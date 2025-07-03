@@ -231,14 +231,15 @@
 delBtn.onclick = e => {
   e.stopPropagation();
 
-  fetch("#")
+  fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json")
     .then(res => res.json())
     .then(data => {
       const entries = Object.entries(data || {});
       const match = entries.find(([key, value]) => value.id === img.id);
       if (match) {
         const key = match[0];
-        fetch(`#"DELETE"
+        fetch(`https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images/${key}.json`, {
+          method: "DELETE"
         }).then(() => {
           images = images.filter(i => i.id !== img.id);
           galleryEl.innerHTML = "";
@@ -328,7 +329,7 @@ delBtn.onclick = e => {
         group: groupId
       };
 
-      return fetch("#", {
+      return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newImg)
@@ -351,7 +352,7 @@ delBtn.onclick = e => {
 
     function confirmClearGallery() {
   if (confirm("هل أنت متأكد أنك تريد حذف جميع الصور؟")) {
-    fetch("#", {
+    fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json", {
       method: "DELETE"
     })
     .then(() => {
@@ -427,7 +428,7 @@ delBtn.onclick = e => {
       handleUpload(e.dataTransfer.files);
     });
 
-    fetch("#")
+    fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json")
   .then(res => res.json())
   .then(data => {
     images = Object.values(data || {});
