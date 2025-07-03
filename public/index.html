@@ -429,9 +429,11 @@ delBtn.onclick = e => {
     });
 
     fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json")
-    .then(res => res.json())
-    .then(data => {
-      images = Object.values(data || {});
+  .then(res => res.json())
+  .then(data => {
+    images = Object.values(data || {});
+    images = images.sort(() => Math.random() - 0.5); // ✅ لخبطة الصور تلقائيًا
+
       renderChunk();
       updateCounter();
     })
