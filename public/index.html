@@ -228,16 +228,44 @@
             border-radius: 50%; cursor: pointer; z-index: 10;
           `;
           delBtn.onclick = e => {
-            e.stopPropagation();
-            images = images.filter(i => i.id !== img.id);
-            localStorage.setItem("gallery_images", JSON.stringify(images));
-            galleryEl.innerHTML = "";
-            page = 1;
-            renderChunk();
-            updateCounter();
-          };
-          div.appendChild(delBtn);
-        }
+  e.stopPropagation();
+
+  // أولًا: جلب كل الصور من Firebase
+  fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json")
+    .then(res => res.json())
+    .then(data => {
+      const entries = Object.entries(data || {});
+
+      // ابحث عن الصورة المطابقة لـ img.id
+      const match = entries.find(([key, value]) => value.id === img.id);
+
+      if (match) {
+        const key = match[0]; // المفتاح داخل Firebase
+
+        // حذف الصورة من Firebase
+        fetch(`https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images/${key}.json`, {
+          method: "DELETE"
+        })
+        .then(() => {
+          console.log("✅ تم حذف الصورة من Firebase");
+
+          // ثم تحديث واجهة المستخدم
+          images = images.filter(i => i.id !== img.id);
+          galleryEl.innerHTML = "";
+          page = 1;
+          renderChunk();
+          updateCounter();
+        })
+        .catch(err => {
+          console.error("❌ فشل في حذف الصورة من Firebase:", err);
+          alert("حدث خطأ أثناء حذف الصورة.");
+        });
+      }
+    });
+};
+
+div.appendChild(delBtn); // ضيف الزر بعد ما تبني الحدث
+
 
         galleryEl.appendChild(div);
       });
