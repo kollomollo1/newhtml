@@ -351,14 +351,25 @@ delBtn.onclick = e => {
 }
 
     function confirmClearGallery() {
-      if (confirm("هل أنت متأكد أنك تريد حذف جميع الصور؟")) {
-        localStorage.removeItem("gallery_images");
-        images = [];
-        galleryEl.innerHTML = "";
-        page = 1;
-        updateCounter();
-      }
-    }
+  if (confirm("هل أنت متأكد أنك تريد حذف جميع الصور؟")) {
+    fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json", {
+      method: "DELETE"
+    })
+    .then(() => {
+      images = [];
+      galleryEl.innerHTML = "";
+      page = 1;
+      renderChunk();
+      updateCounter();
+      alert("✅ تم حذف جميع الصور من Firebase.");
+    })
+    .catch(err => {
+      console.error("❌ فشل حذف الصور من Firebase:", err);
+      alert("حدث خطأ أثناء حذف الصور.");
+    });
+  }
+}
+
 
     function shuffleGallery() {
       images = images.sort(() => Math.random() - 0.5);
