@@ -230,7 +230,7 @@
           delBtn.onclick = e => {
             e.stopPropagation();
             images = images.filter(i => i.id !== img.id);
-            );
+            localStorage.setItem("gallery_images", JSON.stringify(images));
             galleryEl.innerHTML = "";
             page = 1;
             renderChunk();
@@ -284,18 +284,132 @@
     }
 
     function handleUpload(files) {
-      const selectedCategory = categorySelect.value;
-      if (!selectedCategory) return alert("اختر تصنيفًا أولاً");
-      const newImgs = [];
-      let loaded = 0;
-      const groupId = Date.now();
-      Array.from(files).forEach(file => {
-        const reader = new FileReader();
-        reader.onload = e => {
-          newImgs.push({ id: Date.now() + Math.random(), src: e.target.result, category: selectedCategory, group: groupId });
-          loaded++;
-          if (loaded === files.length) {
-            renderChunk();
+  const selectedCategory = categorySelect.value;
+  if (!selectedCategory) return alert("اختر تصنيفًا أولاً");
+
+  const groupId = Date.now();
+
+  Array.from(files).forEach(file => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "lastlast");
+
+    console.log("📤 بدأ رفع الصورة إلى Cloudinary...");
+
+    fetch("https://api.cloudinary.com/v1_1/dugzs3qbh/image/upload", {
+      method: "POST",
+      body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+      console.log("✅ تم رفع الصورة:", data.secure_url);
+
+      const newImg = {
+        id: Date.now() + Math.random(),
+        src: data.secure_url,
+        category: selectedCategory,
+        group: groupId
+      };
+
+      return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newImg)
+      })
+      .then(() => {
+        console.log("🔥 تم حفظ الصورة في Firebase");
+        images.unshift(newImg);
+        galleryEl.innerHTML = "";
+        page = 1;
+        renderChunk();
+        updateCounter();
+      });
+    })
+    .catch(err => {
+      console.error("❌ خطأ في رفع أو حفظ الصورة:", err);
+      alert("حدث خطأ أثناء رفع الصورة أو حفظها.");
+    });
+  });
+}
+
+    function confirmClearGallery() {
+      if (confirm("هل أنت متأكد أنك تريد حذف جميع الصور؟")) {
+        localStorage.removeItem("gallery_images");
+        images = [];
+        galleryEl.innerHTML = "";
+        page = 1;
+        updateCounter();
+      }
+    }
+
+    function shuffleGallery() {
+      images = images.sort(() => Math.random() - 0.5);
+      localStorage.setItem("gallery_images", JSON.stringify(images));
+      galleryEl.innerHTML = "";
+      page = 1;
+      renderChunk();
+      updateCounter();
+    }
+
+    function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function askAdmin() {
+      const user = prompt("اسم المستخدم:");
+      const pass = prompt("كلمة السر:");
+      if (user === "2330498Aa" && pass === "2330498Aa") {
+        document.getElementById("adminPanel").style.display = "flex";
+        isAdmin = true;
+        galleryEl.innerHTML = "";
+        page = 1;
+        renderChunk();
+        updateCounter();
+      } else {
+        alert("بيانات الدخول غير صحيحة");
+      }
+    }
+
+    document.getElementById("fileInput").addEventListener("change", e => handleUpload(e.target.files));
+    categoryFilter.addEventListener("change", () => {
+      page = 1;
+      galleryEl.innerHTML = "";
+      renderChunk();
+  if (categoryFilter.value === "all") {
+    const total = getFilteredImages().length;
+    while (page * pageSize < total) {
+      page++;
+      renderChunk();
+    }
+  }
+      updateCounter();
+    });
+
+    const dropzone = document.getElementById("dropzone");
+    dropzone.addEventListener("dragover", e => {
+      e.preventDefault();
+      dropzone.style.background = "#eef";
+    });
+    dropzone.addEventListener("dragleave", () => {
+      dropzone.style.background = "";
+    });
+    dropzone.addEventListener("drop", e => {
+      e.preventDefault();
+      dropzone.style.background = "";
+      handleUpload(e.dataTransfer.files);
+    });
+
+    fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json")
+    .then(res => res.json())
+    .then(data => {
+      images = Object.values(data || {});
+      renderChunk();
+      updateCounter();
+    })
+    .catch(err => {
+      console.error("فشل في جلب الصور من Firebase:", err);
+    });
+    renderChunk();
     updateCounter();
 
     let currentLightboxIndex = 0;
@@ -402,14 +516,22 @@ function openLightbox(imgArray, category) {
 
 window.history.pushState({}, "");
 
-fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json")
-    .then(res => res.json())
-    .then(data => {
-      console.log("✅ تم جلب الصور من Firebase:", data);
-      images = Object.values(data || {});
-      renderChunk();
-      updateCounter();
-    });
+
+window.askAdmin = function () {
+  const user = prompt("اسم المستخدم:");
+  const pass = prompt("كلمة السر:");
+  if (user === "2330498Aa" && pass === "2330498Aa") {
+    document.getElementById("adminPanel").style.display = "flex";
+    isAdmin = true;
+    galleryEl.innerHTML = "";
+    page = 1;
+    renderChunk();
+    updateCounter();
+  } else {
+    alert("بيانات الدخول غير صحيحة");
+  }
+};
+
 </script>
 </body>
 </html>
