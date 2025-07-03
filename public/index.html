@@ -485,6 +485,14 @@ function openLightbox(imgArray, category) {
 
 window.history.pushState({}, "");
 
+fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json")
+    .then(res => res.json())
+    .then(data => {
+      console.log("✅ تم جلب الصور من Firebase:", data);
+      images = Object.values(data || {});
+      renderChunk();
+      updateCounter();
+    });
 </script>
 </body>
 </html>
