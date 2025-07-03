@@ -230,7 +230,7 @@
           delBtn.onclick = e => {
             e.stopPropagation();
             images = images.filter(i => i.id !== img.id);
-            localStorage.setItem("gallery_images", JSON.stringify(images));
+            );
             galleryEl.innerHTML = "";
             page = 1;
             renderChunk();
@@ -295,90 +295,7 @@
           newImgs.push({ id: Date.now() + Math.random(), src: e.target.result, category: selectedCategory, group: groupId });
           loaded++;
           if (loaded === files.length) {
-            const stored = JSON.parse(localStorage.getItem("gallery_images") || "[]");
-            const updated = [...newImgs, ...stored];
-            localStorage.setItem("gallery_images", JSON.stringify(updated));
-            images = updated;
-            galleryEl.innerHTML = "";
-            page = 1;
             renderChunk();
-            updateCounter();
-          }
-        };
-        reader.readAsDataURL(file);
-      });
-    }
-
-    function confirmClearGallery() {
-      if (confirm("هل أنت متأكد أنك تريد حذف جميع الصور؟")) {
-        localStorage.removeItem("gallery_images");
-        images = [];
-        galleryEl.innerHTML = "";
-        page = 1;
-        updateCounter();
-      }
-    }
-
-    function shuffleGallery() {
-      images = images.sort(() => Math.random() - 0.5);
-      localStorage.setItem("gallery_images", JSON.stringify(images));
-      galleryEl.innerHTML = "";
-      page = 1;
-      renderChunk();
-      updateCounter();
-    }
-
-    function scrollToTop() {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-
-    function askAdmin() {
-      const user = prompt("اسم المستخدم:");
-      const pass = prompt("كلمة السر:");
-      if (user === "2330498Aa" && pass === "2330498Aa") {
-        document.getElementById("adminPanel").style.display = "flex";
-        isAdmin = true;
-        galleryEl.innerHTML = "";
-        page = 1;
-        renderChunk();
-        updateCounter();
-      } else {
-        alert("بيانات الدخول غير صحيحة");
-      }
-    }
-
-    document.getElementById("fileInput").addEventListener("change", e => handleUpload(e.target.files));
-    categoryFilter.addEventListener("change", () => {
-      page = 1;
-      galleryEl.innerHTML = "";
-      renderChunk();
-  if (categoryFilter.value === "all") {
-    const total = getFilteredImages().length;
-    while (page * pageSize < total) {
-      page++;
-      renderChunk();
-    }
-  }
-      updateCounter();
-    });
-
-    const dropzone = document.getElementById("dropzone");
-    dropzone.addEventListener("dragover", e => {
-      e.preventDefault();
-      dropzone.style.background = "#eef";
-    });
-    dropzone.addEventListener("dragleave", () => {
-      dropzone.style.background = "";
-    });
-    dropzone.addEventListener("drop", e => {
-      e.preventDefault();
-      dropzone.style.background = "";
-      handleUpload(e.dataTransfer.files);
-    });
-
-    const stored = JSON.parse(localStorage.getItem("gallery_images") || "[]");
-    images = stored;
-    renderChunk();
     updateCounter();
 
     let currentLightboxIndex = 0;
