@@ -351,136 +351,43 @@ delBtn.onclick = e => {
 }
 
     function confirmClearGallery() {
-  if (confirm("هل أنت متأكد أنك تريد حذف جميع الصور؟")) {
-    fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json", {
-      method: "DELETE"
-    })
-    .then(() => {
-      images = [];
-      galleryEl.innerHTML = "";
-      page = 1;
-      renderChunk();
-      updateCounter();
-      alert("✅ تم حذف جميع الصور من Firebase.");
-    })
-    .catch(err => {
-      console.error("❌ فشل حذف الصور من Firebase:", err);
-      alert("حدث خطأ أثناء حذف الصور.");
-    });
-  }
-}
-
-
-    function shuffleGallery() {
-      images = images.sort(() => Math.random() - 0.5);
-      localStorage.setItem("gallery_images", JSON.stringify(images));
-      galleryEl.innerHTML = "";
-      page = 1;
-      renderChunk();
-      updateCounter();
-    }
-
-    function scrollToTop() {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-
-    window.askAdmin = function () {
-      const user = prompt("اسم المستخدم:");
-      const pass = prompt("كلمة السر:");
-      if (user === "2330498Aa" && pass === "2330498Aa") {
-        document.getElementById("adminPanel").style.display = "flex";
-        isAdmin = true;
+      if (confirm("هل أنت متأكد أنك تريد حذف جميع الصور؟")) {
+        localStorage.removeItem("gallery_images");
+        images = [];
         galleryEl.innerHTML = "";
         page = 1;
-        renderChunk();
         updateCounter();
-      } else {
-        alert("بيانات الدخول غير صحيحة");
       }
     }
 
-    document.getElementById("fileInput").addEventListener("change", e => handleUpload(e.target.files));
-    categoryFilter.addEventListener("change", () => {
-      page = 1;
-      galleryEl.innerHTML = "";
-      renderChunk();
-  if (categoryFilter.value === "all") {
-    const total = getFilteredImages().length;
-    while (page * pageSize < total) {
-      page++;
-      renderChunk();
-    }
-  }
-      updateCounter();
-    });
+    
+function shuffleGallery() {
+  // Shuffle the images array
+  images = images.sort(() => Math.random() - 0.5);
 
-    const dropzone = document.getElementById("dropzone");
-    dropzone.addEventListener("dragover", e => {
-      e.preventDefault();
-      dropzone.style.background = "#eef";
-    });
-    dropzone.addEventListener("dragleave", () => {
-      dropzone.style.background = "";
-    });
-    dropzone.addEventListener("drop", e => {
-      e.preventDefault();
-      dropzone.style.background = "";
-      handleUpload(e.dataTransfer.files);
-    });
-
-    fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json")
-    .then(res => res.json())
-    .then(data => {
-      images = Object.values(data || {});
-      renderChunk();
-      updateCounter();
-    })
-    .catch(err => {
-      console.error("فشل في جلب الصور من Firebase:", err);
-    });
-    renderChunk();
-    updateCounter();
-
-    let currentLightboxIndex = 0;
-    let currentLightboxImages = [];
-  
-  window.addEventListener("scroll", () => {
-    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100) {
-      const total = getFilteredImages().length;
-      if (page * pageSize < total) {
-        page++;
-        renderChunk();
-      }
-    }
-
-    if (window.scrollY > 300) {
-      scrollBtn.style.display = "block";
-    } else {
-      scrollBtn.style.display = "none";
-    }
-  });
-
-
-let lightboxImg = document.getElementById('lightbox-img');
-let scale = 1;
-let lastTouchDistance = 0;
-let startX = 0, startY = 0;
-let moveX = 0, moveY = 0;
-let isPanning = false;
-
-lightboxImg.addEventListener('touchstart', function (e) {
-  if (e.touches.length === 2) {
-    e.preventDefault();
-    lastTouchDistance = Math.hypot(
-      e.touches[0].clientX - e.touches[1].clientX,
-      e.touches[0].clientY - e.touches[1].clientY
+  // تحديث الصور داخل Firebase بنفس الترتيب الجديد
+  // 1. حذف كل الصور
+  fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json", {
+    method: "DELETE"
+  }).then(() => {
+    // 2. إعادة رفع الصور بترتيب جديد
+    const requests = images.map(img =>
+      fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(img)
+      })
     );
-  } else if (e.touches.length === 1) {
-    isPanning = true;
-    startX = e.touches[0].clientX - moveX;
-    startY = e.touches[0].clientY - moveY;
-  }
-}, { passive: false });
+
+    Promise.all(requests).then(() => {
+      galleryEl.innerHTML = "";
+      page = 1;
+      renderChunk();
+      updateCounter();
+    });
+  });
+}
+, { passive: false });
 
 lightboxImg.addEventListener('touchmove', function (e) {
   if (e.touches.length === 2) {
