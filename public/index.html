@@ -218,53 +218,48 @@
         div.appendChild(label);
 
         if (isAdmin) {
-          const delBtn = document.createElement("div");
-          delBtn.textContent = "✖";
-          delBtn.style.cssText = `
-            position: absolute; top: 4px; right: 4px;
-            background: rgba(0,0,0,0.6); color: white;
-            font-size: 14px; width: 20px; height: 20px;
-            line-height: 20px; text-align: center;
-            border-radius: 50%; cursor: pointer; z-index: 10;
-          `;
-          delBtn.onclick = e => {
-  e.stopPropagation();
+  const delBtn = document.createElement("div");
+  delBtn.textContent = "✖";
+  delBtn.style.cssText = `
+    position: absolute; top: 4px; right: 4px;
+    background: rgba(0,0,0,0.6); color: white;
+    font-size: 14px; width: 20px; height: 20px;
+    line-height: 20px; text-align: center;
+    border-radius: 50%; cursor: pointer; z-index: 10;
+  `;
 
-  // أولًا: جلب كل الصور من Firebase
-  fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json")
-    .then(res => res.json())
-    .then(data => {
-      const entries = Object.entries(data || {});
+  delBtn.onclick = e => {
+    e.stopPropagation();
 
-      // ابحث عن الصورة المطابقة لـ img.id
-      const match = entries.find(([key, value]) => value.id === img.id);
+    fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json")
+      .then(res => res.json())
+      .then(data => {
+        const entries = Object.entries(data || {});
+        const match = entries.find(([key, value]) => value.id === img.id);
+        if (match) {
+          const key = match[0];
+          fetch(`https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images/${key}.json`, {
+            method: "DELETE"
+          })
+          .then(() => {
+            images = images.filter(i => i.id !== img.id);
+            galleryEl.innerHTML = "";
+            page = 1;
+            renderChunk();
+            updateCounter();
+          })
+          .catch(err => {
+            console.error("فشل حذف الصورة:", err);
+            alert("حدث خطأ أثناء حذف الصورة.");
+          });
+        }
+      });
+  };
 
-      if (match) {
-        const key = match[0]; // المفتاح داخل Firebase
+  div.appendChild(delBtn);
+}
 
-        // حذف الصورة من Firebase
-        fetch(`https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images/${key}.json`, {
-          method: "DELETE"
-        })
-        .then(() => {
-          console.log("✅ تم حذف الصورة من Firebase");
 
-          // ثم تحديث واجهة المستخدم
-          images = images.filter(i => i.id !== img.id);
-          galleryEl.innerHTML = "";
-          page = 1;
-          renderChunk();
-          updateCounter();
-        })
-        .catch(err => {
-          console.error("❌ فشل في حذف الصورة من Firebase:", err);
-          alert("حدث خطأ أثناء حذف الصورة.");
-        });
-      }
-    });
-};
-
-div.appendChild(delBtn); // ضيف الزر بعد ما تبني الحدث
 
 
         galleryEl.appendChild(div);
@@ -557,7 +552,7 @@ window.askAdmin = function () {
   } else {
     alert("بيانات الدخول غير صحيحة");
   }
-};
+}
 
 </script>
 </body>
