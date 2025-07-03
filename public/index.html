@@ -428,13 +428,13 @@ delBtn.onclick = e => {
       handleUpload(e.dataTransfer.files);
     });
 
-    fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json")
-    .then(res => res.json())
-    .then(data => {
-      images = Object.values(data || {});
-      renderChunk();
-      updateCounter();
-    })
+fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json")
+  .then(res => res.json())
+  .then(data => {
+    images = Object.values(data || {}).sort(() => Math.random() - 0.5); // ← Shuffle before render
+    renderChunk();
+    updateCounter();
+  });
     .catch(err => {
       console.error("فشل في جلب الصور من Firebase:", err);
     });
