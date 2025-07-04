@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>متجري</title>
+  <title>معرض الصور</title>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet" />
   <style>
     body {
@@ -197,17 +197,13 @@ if (localStorage.getItem("isAdmin") === "true") {
     }
 
     function renderChunk() {
-  const filtered = getFilteredImages();
-
-  const grouped = {};
-  filtered.forEach(img => {
-    if (!grouped[img.group]) grouped[img.group] = [];
-    grouped[img.group].push(img);
-  });
-
-  const groupChunks = Object.values(grouped).slice((page - 1) * pageSize, page * pageSize);
-  groupChunks.forEach(groupImgs => {
-
+      const filtered = getFilteredImages();
+      const chunk = filtered.slice((page - 1) * pageSize, page * pageSize);
+      const grouped = {};
+      chunk.forEach(img => {
+        if (!grouped[img.group]) grouped[img.group] = [];
+        grouped[img.group].push(img);
+      });
 
       Object.values(grouped).forEach(groupImgs => {
         const img = groupImgs[0];
