@@ -179,7 +179,20 @@ if (localStorage.getItem("isAdmin") === "true") {
   document.getElementById("adminPanel").style.display = "flex";
 }
 
-    const galleryEl = document.getElementById("gallery");
+    
+function shuffleGroupedImages(imgList) {
+  const grouped = {};
+  imgList.forEach(img => {
+    if (!grouped[img.group]) grouped[img.group] = [];
+    grouped[img.group].push(img);
+  });
+
+  const shuffledGroups = Object.values(grouped).sort(() => Math.random() - 0.5);
+  return shuffledGroups.flat();
+}
+
+
+const galleryEl = document.getElementById("gallery");
     const scrollBtn = document.getElementById("scrollTopBtn");
     const categorySelect = document.getElementById("categorySelect");
     const categoryFilter = document.getElementById("categoryFilter");
@@ -378,7 +391,7 @@ delBtn.onclick = e => {
 
 
     function shuffleGallery() {
-      images = images.sort(() => Math.random() - 0.5);
+      images = shuffleGroupedImages(images);
       localStorage.setItem("gallery_images", JSON.stringify(images));
       galleryEl.innerHTML = "";
       page = 1;
@@ -434,7 +447,7 @@ delBtn.onclick = e => {
   .then(res => res.json())
   .then(data => {
     images = Object.values(data || {});
-    images = images.sort(() => Math.random() - 0.5); // ✅ لخبطة الصور تلقائيًا
+    images = shuffleGroupedImages(images); // ✅ لخبطة الصور تلقائيًا
 
       renderChunk();
       updateCounter();
