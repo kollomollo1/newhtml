@@ -179,20 +179,7 @@ if (localStorage.getItem("isAdmin") === "true") {
   document.getElementById("adminPanel").style.display = "flex";
 }
 
-    
-function shuffleGroupedImages(imgList) {
-  const grouped = {};
-  imgList.forEach(img => {
-    if (!grouped[img.group]) grouped[img.group] = [];
-    grouped[img.group].push(img);
-  });
-
-  const shuffledGroups = Object.values(grouped).sort(() => Math.random() - 0.5);
-  return shuffledGroups.flat();
-}
-
-
-const galleryEl = document.getElementById("gallery");
+    const galleryEl = document.getElementById("gallery");
     const scrollBtn = document.getElementById("scrollTopBtn");
     const categorySelect = document.getElementById("categorySelect");
     const categoryFilter = document.getElementById("categoryFilter");
@@ -326,8 +313,6 @@ delBtn.onclick = e => {
 
   const groupId = Date.now();
 
-  const groupId = Date.now();
-
   Array.from(files).forEach(file => {
     const formData = new FormData();
     formData.append("file", file);
@@ -393,7 +378,7 @@ delBtn.onclick = e => {
 
 
     function shuffleGallery() {
-      images = shuffleGroupedImages(images);
+      images = images.sort(() => Math.random() - 0.5);
       localStorage.setItem("gallery_images", JSON.stringify(images));
       galleryEl.innerHTML = "";
       page = 1;
@@ -449,7 +434,7 @@ delBtn.onclick = e => {
   .then(res => res.json())
   .then(data => {
     images = Object.values(data || {});
-    images = shuffleGroupedImages(images); // ✅ لخبطة الصور تلقائيًا
+    images = images.sort(() => Math.random() - 0.5); // ✅ لخبطة الصور تلقائيًا
 
       renderChunk();
       updateCounter();
