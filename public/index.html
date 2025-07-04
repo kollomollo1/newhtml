@@ -197,13 +197,17 @@ if (localStorage.getItem("isAdmin") === "true") {
     }
 
     function renderChunk() {
-      const filtered = getFilteredImages();
-      const chunk = filtered.slice((page - 1) * pageSize, page * pageSize);
-      const grouped = {};
-      chunk.forEach(img => {
-        if (!grouped[img.group]) grouped[img.group] = [];
-        grouped[img.group].push(img);
-      });
+  const filtered = getFilteredImages();
+
+  const grouped = {};
+  filtered.forEach(img => {
+    if (!grouped[img.group]) grouped[img.group] = [];
+    grouped[img.group].push(img);
+  });
+
+  const groupChunks = Object.values(grouped).slice((page - 1) * pageSize, page * pageSize);
+  groupChunks.forEach(groupImgs => {
+
 
       Object.values(grouped).forEach(groupImgs => {
         const img = groupImgs[0];
