@@ -472,6 +472,7 @@ delBtn.onclick = e => {
 let lightboxImg = document.getElementById('lightbox-img');
 let scale = 1;
 let ignoreNextSingleTouch = false;
+let ignoreTimeout;
 let prevTouchX = 0;
 let prevTouchY = 0;
 let lastTouchDistance = 0;
@@ -513,6 +514,11 @@ lightboxImg.addEventListener('touchmove', function (e) {
     scale = Math.max(1, Math.min(scale, 4));
     lightboxImg.style.transform = `scale(${scale}) translate(${moveX}px, ${moveY}px)`;
     lastTouchDistance = currentDistance;
+ignoreNextSingleTouch = true;
+clearTimeout(ignoreTimeout);
+ignoreTimeout = setTimeout(() => {
+  ignoreNextSingleTouch = false;
+}, 200);
   } else if (e.touches.length === 1 && isPanning && scale > 1) {
     e.preventDefault();
     let deltaX = e.touches[0].clientX - prevTouchX;
