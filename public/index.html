@@ -268,7 +268,6 @@ delBtn.onclick = e => {
         galleryEl.appendChild(div);
       });
     }
-
 function openLightbox(imgArray, category) {
   currentLightboxImages = imgArray;
   currentLightboxIndex = 0;
@@ -299,6 +298,19 @@ function openLightbox(imgArray, category) {
 
     lastTap = currentTime;
   };
+
+  const leftArrow = document.querySelector("#lightbox button:nth-of-type(1)");
+  const rightArrow = document.querySelector("#lightbox button:nth-of-type(2)");
+  if (imgArray.length <= 1) {
+    leftArrow.style.display = "none";
+    rightArrow.style.display = "none";
+  } else {
+    leftArrow.style.display = "block";
+    rightArrow.style.display = "block";
+  }
+
+  history.pushState(null, null, location.href);
+}
 
   const leftArrow = document.querySelector("#lightbox button:nth-of-type(1)");
   const rightArrow = document.querySelector("#lightbox button:nth-of-type(2)");
