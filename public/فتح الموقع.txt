@@ -5,7 +5,7 @@
 cd pathالمشروع
 cd C:\newhtml
 git add .
-git commit -m "udsaa.js"
+git commit -m "udssasza.js"
 git push origin main
 
 في موقعي بستخدم vercel hosting و cloudinary storage  و firebase database , هل ممكن نستخدم supabase بدل firebase database لحفظ الروابط , وهل بعد كده الصور اللى هرفعها علي موقعي هتظهر مباشرة علي موقعي بدون روابط ؟

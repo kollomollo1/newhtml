@@ -70,6 +70,7 @@
     #lightbox img {
   width: 90%;
   height: auto;
+  transform: none;
       transition: transform 0.3s ease;
       border-radius: 8px;
     }
@@ -460,6 +461,24 @@ delBtn.onclick = e => {
 
 
 let lightboxImg = document.getElementById('lightbox-img');
+
+let lastTap = 0;
+lightboxImg.addEventListener('touchend', function (e) {
+  const currentTime = new Date().getTime();
+  const tapLength = currentTime - lastTap;
+  if (tapLength < 300 && e.touches.length === 0) {
+    if (scale === 1) {
+      scale = 2;
+    } else {
+      scale = 1;
+      moveX = 0;
+      moveY = 0;
+    }
+    lightboxImg.style.transform = `scale(${scale}) translate(${moveX}px, ${moveY}px)`;
+  }
+  lastTap = currentTime;
+});
+
 let scale = 1;
 let lastTouchDistance = 0;
 let startX = 0, startY = 0;
@@ -489,7 +508,7 @@ lightboxImg.addEventListener('touchmove', function (e) {
     );
     let delta = currentDistance - lastTouchDistance;
     scale += delta * 0.005;
-    scale = Math.max(1, Math.min(scale, 2));
+    scale = Math.max(1, Math.min(scale, 4));
     lightboxImg.style.transform = `scale(${scale}) translate(${moveX}px, ${moveY}px)`;
     lastTouchDistance = currentDistance;
   } else if (e.touches.length === 1 && isPanning && scale > 1) {
