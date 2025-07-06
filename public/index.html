@@ -503,8 +503,9 @@ lightboxImg.addEventListener('touchmove', function (e) {
     lightboxImg.style.transform = `scale(${scale}) translate(${moveX}px, ${moveY}px)`;
     lastTouchDistance = currentDistance;
   } else if (e.touches.length === 1 && isPanning && scale > 1) {
-    moveX = (e.touches[0].clientX - startX) * 0.5;
-    moveY = (e.touches[0].clientY - startY) * 0.5;
+    e.preventDefault();
+    moveX = e.touches[0].clientX - startX;
+    moveY = e.touches[0].clientY - startY;
     lightboxImg.style.transform = `scale(${scale}) translate(${moveX}px, ${moveY}px)`;
   }
 }, { passive: false });
