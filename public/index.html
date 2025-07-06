@@ -472,6 +472,29 @@ delBtn.onclick = e => {
 
 let lightboxImg = document.getElementById('lightbox-img');
 let scale = 1;
+let lastTouchDistance = 0;
+let startX = 0, startY = 0;
+let moveX = 0, moveY = 0;
+let isPanning = false;
+
+// ✅ دعم الضغط مرتين للموبايل
+let lastTap = 0;
+lightboxImg.addEventListener("touchend", function (e) {
+  const currentTime = new Date().getTime();
+  const tapLength = currentTime - lastTap;
+
+  if (tapLength < 300 && tapLength > 0) {
+    scale = 1;
+    moveX = 0;
+    moveY = 0;
+    lightboxImg.style.transform = `scale(1) translate(0px, 0px)`;
+    lightboxImg.style.transformOrigin = "center center";
+  }
+
+  lastTap = currentTime;
+});
+
+let scale = 1;
 let ignoreNextSingleTouch = false;
 let ignoreTimeout;
 let prevTouchX = 0;
