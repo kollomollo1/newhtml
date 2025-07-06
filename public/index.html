@@ -68,12 +68,12 @@
       text-align: center;
     }
     #lightbox img {
-  width: 90%;
-  height: auto;
-  transform: none;
-      transition: transform 0.3s ease;
-      border-radius: 8px;
-    }
+  max-width: 90%;
+  max-height: 80vh;
+  transition: transform 0.3s ease;
+  border-radius: 8px;
+  transform: scale(1);
+}
     #dropzone {
       border: 2px dashed #aaa;
       padding: 50px;
@@ -282,12 +282,15 @@ delBtn.onclick = e => {
         leftArrow.style.display = "block";
         rightArrow.style.display = "block";
       }
-    }
+    }function showLightboxImage() {
+  scale = 1;
+  moveX = 0;
+  moveY = 0;
 
-    function showLightboxImage() {
-      document.getElementById("lightbox-img").src = currentLightboxImages[currentLightboxIndex];
-    }
-
+  const img = document.getElementById("lightbox-img");
+  img.style.transform = `scale(${scale}) translate(0px, 0px)`;
+  img.src = currentLightboxImages[currentLightboxIndex];
+}
     function nextImage() {
       if (currentLightboxIndex < currentLightboxImages.length - 1) {
         currentLightboxIndex++;
