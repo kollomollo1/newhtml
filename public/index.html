@@ -463,6 +463,7 @@ delBtn.onclick = e => {
   .then(data => {
     images = Object.values(data || {});
     images = images.sort(() => Math.random() - 0.5);
+    categoryFilter.value = "all";
     renderChunk();
     updateCounter();
   })
