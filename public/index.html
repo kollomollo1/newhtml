@@ -155,10 +155,10 @@
 <div class="gallery" id="gallery"></div>
 <div id="lightbox" onclick="this.style.display='none'">
 <button onclick="event.stopPropagation(); prevImage();" style="position:absolute; left:10px; top:50%; font-size:30px; background:none; border:none; color:white;">❮</button>
-<img id="lightbox-img" src="">
+<img id="lightbox-img" src=""/>
 <button onclick="event.stopPropagation(); nextImage();" style="position:absolute; right:10px; top:50%; font-size:30px; background:none; border:none; color:white;">❯</button>
 <p id="lightbox-category"></p>
-</img></div>
+</div>
 <button id="scrollTopBtn" onclick="scrollToTop()">↑</button>
 <script>
     let isAdmin = false;
@@ -277,14 +277,16 @@ delBtn.onclick = e => {
       }
     }
 
-    function showLightboxImage() {
+    
+function showLightboxImage() {
+  const lightboxImg = document.getElementById("lightbox-img");
+  lightboxImg.src = currentLightboxImages[currentLightboxIndex];
   scale = 1;
   moveX = 0;
   moveY = 0;
   lightboxImg.style.transform = `scale(1) translate(0px, 0px)`;
+}
 
-      document.getElementById("lightbox-img").src = currentLightboxImages[currentLightboxIndex];
-    }
 
     function nextImage() {
       if (currentLightboxIndex < currentLightboxImages.length - 1) {
