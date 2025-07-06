@@ -505,10 +505,22 @@ lightboxImg.addEventListener('touchstart', function (e) {
 lightboxImg.addEventListener('touchmove', function (e) {
   if (e.touches.length === 2) {
     e.preventDefault();
-    let currentDistance = Math.hypot(
-      e.touches[0].clientX - e.touches[1].clientX,
-      e.touches[0].clientY - e.touches[1].clientY
-    );
+    // ✅ تحديد مركز اللمس (المكان اللي بتزوم منه)
+let touchX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+let touchY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+
+const rect = lightboxImg.getBoundingClientRect();
+let offsetX = touchX - rect.left;
+let offsetY = touchY - rect.top;
+
+lightboxImg.style.transformOrigin = `${offsetX}px ${offsetY}px`;
+
+// ✅ الزوم نفسه
+let currentDistance = Math.hypot(
+  e.touches[0].clientX - e.touches[1].clientX,
+  e.touches[0].clientY - e.touches[1].clientY
+);
+
     let delta = currentDistance - lastTouchDistance;
     scale += delta * 0.002;
     scale = Math.max(1, Math.min(scale, 4));
