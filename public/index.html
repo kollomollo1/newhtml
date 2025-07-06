@@ -407,6 +407,7 @@ delBtn.onclick = e => {
 
     document.getElementById("fileInput").addEventListener("change", e => handleUpload(e.target.files));
     categoryFilter.addEventListener("change", () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
       page = 1;
       galleryEl.innerHTML = "";
       renderChunk();
@@ -601,7 +602,7 @@ function logoutAdmin() {
   location.reload();
 }
 
-window.scrollTo(0, 0);
+
 </script>
 </body>
 </html>
