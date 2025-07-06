@@ -164,19 +164,9 @@
   <div class="gallery" id="gallery"></div>
 
   <div id="lightbox" onclick="this.style.display='none'">
-    <button onclick="event.stopPropagation(); prevImage();"
-  style="position:absolute; left:10px; top:50%; transform:translateY(-50%);
-         font-size:30px; background:none; border:1px solid gray; color:white;
-         padding:4px 10px; z-index:1001; cursor:pointer;">
-  ❮
-</button>
+    <button onclick="event.stopPropagation(); prevImage();" style="position:absolute; left:10px; top:50%; transform: translateY(-50%); font-size:30px; background:none; border:none; color:white; z-index:1001;">❮</button>
     <img id="lightbox-img" src="" />
-    <button onclick="event.stopPropagation(); nextImage();"
-  style="position:absolute; right:10px; top:50%; transform:translateY(-50%);
-         font-size:30px; background:none; border:1px solid gray; color:white;
-         padding:4px 10px; z-index:1001; cursor:pointer;">
-  ❯
-</button>
+    <button onclick="event.stopPropagation(); nextImage();" style="position:absolute; right:10px; top:50%; font-size:30px; background:none; border:none; color:white;">❯</button>
     <p id="lightbox-category"></p>
   </div>
 
