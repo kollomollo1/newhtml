@@ -553,33 +553,42 @@ ignoreTimeout = setTimeout(() => {
   }
 }, { passive: false });
 
-let lastTapTime = 0;
-
 lightboxImg.addEventListener('touchend', function (e) {
   if (e.touches.length === 0) {
     isPanning = false;
   }
-
-  // 🔁 تحقق إذا كانت نقرة مزدوجة
-  const currentTime = new Date().getTime();
-  const tapLength = currentTime - lastTapTime;
-  if (tapLength < 300 && tapLength > 0) {
-    // 👆 ده Double Tap
-    scale = 1;
-    moveX = 0;
-    moveY = 0;
-    lightboxImg.style.transform = `scale(1) translate(0px, 0px)`;
-  }
-  lastTapTime = currentTime;
 });
 
+let lastTapTime = 0;
+
+lightboxImg.addEventListener('touchstart', function (e) {
+  if (e.touches.length === 1) {
+    const currentTime = new Date().getTime();
+    const tapLength = currentTime - lastTapTime;
+
+    if (tapLength > 0 && tapLength < 300) {
+      // ✅ Double Tap → Zoom In or Reset
+      if (scale === 1) {
+        scale = 2;
+      } else {
+        scale = 1;
+        moveX = 0;
+        moveY = 0;
+      }
+
+      lightboxImg.style.transform = `scale(${scale}) translate(${moveX}px, ${moveY}px)`;
+    }
+
+    lastTapTime = currentTime;
+  }
+}, { passive: true });
 
 
 window.addEventListener("popstate", function () {
   const lightbox = document.getElementById("lightbox");
   if (lightbox.style.display === "flex") {
     lightbox.style.display = "none";
-    history.pushState(null, null, location.href); // إعادة الحالة حتى لا يخرج المستخدم
+    history.pushState(null, null, location.href);
   }
 });
 
