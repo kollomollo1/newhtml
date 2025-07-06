@@ -8,7 +8,7 @@ cd C:\newhtml
 
 git add .
 
-git commit -m "uvsasdaswdasa.js"
+git commit -m "uvsadadfefasa.js"
 
 git push origin main
 
