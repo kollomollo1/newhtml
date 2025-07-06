@@ -279,6 +279,18 @@ function openLightbox(imgArray, category) {
   document.getElementById("lightbox-img").onclick = e => {
     e.stopPropagation();
   };
+  const leftArrow = document.querySelector("#lightbox button:nth-of-type(1)");
+  const rightArrow = document.querySelector("#lightbox button:nth-of-type(2)");
+  if (imgArray.length <= 1) {
+    leftArrow.style.display = "none";
+    rightArrow.style.display = "none";
+  } else {
+    leftArrow.style.display = "block";
+    rightArrow.style.display = "block";
+  }
+
+  history.pushState(null, null, location.href);
+}
 
   // ✅ دعم الضغط مرتين للموبايل
   let lastTap = 0;
