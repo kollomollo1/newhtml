@@ -518,7 +518,7 @@ ignoreNextSingleTouch = true;
 clearTimeout(ignoreTimeout);
 ignoreTimeout = setTimeout(() => {
   ignoreNextSingleTouch = false;
-}, 200);
+}, 400);
   } else if (e.touches.length === 1 && scale > 1) {
   if (ignoreNextSingleTouch) return;
   if (!isPanning) return;
