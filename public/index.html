@@ -216,7 +216,7 @@ if (localStorage.getItem("isAdmin") === "true") {
         image.src = img.src;
         image.onclick = e => {
           e.stopPropagation();
-          openLightbox(groupImgs.map(i => i.src), img.category);
+          openLightbox(groupImgs, img.category);
         };
         div.appendChild(image);
 
@@ -590,32 +590,6 @@ window.addEventListener("popstate", function () {
   }
 });
 
-// عند فتح اللايت بوكس، أضف حالة إلى التاريخ
-function openLightbox(imgArray, category) {
-  currentLightboxImages = imgArray;
-  currentLightboxIndex = 0;
-  showLightboxImage();
-  const lightbox = document.getElementById("lightbox");
-  lightbox.style.display = "flex";
-  document.getElementById("lightbox-category").textContent = category || "";
-
-  // منع إغلاق اللايت بوكس عند الضغط على الصورة نفسها
-  document.getElementById("lightbox-img").onclick = e => {
-    e.stopPropagation();
-  };
-
-  const leftArrow = document.querySelector("#lightbox button:nth-of-type(1)");
-  const rightArrow = document.querySelector("#lightbox button:nth-of-type(2)");
-  if (imgArray.length <= 1) {
-    leftArrow.style.display = "none";
-    rightArrow.style.display = "none";
-  } else {
-    leftArrow.style.display = "block";
-    rightArrow.style.display = "block";
-  }
-
-  history.pushState(null, null, location.href); // إضافة الحالة عند فتح اللايت بوكس
-}
 
 window.history.pushState({}, "");
     
