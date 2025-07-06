@@ -501,6 +501,8 @@ function openLightbox(imgArray, category) {
       handleUpload(e.dataTransfer.files);
     });
 
+const categoryFilter = document.getElementById("categoryFilter");
+
  fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json")
   .then(res => res.json())
   .then(data => {
