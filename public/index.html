@@ -157,9 +157,9 @@
     <option value="أحذية رجالي">أحذية رجالي</option>
   </select>
 
-  <p style="text-align:center; font-size:14px; color:#555; margin-top: 10px;">
-    عدد المنتجات: <span id="imageCount">0</span>
-  </p>
+  #imageCount, p[style*="عدد المنتجات"] {
+  display: none !important;
+}
 
   <div class="gallery" id="gallery"></div>
 
