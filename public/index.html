@@ -268,15 +268,38 @@ delBtn.onclick = e => {
     }
 
     function openLightbox(imgArray, category) {
-      currentLightboxImages = imgArray;
-      currentLightboxIndex = 0;
-      showLightboxImage();
-      document.getElementById("lightbox").style.display = "flex";
-      document.getElementById("lightbox-category").textContent = category || "";
-    // منع إغلاق اللايت بوكس عند الضغط على الصورة نفسها
-    document.getElementById("lightbox-img").onclick = e => {
-      e.stopPropagation();
-    };
+  currentLightboxImages = imgArray;
+  currentLightboxIndex = 0;
+  showLightboxImage();
+  document.getElementById("lightbox").style.display = "flex";
+  document.getElementById("lightbox-category").textContent = category || "";
+
+  // منع إغلاق اللايت بوكس عند الضغط على الصورة
+  document.getElementById("lightbox-img").onclick = e => {
+    e.stopPropagation();
+  };
+
+  // ✅ دعم الضغط مرتين على الصورة للموبايل
+  let lastTap = 0;
+  document.getElementById("lightbox-img").ontouchend = function (e) {
+    const lightbox = document.getElementById("lightbox");
+
+    if (lightbox.style.display !== "flex" || !lightboxImg.src) return;
+
+    const currentTime = new Date().getTime();
+    const tapLength = currentTime - lastTap;
+
+    if (tapLength < 300 && tapLength > 0) {
+      scale = 1;
+      moveX = 0;
+      moveY = 0;
+      lightboxImg.style.transform = `scale(1) translate(0px, 0px)`;
+      lightboxImg.style.transformOrigin = "center center";
+    }
+
+    lastTap = currentTime;
+  };
+}
 
       const leftArrow = document.querySelector("#lightbox button:nth-of-type(1)");
       const rightArrow = document.querySelector("#lightbox button:nth-of-type(2)");
@@ -468,29 +491,6 @@ delBtn.onclick = e => {
       scrollBtn.style.display = "none";
     }
   });
-
-
-let lastTap = 0;
-
-lightboxImg.addEventListener("touchend", function (e) {
-  const lightbox = document.getElementById("lightbox");
-
-  // ✅ نتأكد إن اللايت بوكس ظاهر فعلاً قبل تطبيق الزوم
-  if (lightbox.style.display !== "flex") return;
-
-  const currentTime = new Date().getTime();
-  const tapLength = currentTime - lastTap;
-
-  if (tapLength < 300 && tapLength > 0) {
-    scale = 1;
-    moveX = 0;
-    moveY = 0;
-    lightboxImg.style.transform = `scale(1) translate(0px, 0px)`;
-    lightboxImg.style.transformOrigin = "center center";
-  }
-
-  lastTap = currentTime;
-});
 
 
 let scale = 1;
