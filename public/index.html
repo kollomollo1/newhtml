@@ -2,7 +2,7 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5, user-scalable=yes">
   <title>متجري</title>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet" />
   <style>
@@ -71,6 +71,7 @@
   width: 90%;
   height: auto;
   transform: none;
+      transform: scale(1.5);
       transition: transform 0.3s ease;
       border-radius: 8px;
     }
@@ -461,26 +462,7 @@ delBtn.onclick = e => {
 
 
 let lightboxImg = document.getElementById('lightbox-img');
-
-let lastTap = 0;
-lightboxImg.addEventListener('touchend', function (e) {
-  const currentTime = new Date().getTime();
-  const tapLength = currentTime - lastTap;
-  if (tapLength < 300 && e.touches.length === 0) {
-    if (scale === 1) {
-      scale = 2;
-    } else {
-      scale = 1;
-      moveX = 0;
-      moveY = 0;
-    }
-    lightboxImg.style.transform = `scale(${scale}) translate(${moveX}px, ${moveY}px)`;
-  }
-  lastTap = currentTime;
-});
-
 let scale = 1;
-let lastTap = 0;
 let lastTouchDistance = 0;
 let startX = 0, startY = 0;
 let moveX = 0, moveY = 0;
@@ -568,21 +550,6 @@ function logoutAdmin() {
   location.reload();
 }
 
-lightboxImg.addEventListener('touchend', function (e) {
-  const currentTime = new Date().getTime();
-  const tapLength = currentTime - lastTap;
-  if (tapLength < 300 && e.touches.length === 0) {
-    if (scale === 1) {
-      scale = 2;
-    } else {
-      scale = 1;
-      moveX = 0;
-      moveY = 0;
-    }
-    lightboxImg.style.transform = `scale(${scale}) translate(${moveX}px, ${moveY}px)`;
-  }
-  lastTap = currentTime;
-});
 
 </script>
 </body>
