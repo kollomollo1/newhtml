@@ -481,22 +481,24 @@ let isPanning = false;
 
 lightboxImg.addEventListener('touchstart', function (e) {
   if (e.touches.length === 2) {
+    // 👆 بداية زوم (بأصبعين)
     e.preventDefault();
     lastTouchDistance = Math.hypot(
       e.touches[0].clientX - e.touches[1].clientX,
       e.touches[0].clientY - e.touches[1].clientY
     );
- } else if (e.touches.length === 1) {
-  if (ignoreNextSingleTouch) {
-    ignoreNextSingleTouch = false;
-    return; // ✅ منع البان المفاجئ بعد الزوم
+  } else if (e.touches.length === 1) {
+    // 👆 بداية سحب بأصبع واحد
+    if (ignoreNextSingleTouch) {
+      ignoreNextSingleTouch = false;
+      return; // ✅ منع السحب المفاجئ بعد الزوم مباشرة
+    }
+    isPanning = true;
+    startX = e.touches[0].clientX - moveX;
+    startY = e.touches[0].clientY - moveY;
+    prevTouchX = e.touches[0].clientX;
+    prevTouchY = e.touches[0].clientY;
   }
-  isPanning = true;
-  startX = e.touches[0].clientX - moveX;
-  startY = e.touches[0].clientY - moveY;
-  prevTouchX = e.touches[0].clientX;
-  prevTouchY = e.touches[0].clientY;
-}
 }, { passive: false });
 
 lightboxImg.addEventListener('touchmove', function (e) {
