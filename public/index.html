@@ -192,11 +192,9 @@ if (localStorage.getItem("isAdmin") === "true") {
     }
 
     function getFilteredImages() {
-  const selectedCategory = categoryFilter.value.trim();
-  return selectedCategory === "all"
-    ? images
-    : images.filter(i => (i.category || "").trim() === selectedCategory);
-}
+      const selectedCategory = categoryFilter.value;
+      return selectedCategory === "all" ? images : images.filter(i => i.category === selectedCategory);
+    }
 
     function renderChunk() {
       const filtered = getFilteredImages();
@@ -216,7 +214,7 @@ if (localStorage.getItem("isAdmin") === "true") {
         image.src = img.src;
         image.onclick = e => {
           e.stopPropagation();
-          openLightbox(groupImgs, img.category);
+          openLightbox(groupImgs.map(i => i.src), img.category);
         };
         div.appendChild(image);
 
@@ -268,92 +266,28 @@ delBtn.onclick = e => {
         galleryEl.appendChild(div);
       });
     }
-function openLightbox(imgArray, category) {
-  currentLightboxImages = imgArray;
-  currentLightboxIndex = 0;
-  showLightboxImage();
 
-  const lightbox = document.getElementById("lightbox");
-  const lightboxImg = document.getElementById("lightbox-img");
+    function openLightbox(imgArray, category) {
+      currentLightboxImages = imgArray;
+      currentLightboxIndex = 0;
+      showLightboxImage();
+      document.getElementById("lightbox").style.display = "flex";
+      document.getElementById("lightbox-category").textContent = category || "";
+    // منع إغلاق اللايت بوكس عند الضغط على الصورة نفسها
+    document.getElementById("lightbox-img").onclick = e => {
+      e.stopPropagation();
+    };
 
-  lightbox.style.display = "flex";
-  document.getElementById("lightbox-category").textContent = category || "";
-
-  lightboxImg.onclick = e => {
-    e.stopPropagation();
-  };
-
-  // ✅ دعم الضغط مرتين للموبايل
-  let lastTap = 0;
-  lightboxImg.ontouchend = function (e) {
-    if (lightbox.style.display !== "flex" || !lightboxImg.src) return;
-
-    const currentTime = new Date().getTime();
-    const tapLength = currentTime - lastTap;
-
-    if (tapLength < 300 && tapLength > 0) {
-      scale = 1;
-      moveX = 0;
-      moveY = 0;
-      lightboxImg.style.transform = `scale(1) translate(0px, 0px)`;
-      lightboxImg.style.transformOrigin = "center center";
+      const leftArrow = document.querySelector("#lightbox button:nth-of-type(1)");
+      const rightArrow = document.querySelector("#lightbox button:nth-of-type(2)");
+      if (imgArray.length <= 1) {
+        leftArrow.style.display = "none";
+        rightArrow.style.display = "none";
+      } else {
+        leftArrow.style.display = "block";
+        rightArrow.style.display = "block";
+      }
     }
-
-    lastTap = currentTime;
-  };
-
-  const leftArrow = document.querySelector("#lightbox button:nth-of-type(1)");
-  const rightArrow = document.querySelector("#lightbox button:nth-of-type(2)");
-
-  if (imgArray.length <= 1) {
-    leftArrow.style.display = "none";
-    rightArrow.style.display = "none";
-  } else {
-    leftArrow.style.display = "block";
-    rightArrow.style.display = "block";
-  }
-
-  history.pushState(null, null, location.href);
-}
-
-  const leftArrow = document.querySelector("#lightbox button:nth-of-type(1)");
-  const rightArrow = document.querySelector("#lightbox button:nth-of-type(2)");
-  if (imgArray.length <= 1) {
-    leftArrow.style.display = "none";
-    rightArrow.style.display = "none";
-  } else {
-    leftArrow.style.display = "block";
-    rightArrow.style.display = "block";
-  }
-
-  history.pushState(null, null, location.href);
-}
-
-  const leftArrow = document.querySelector("#lightbox button:nth-of-type(1)");
-  const rightArrow = document.querySelector("#lightbox button:nth-of-type(2)");
-  if (imgArray.length <= 1) {
-    leftArrow.style.display = "none";
-    rightArrow.style.display = "none";
-  } else {
-    leftArrow.style.display = "block";
-    rightArrow.style.display = "block";
-  }
-
-  history.pushState(null, null, location.href);
-}
-
-  const leftArrow = document.querySelector("#lightbox button:nth-of-type(1)");
-  const rightArrow = document.querySelector("#lightbox button:nth-of-type(2)");
-  if (imgArray.length <= 1) {
-    leftArrow.style.display = "none";
-    rightArrow.style.display = "none";
-  } else {
-    leftArrow.style.display = "block";
-    rightArrow.style.display = "block";
-  }
-
-  history.pushState(null, null, location.href);
-}
 
     function showLightboxImage() {
   lightboxImg.src = currentLightboxImages[currentLightboxIndex];
@@ -501,21 +435,20 @@ function openLightbox(imgArray, category) {
       handleUpload(e.dataTransfer.files);
     });
 
-const categoryFilter = document.getElementById("categoryFilter");
-
- fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json")
+    fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json")
   .then(res => res.json())
   .then(data => {
     images = Object.values(data || {});
-    images = images.sort(() => Math.random() - 0.5);
-    categoryFilter.value = "all";
+    images = images.sort(() => Math.random() - 0.5); // ✅ لخبطة الصور تلقائيًا
+
+      renderChunk();
+      updateCounter();
+    })
+    .catch(err => {
+      console.error("فشل في جلب الصور من Firebase:", err);
+    });
     renderChunk();
     updateCounter();
-  })
-  .catch(err => {
-    console.error("فشل في جلب الصور من Firebase:", err);
-  });
-
 
     let currentLightboxIndex = 0;
     let currentLightboxImages = [];
@@ -537,6 +470,7 @@ const categoryFilter = document.getElementById("categoryFilter");
   });
 
 
+let lightboxImg = document.getElementById('lightbox-img');
 let scale = 1;
 let ignoreNextSingleTouch = false;
 let ignoreTimeout;
@@ -634,6 +568,32 @@ window.addEventListener("popstate", function () {
   }
 });
 
+// عند فتح اللايت بوكس، أضف حالة إلى التاريخ
+function openLightbox(imgArray, category) {
+  currentLightboxImages = imgArray;
+  currentLightboxIndex = 0;
+  showLightboxImage();
+  const lightbox = document.getElementById("lightbox");
+  lightbox.style.display = "flex";
+  document.getElementById("lightbox-category").textContent = category || "";
+
+  // منع إغلاق اللايت بوكس عند الضغط على الصورة نفسها
+  document.getElementById("lightbox-img").onclick = e => {
+    e.stopPropagation();
+  };
+
+  const leftArrow = document.querySelector("#lightbox button:nth-of-type(1)");
+  const rightArrow = document.querySelector("#lightbox button:nth-of-type(2)");
+  if (imgArray.length <= 1) {
+    leftArrow.style.display = "none";
+    rightArrow.style.display = "none";
+  } else {
+    leftArrow.style.display = "block";
+    rightArrow.style.display = "block";
+  }
+
+  history.pushState(null, null, location.href); // إضافة الحالة عند فتح اللايت بوكس
+}
 
 window.history.pushState({}, "");
     
