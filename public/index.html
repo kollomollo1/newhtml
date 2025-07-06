@@ -471,6 +471,8 @@ delBtn.onclick = e => {
 
 let lightboxImg = document.getElementById('lightbox-img');
 let scale = 1;
+let prevTouchX = 0;
+let prevTouchY = 0;
 let lastTouchDistance = 0;
 let startX = 0, startY = 0;
 let moveX = 0, moveY = 0;
@@ -487,6 +489,8 @@ lightboxImg.addEventListener('touchstart', function (e) {
     isPanning = true;
     startX = e.touches[0].clientX - moveX;
     startY = e.touches[0].clientY - moveY;
+    prevTouchX = e.touches[0].clientX;
+    prevTouchY = e.touches[0].clientY;
   }
 }, { passive: false });
 
@@ -498,29 +502,30 @@ lightboxImg.addEventListener('touchmove', function (e) {
       e.touches[0].clientY - e.touches[1].clientY
     );
     let delta = currentDistance - lastTouchDistance;
-    scale += delta * 0.004;
+    scale += delta * 0.002;
     scale = Math.max(1, Math.min(scale, 4));
     lightboxImg.style.transform = `scale(${scale}) translate(${moveX}px, ${moveY}px)`;
     lastTouchDistance = currentDistance;
   } else if (e.touches.length === 1 && isPanning && scale > 1) {
     e.preventDefault();
-    moveX = e.touches[0].clientX - startX;
-    moveY = e.touches[0].clientY - startY;
+    let deltaX = e.touches[0].clientX - prevTouchX;
+    let deltaY = e.touches[0].clientY - prevTouchY;
 
-    moveX = e.touches[0].clientX - startX;
-    moveY = e.touches[0].clientY - startY;
+    moveX += deltaX;
+    moveY += deltaY;
 
-    // 🧠 حساب أقصى إزاحة ممكنة حسب التكبير وحجم الصورة
     const imgWidth = lightboxImg.offsetWidth;
     const imgHeight = lightboxImg.offsetHeight;
     const maxMoveX = (imgWidth * (scale - 1)) / 2;
     const maxMoveY = (imgHeight * (scale - 1)) / 2;
 
-    // 🛑 تقييد الحركة داخل الإطار فقط
     moveX = Math.max(-maxMoveX, Math.min(moveX, maxMoveX));
     moveY = Math.max(-maxMoveY, Math.min(moveY, maxMoveY));
 
     lightboxImg.style.transform = `scale(${scale}) translate(${moveX}px, ${moveY}px)`;
+
+    prevTouchX = e.touches[0].clientX;
+    prevTouchY = e.touches[0].clientY;
   }
 }, { passive: false });
 
