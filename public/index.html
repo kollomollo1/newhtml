@@ -192,9 +192,11 @@ if (localStorage.getItem("isAdmin") === "true") {
     }
 
     function getFilteredImages() {
-      const selectedCategory = categoryFilter.value;
-      return selectedCategory === "all" ? images : images.filter(i => i.category === selectedCategory);
-    }
+  const selectedCategory = categoryFilter.value.trim();
+  return selectedCategory === "all"
+    ? images
+    : images.filter(i => (i.category || "").trim() === selectedCategory);
+}
 
     function renderChunk() {
       const filtered = getFilteredImages();
