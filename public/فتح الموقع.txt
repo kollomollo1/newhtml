@@ -3,10 +3,16 @@
 بعد التعديلات نحدث النسخة علي github كده
 وهيظهر التعديلات اوتوماتيك علي vercel
 cd pathالمشروع
+
 cd C:\newhtml
+
 git add .
-git commit -m "udssaaasza.js"
+
+git commit -m "uaaaahdggaaa.js"
+
 git push origin main
+
+
 
 في موقعي بستخدم vercel hosting و cloudinary storage  و firebase database , هل ممكن نستخدم supabase بدل firebase database لحفظ الروابط , وهل بعد كده الصور اللى هرفعها علي موقعي هتظهر مباشرة علي موقعي بدون روابط ؟
 
