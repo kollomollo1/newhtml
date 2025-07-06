@@ -11,6 +11,26 @@
       font-family: 'Cairo', sans-serif;
       padding-top: 120px;
     }
+lightboxImg.addEventListener('touchmove', function (e) {
+  if (e.touches.length === 2) {
+    e.preventDefault();
+    let currentDistance = Math.hypot(
+      e.touches[0].clientX - e.touches[1].clientX,
+      e.touches[0].clientY - e.touches[1].clientY
+    );
+    let delta = currentDistance - lastTouchDistance;
+    scale += delta * 0.005;
+    scale = Math.max(1, Math.min(scale, 4));
+    lightboxImg.style.transform = `scale(${scale}) translate(${moveX}px, ${moveY}px)`;
+    lastTouchDistance = currentDistance;
+  } else if (e.touches.length === 1 && isPanning && scale > 1) {
+    e.preventDefault(); // ✅ أضف هذا هنا لضبط الحركة
+    moveX = e.touches[0].clientX - startX;
+    moveY = e.touches[0].clientY - startY;
+    lightboxImg.style.transform = `scale(${scale}) translate(${moveX}px, ${moveY}px)`;
+  }
+}, { passive: false });
+
     .gallery {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -503,8 +523,8 @@ lightboxImg.addEventListener('touchmove', function (e) {
     lightboxImg.style.transform = `scale(${scale}) translate(${moveX}px, ${moveY}px)`;
     lastTouchDistance = currentDistance;
   } else if (e.touches.length === 1 && isPanning && scale > 1) {
-    moveX = e.touches[0].clientX - startX;
-    moveY = e.touches[0].clientY - startY;
+    moveX = (e.touches[0].clientX - startX) * 0.6;
+    moveY = (e.touches[0].clientY - startY) * 0.6;
     lightboxImg.style.transform = `scale(${scale}) translate(${moveX}px, ${moveY}px)`;
   }
 }, { passive: false });
