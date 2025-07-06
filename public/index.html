@@ -269,23 +269,21 @@ delBtn.onclick = e => {
       });
     }
 
-    function openLightbox(imgArray, category) {
+function openLightbox(imgArray, category) {
   currentLightboxImages = imgArray;
   currentLightboxIndex = 0;
   showLightboxImage();
-  document.getElementById("lightbox").style.display = "flex";
+  const lightbox = document.getElementById("lightbox");
+  lightbox.style.display = "flex";
   document.getElementById("lightbox-category").textContent = category || "";
 
-  // منع إغلاق اللايت بوكس عند الضغط على الصورة
   document.getElementById("lightbox-img").onclick = e => {
     e.stopPropagation();
   };
 
-  // ✅ دعم الضغط مرتين على الصورة للموبايل
+  // ✅ دعم الضغط مرتين للموبايل
   let lastTap = 0;
   document.getElementById("lightbox-img").ontouchend = function (e) {
-    const lightbox = document.getElementById("lightbox");
-
     if (lightbox.style.display !== "flex" || !lightboxImg.src) return;
 
     const currentTime = new Date().getTime();
@@ -301,18 +299,19 @@ delBtn.onclick = e => {
 
     lastTap = currentTime;
   };
-}
 
-      const leftArrow = document.querySelector("#lightbox button:nth-of-type(1)");
-      const rightArrow = document.querySelector("#lightbox button:nth-of-type(2)");
-      if (imgArray.length <= 1) {
-        leftArrow.style.display = "none";
-        rightArrow.style.display = "none";
-      } else {
-        leftArrow.style.display = "block";
-        rightArrow.style.display = "block";
-      }
-    }
+  const leftArrow = document.querySelector("#lightbox button:nth-of-type(1)");
+  const rightArrow = document.querySelector("#lightbox button:nth-of-type(2)");
+  if (imgArray.length <= 1) {
+    leftArrow.style.display = "none";
+    rightArrow.style.display = "none";
+  } else {
+    leftArrow.style.display = "block";
+    rightArrow.style.display = "block";
+  }
+
+  history.pushState(null, null, location.href);
+}
 
     function showLightboxImage() {
   lightboxImg.src = currentLightboxImages[currentLightboxIndex];
