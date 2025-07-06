@@ -471,13 +471,18 @@ delBtn.onclick = e => {
 
 
 let lightboxImg = document.getElementById('lightbox-img');
+
+// ✅ لازم المتغيرات تتعرّف قبل استخدامها
 let scale = 1;
+let ignoreNextSingleTouch = false;
+let ignoreTimeout;
+let prevTouchX = 0;
+let prevTouchY = 0;
 let lastTouchDistance = 0;
 let startX = 0, startY = 0;
 let moveX = 0, moveY = 0;
 let isPanning = false;
 
-// ✅ دعم الضغط مرتين للموبايل
 let lastTap = 0;
 lightboxImg.addEventListener("touchend", function (e) {
   const currentTime = new Date().getTime();
