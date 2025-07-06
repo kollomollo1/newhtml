@@ -512,6 +512,14 @@ lightboxImg.addEventListener('touchmove', function (e) {
     let delta = currentDistance - lastTouchDistance;
     scale += delta * 0.002;
     scale = Math.max(1, Math.min(scale, 2));
+
+if (scale === 1) {
+  moveX = 0;
+  moveY = 0;
+  lightboxImg.style.transformOrigin = "center center";
+}
+
+lightboxImg.style.transform = `scale(${scale}) translate(${moveX}px, ${moveY}px)`;
     lightboxImg.style.transform = `scale(${scale}) translate(${moveX}px, ${moveY}px)`;
     lastTouchDistance = currentDistance;
 ignoreNextSingleTouch = true;
