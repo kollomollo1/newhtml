@@ -268,22 +268,24 @@ delBtn.onclick = e => {
         galleryEl.appendChild(div);
       });
     }
-
 function openLightbox(imgArray, category) {
   currentLightboxImages = imgArray;
   currentLightboxIndex = 0;
   showLightboxImage();
+
   const lightbox = document.getElementById("lightbox");
+  const lightboxImg = document.getElementById("lightbox-img");
+
   lightbox.style.display = "flex";
   document.getElementById("lightbox-category").textContent = category || "";
 
-  document.getElementById("lightbox-img").onclick = e => {
+  lightboxImg.onclick = e => {
     e.stopPropagation();
   };
 
   // ✅ دعم الضغط مرتين للموبايل
   let lastTap = 0;
-  document.getElementById("lightbox-img").ontouchend = function (e) {
+  lightboxImg.ontouchend = function (e) {
     if (lightbox.style.display !== "flex" || !lightboxImg.src) return;
 
     const currentTime = new Date().getTime();
@@ -299,6 +301,20 @@ function openLightbox(imgArray, category) {
 
     lastTap = currentTime;
   };
+
+  const leftArrow = document.querySelector("#lightbox button:nth-of-type(1)");
+  const rightArrow = document.querySelector("#lightbox button:nth-of-type(2)");
+
+  if (imgArray.length <= 1) {
+    leftArrow.style.display = "none";
+    rightArrow.style.display = "none";
+  } else {
+    leftArrow.style.display = "block";
+    rightArrow.style.display = "block";
+  }
+
+  history.pushState(null, null, location.href);
+}
 
   const leftArrow = document.querySelector("#lightbox button:nth-of-type(1)");
   const rightArrow = document.querySelector("#lightbox button:nth-of-type(2)");
