@@ -538,26 +538,22 @@ ignoreTimeout = setTimeout(() => {
     moveX += deltaX;
     moveY += deltaY;
 
-const containerWidth = window.innerWidth;
-const containerHeight = window.innerHeight;
+    const containerWidth = window.innerWidth;
+    const containerHeight = window.innerHeight;
 
-const imgWidth = lightboxImg.naturalWidth * scale;
-const imgHeight = lightboxImg.naturalHeight * scale;
+    const imgWidth = lightboxImg.naturalWidth * scale;
+    const imgHeight = lightboxImg.naturalHeight * scale;
 
-// الفرق بين حجم الصورة والشاشة
-const maxMoveX = Math.max(0, (imgWidth - containerWidth) / 2);
-const maxMoveY = Math.max(0, (imgHeight - containerHeight) / 2);
+    const maxMoveX = Math.max(0, (imgWidth - containerWidth) / 2);
+    const maxMoveY = Math.max(0, (imgHeight - containerHeight) / 2);
 
-// لا تخرج الصورة خارج الإطار
-moveX = Math.max(-maxMoveX, Math.min(moveX, maxMoveX));
-moveY = Math.max(-maxMoveY, Math.min(moveY, maxMoveY));
+    moveX = Math.max(-maxMoveX, Math.min(moveX, maxMoveX));
+    moveY = Math.max(-maxMoveY, Math.min(moveY, maxMoveY));
 
-// نفذ التحويل
-lightboxImg.style.transform = `translate(${moveX}px, ${moveY}px) scale(${scale})`;
+    lightboxImg.style.transform = `translate(${moveX}px, ${moveY}px) scale(${scale})`;
 
-prevTouchX = e.touches[0].clientX;
-prevTouchY = e.touches[0].clientY;
-
+    prevTouchX = e.touches[0].clientX;
+    prevTouchY = e.touches[0].clientY;
 
 lightboxImg.addEventListener('touchend', function (e) {
   if (e.touches.length === 0) {
