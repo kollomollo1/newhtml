@@ -481,28 +481,33 @@ let startX = 0, startY = 0;
 let moveX = 0, moveY = 0;
 let isPanning = false;
 
+
+let scale = 1;
+let moveX = 0, moveY = 0;
+let startX = 0, startY = 0;
+let isPanning = false;
+let lastTouchDistance = 0;
+let ignoreNextSingleTouch = false;
+
+lightboxImg.style.transformOrigin = "center center";
+
 lightboxImg.addEventListener('touchstart', function (e) {
   if (e.touches.length === 2) {
-    // 👆 بداية زوم (بأصبعين)
     e.preventDefault();
     lastTouchDistance = Math.hypot(
       e.touches[0].clientX - e.touches[1].clientX,
       e.touches[0].clientY - e.touches[1].clientY
     );
   } else if (e.touches.length === 1) {
-    // 👆 بداية سحب بأصبع واحد
     if (ignoreNextSingleTouch) {
       ignoreNextSingleTouch = false;
-      return; // ✅ منع السحب المفاجئ بعد الزوم مباشرة
+      return;
     }
     isPanning = true;
     startX = e.touches[0].clientX - moveX;
     startY = e.touches[0].clientY - moveY;
-    prevTouchX = e.touches[0].clientX;
-    prevTouchY = e.touches[0].clientY;
   }
 }, { passive: false });
-
 
 lightboxImg.addEventListener('touchmove', function (e) {
   if (e.touches.length === 2) {
@@ -514,53 +519,44 @@ lightboxImg.addEventListener('touchmove', function (e) {
     let delta = currentDistance - lastTouchDistance;
     scale += delta * 0.005;
     scale = Math.max(1, Math.min(scale, 3));
-
     if (scale === 1) {
       moveX = 0;
       moveY = 0;
     }
-
-    lightboxImg.style.transform = `scale(${scale}) translate(${moveX}px, ${moveY}px)`;
+    applyTransform();
     lastTouchDistance = currentDistance;
     ignoreNextSingleTouch = true;
-    clearTimeout(ignoreTimeout);
-    ignoreTimeout = setTimeout(() => {
-      ignoreNextSingleTouch = false;
-    }, 200);
   } else if (e.touches.length === 1 && scale > 1) {
-    if (ignoreNextSingleTouch) return;
     if (!isPanning) return;
-
     e.preventDefault();
-    let deltaX = e.touches[0].clientX - prevTouchX;
-    let deltaY = e.touches[0].clientY - prevTouchY;
+    moveX = e.touches[0].clientX - startX;
+    moveY = e.touches[0].clientY - startY;
 
-    moveX += deltaX;
-    moveY += deltaY;
-
-    const imgRect = lightboxImg.getBoundingClientRect();
     const containerWidth = window.innerWidth;
     const containerHeight = window.innerHeight;
+    const imgWidth = lightboxImg.naturalWidth * scale;
+    const imgHeight = lightboxImg.naturalHeight * scale;
 
-    const maxMoveX = Math.max(0, (imgRect.width - containerWidth) / 2);
-    const maxMoveY = Math.max(0, (imgRect.height - containerHeight) / 2);
+    const maxX = Math.max(0, (imgWidth - containerWidth) / 2);
+    const maxY = Math.max(0, (imgHeight - containerHeight) / 2);
 
-    moveX = Math.max(-maxMoveX, Math.min(moveX, maxMoveX));
-    moveY = Math.max(-maxMoveY, Math.min(moveY, maxMoveY));
+    moveX = Math.min(maxX, Math.max(-maxX, moveX));
+    moveY = Math.min(maxY, Math.max(-maxY, moveY));
 
-    lightboxImg.style.transform = `scale(${scale}) translate(${moveX}px, ${moveY}px)`;
-
-    prevTouchX = e.touches[0].clientX;
-    prevTouchY = e.touches[0].clientY;
+    applyTransform();
   }
 }, { passive: false });
-
 
 lightboxImg.addEventListener('touchend', function (e) {
   if (e.touches.length === 0) {
     isPanning = false;
   }
 });
+
+function applyTransform() {
+  lightboxImg.style.transform = `scale(${scale}) translate(${moveX}px, ${moveY}px)`;
+}
+
 
 let lastTapTime = 0;
 
