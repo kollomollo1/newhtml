@@ -3,11 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>متجري</title>
+  <title>معرض الصور</title>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@700&display=swap" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
@@ -514,8 +511,8 @@ lightboxImg.addEventListener('touchmove', function (e) {
       e.touches[0].clientY - e.touches[1].clientY
     );
     let delta = currentDistance - lastTouchDistance;
-    scale += delta * 0.007;
-    scale = Math.max(1, Math.min(scale, 3));
+    scale += delta * 0.002;
+    scale = Math.max(1, Math.min(scale, 2));
 
 if (scale === 1) {
   moveX = 0;
