@@ -246,20 +246,10 @@ if (localStorage.getItem("isAdmin") === "true") {
         label.textContent = img.category || "";
         div.appendChild(label);
         if (img.seller) {
-  const contactBtn = document.createElement("button");
+  const contactBtn = document.createElement("a");
+contactBtn.href = img.seller;
+contactBtn.target = "_blank";
 contactBtn.textContent = "تواصل مع البائع";
-contactBtn.onclick = (e) => {
-  e.preventDefault();
-  contactBtn.textContent = "⏳ جاري الفتح...";
-  contactBtn.style.opacity = "0.6";
-
-  setTimeout(() => {
-    window.open(img.seller, "_blank", "noopener,noreferrer");
-    contactBtn.textContent = "تواصل مع البائع";
-    contactBtn.style.opacity = "1";
-  }, 1000); // ← نأخر الفتح ثانية واحدة
-};
-;
 contactBtn.style.cssText = `
   position: absolute;
   bottom: 6px;
