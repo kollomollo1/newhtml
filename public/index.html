@@ -14,6 +14,20 @@
       font-family: 'Cairo', sans-serif;
       padding-top: 120px;
     }
+#dropzone {
+  border: 2px dashed #aaa;
+  padding: 50px;
+  margin: 10px;
+  text-align: center;
+  color: #666;
+  border-radius: 6px;
+  transition: 0.2s;
+}
+#dropzone.dragover {
+  background-color: #f0f8ff;
+  border-color: #0084FF;
+  color: #0084FF;
+}
     .gallery {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -122,6 +136,7 @@
 
 
   <div id="adminPanel" style="display: none; flex-direction: column; gap: 10px; margin: 10px;">
+  <div id="dropzone">اسحب الصورة هنا لرفعها</div>
     <select id="categorySelect" style="margin-top: 100px;">
       <option value="">-- اختر التصنيف --</option>
       <option value="كاشات حريمي">كاشات حريمي</option>
@@ -345,6 +360,25 @@ delBtn.onclick = e => {
         showLightboxImage();
       }
     }
+
+// ✅ التعامل مع السحب والإفلات
+const dropzone = document.getElementById("dropzone");
+
+dropzone.addEventListener("dragover", (e) => {
+  e.preventDefault();
+  dropzone.classList.add("dragover");
+});
+
+dropzone.addEventListener("dragleave", () => {
+  dropzone.classList.remove("dragover");
+});
+
+dropzone.addEventListener("drop", (e) => {
+  e.preventDefault();
+  dropzone.classList.remove("dragover");
+  const files = e.dataTransfer.files;
+  handleUpload(files);
+});
 
     function handleUpload(files) {
   const selectedCategory = categorySelect.value;
