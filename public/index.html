@@ -227,55 +227,57 @@ if (localStorage.getItem("isAdmin") === "true") {
         div.appendChild(image);
 
         if (img.seller) {
-  const contactBtn = document.createElement("a");
-  contactBtn.href = img.seller;
-  contactBtn.target = "_blank";
-  contactBtn.textContent = "تواصل مع البائع";
+          const contactBtn = document.createElement("a");
+          contactBtn.href = img.seller;
+          contactBtn.target = "_blank";
+          contactBtn.textContent = "تواصل مع التاجر";
+          contactBtn.style.cssText = `
+            display: block;
+            margin: 8px auto 0;
+            width: fit-content;
+            padding: 4px 8px;
+            font-size: 13px;
+            background-color: #0084FF;
+            color: white;
+            border-radius: 4px;
+            text-align: center;
+            text-decoration: none;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+          `;
+          div.appendChild(contactBtn);
+        }
 
-  contactBtn.style.cssText = `
-    display: block;
-    margin-top: 6px;
-    padding: 6px 10px;
-    background-color: #0084FF;
-    color: white;
-    font-size: 13px;
-    border-radius: 6px;
-    text-align: center;
-    text-decoration: none;
-    width: 90%;
-    margin-inline: auto;
-  `;
-
-  div.appendChild(contactBtn);
-}
-
-galleryEl.appendChild(div);
-});
 
         const label = document.createElement("div");
         label.className = "label";
         label.textContent = img.category || "";
         div.appendChild(label);
         if (img.seller) {
-  if (img.seller) {
   const contactBtn = document.createElement("a");
-  contactBtn.href = img.seller;
-  contactBtn.target = "_blank";
-  contactBtn.textContent = "تواصل مع البائع";
-
-  contactBtn.style.cssText = `
-    display: block;
-    margin-top: 6px;
-    padding: 5px 10px;
-    background-color: #0084FF;
-    color: white;
-    font-size: 12px;
-    border-radius: 4px;
-    text-align: center;
-    text-decoration: none;
-  `;
-
+contactBtn.href = img.seller;
+contactBtn.target = "_blank";
+contactBtn.textContent = "تواصل مع البائع";
+contactBtn.style.cssText = `
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40%;
+  height: 20px; /* ← نحدد ارتفاع ثابت */
+  line-height: 20px; /* ← نخلي النص يتوسّط عموديًا */
+  font-size: 11px;
+  background-color: #0084FF;
+  color: white;
+  border-radius: 4px;
+  text-align: center;
+  text-decoration: none;
+  z-index: 10;
+  white-space: nowrap;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+`;
   div.appendChild(contactBtn);
+
 }
 
         if (isAdmin) {
