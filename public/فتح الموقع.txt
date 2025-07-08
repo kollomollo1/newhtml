@@ -8,7 +8,7 @@ cd C:\newhtml
 
 git add .
 
-git commit -m "ujhsdfdsyhaaa.js"
+git commit -m "ujhsdfda.js"
 
 git push origin main
 
@@ -16,3 +16,4 @@ git push origin main
 
 
 
+لما بضغط علي زر تواصل مع البائع الصفحة بتهنج شوية والشات بيتأخر في الفتح

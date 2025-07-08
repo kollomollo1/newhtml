@@ -9,6 +9,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
   <style>
+a[disabled] {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
     body {
       margin: 0;
       font-family: 'Cairo', sans-serif;
@@ -232,7 +237,17 @@ if (localStorage.getItem("isAdmin") === "true") {
         div.appendChild(label);
         if (img.seller) {
   const contactBtn = document.createElement("a");
-const contactBtn = document.createElement("div");
+contactBtn.href = img.seller;
+contactBtn.target = "_blank";
+  contactBtn.rel = "noopener noreferrer";
+  contactBtn.addEventListener("click", (e) => {
+    contactBtn.textContent = "...جاري الفتح";
+    contactBtn.style.pointerEvents = "none";
+    setTimeout(() => {
+      contactBtn.textContent = "تواصل مع البائع";
+      contactBtn.style.pointerEvents = "auto";
+    }, 2000);
+  });
 contactBtn.textContent = "تواصل مع البائع";
 contactBtn.style.cssText = `
   position: absolute;
@@ -240,8 +255,8 @@ contactBtn.style.cssText = `
   left: 50%;
   transform: translateX(-50%);
   width: 40%;
-  height: 20px;
-  line-height: 20px;
+  height: 20px; /* ← نحدد ارتفاع ثابت */
+  line-height: 20px; /* ← نخلي النص يتوسّط عموديًا */
   font-size: 11px;
   background-color: #0084FF;
   color: white;
@@ -252,18 +267,7 @@ contactBtn.style.cssText = `
   white-space: nowrap;
   overflow: hidden;
   box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-  cursor: pointer;
 `;
-
-contactBtn.onclick = function (e) {
-  e.preventDefault();
-  const oldText = contactBtn.textContent;
-  contactBtn.textContent = "جاري التحميل...";
-  setTimeout(() => {
-    window.open(img.seller, "_blank");
-    contactBtn.textContent = oldText;
-  }, 300);
-};
   div.appendChild(contactBtn);
 
 }
@@ -456,11 +460,9 @@ delBtn.onclick = e => {
       galleryEl.innerHTML = "";
       renderChunk();
   if (categoryFilter.value === "all") {
-    const total = getFilteredImages().length;
-    while (page * pageSize < total) {
-      page++;
-      renderChunk();
-    }
+    page = 1;
+    galleryEl.innerHTML = "";
+    renderChunk();
   }
       updateCounter();
     });
