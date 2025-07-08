@@ -431,7 +431,6 @@ delBtn.onclick = e => {
   }
 }
 
-    document.getElementById("fileInput").addEventListener("change", e => handleUpload(e.target.files));
     categoryFilter.addEventListener("change", () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
       page = 1;
@@ -445,20 +444,6 @@ delBtn.onclick = e => {
     }
   }
       updateCounter();
-    });
-
-    const dropzone = document.getElementById("dropzone");
-    dropzone.addEventListener("dragover", e => {
-      e.preventDefault();
-      dropzone.style.background = "#eef";
-    });
-    dropzone.addEventListener("dragleave", () => {
-      dropzone.style.background = "";
-    });
-    dropzone.addEventListener("drop", e => {
-      e.preventDefault();
-      dropzone.style.background = "";
-      handleUpload(e.dataTransfer.files);
     });
 
     fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json")
