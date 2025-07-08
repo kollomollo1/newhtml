@@ -248,11 +248,16 @@ if (localStorage.getItem("isAdmin") === "true") {
         if (img.seller) {
   const contactBtn = document.createElement("button");
 contactBtn.textContent = "تواصل مع البائع";
-contactBtn.onclick = () => {
-  window.open(img.seller, "_blank", "noopener,noreferrer");
+contactBtn.onclick = (e) => {
+  e.preventDefault();
+  contactBtn.textContent = "⏳ جاري الفتح...";
+  contactBtn.style.opacity = "0.6";
+
   setTimeout(() => {
     window.open(img.seller, "_blank", "noopener,noreferrer");
-  }, 200); // تأخير 0.2 ثانية بين الضغطتين
+    contactBtn.textContent = "تواصل مع البائع";
+    contactBtn.style.opacity = "1";
+  }, 1000); // ← نأخر الفتح ثانية واحدة
 };
 ;
 contactBtn.style.cssText = `
