@@ -226,6 +226,32 @@ if (localStorage.getItem("isAdmin") === "true") {
         };
         div.appendChild(image);
 
+        if (img.seller) {
+  const contactBtn = document.createElement("a");
+  contactBtn.href = img.seller;
+  contactBtn.target = "_blank";
+  contactBtn.textContent = "تواصل مع البائع";
+
+  contactBtn.style.cssText = `
+    display: block;
+    margin-top: 6px;
+    padding: 6px 10px;
+    background-color: #0084FF;
+    color: white;
+    font-size: 13px;
+    border-radius: 6px;
+    text-align: center;
+    text-decoration: none;
+    width: 90%;
+    margin-inline: auto;
+  `;
+
+  div.appendChild(contactBtn);
+}
+
+galleryEl.appendChild(div);
+});
+
         const label = document.createElement("div");
         label.className = "label";
         label.textContent = img.category || "";
