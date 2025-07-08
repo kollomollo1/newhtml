@@ -384,6 +384,10 @@ dropzone.addEventListener("drop", (e) => {
   const selectedCategory = categorySelect.value;
   if (!selectedCategory) return alert("اختر تصنيفًا أولاً");
 
+  // 🟡 نطلب رابط البائع من المستخدم
+  const sellerLink = prompt("أدخل رابط البائع (واتساب أو ماسنجر):");
+  if (!sellerLink) return alert("لم يتم إدخال رابط البائع.");
+
   const groupId = Date.now();
 
   Array.from(files).forEach(file => {
@@ -391,20 +395,17 @@ dropzone.addEventListener("drop", (e) => {
     formData.append("file", file);
     formData.append("upload_preset", "lastlast");
 
-    console.log("📤 بدأ رفع الصورة إلى Cloudinary...");
-
     fetch("https://api.cloudinary.com/v1_1/dugzs3qbh/image/upload", {
       method: "POST",
       body: formData
     })
     .then(res => res.json())
     .then(data => {
-      console.log("✅ تم رفع الصورة:", data.secure_url);
-
       const newImg = {
         id: Date.now() + Math.random(),
         src: data.secure_url,
         category: selectedCategory,
+        seller: sellerLink, // ✅ نضيف الرابط للصورة
         group: groupId
       };
 
@@ -414,7 +415,6 @@ dropzone.addEventListener("drop", (e) => {
         body: JSON.stringify(newImg)
       })
       .then(() => {
-        console.log("🔥 تم حفظ الصورة في Firebase");
         images.unshift(newImg);
         galleryEl.innerHTML = "";
         page = 1;
@@ -423,8 +423,8 @@ dropzone.addEventListener("drop", (e) => {
       });
     })
     .catch(err => {
-      console.error("❌ خطأ في رفع أو حفظ الصورة:", err);
-      alert("حدث خطأ أثناء رفع الصورة أو حفظها.");
+      console.error("❌ خطأ في الرفع:", err);
+      alert("حدث خطأ أثناء رفع الصورة.");
     });
   });
 }
