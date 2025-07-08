@@ -240,17 +240,19 @@ contactBtn.style.cssText = `
   bottom: 6px;
   left: 50%;
   transform: translateX(-50%);
-  width: 40%; /* ⬅️ أعرض */
-  padding: 1px 6px; /* ⬇️ أنحف رأسياً */
+  width: 40%;
+  height: 20px; /* ← نحدد ارتفاع ثابت */
+  line-height: 20px; /* ← نخلي النص يتوسّط عموديًا */
+  font-size: 11px;
   background-color: #0084FF;
   color: white;
-  font-size: 12px;
   border-radius: 4px;
   text-align: center;
   text-decoration: none;
   z-index: 10;
   white-space: nowrap;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 `;
   div.appendChild(contactBtn);
 
