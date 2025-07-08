@@ -1,0 +1,47 @@
+
+cloudinary بيانات
+mohamed.elsayed.tm@gmail.com
+
+dugzs3qbh
+unsigned_preset
+668435559927199
+ZhtkpV-9QpWoLkYHishqvUkE0Ac
+
+
+
+vercel
+kollomollo1@gmail.com
+
+المشروع علي فيرسيل اسمه  newhtml
+لكن علي جيتهاب اسمه gallery3
+https://newhtml-psi.vercel.app/
+
+
+https://github.com
+kollomollo1@gmail.com
+kollomollo1
+newhtml اسم المشروع
+
+
+
+firebase  
+https://console.firebase.google.com/u/0/project/gallery3modifiedjsless/overview
+kollomollo1@gmail.com الدخول بالجيميل 
+للاسف الجيميل ده دخل فيه فيزا غلط وقفت حاجه ربنا يستر واقدر ادفع بعد كده لما المجانية تنتهي 1 أغسطس
+
+
+hostinger.com
+kollomollo1@gmail.com
+mobAa
+
+
+إحتياطي بدل firebase
+
+https://supabase.com الدخول ب github
+kollomollo1@gmail.com
+organization name kollomollo1's Org
+Project name newsupabase
+project url https://oktecatvcyieiwrgqtmh.supabase.co
+anon public key  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9rdGVjYXR2Y3lpZWl3cmdxdG1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE1NTY5NTIsImV4cCI6MjA2NzEzMjk1Mn0.lf9dRTeShQxwwvVFJmVZyEPch_apV-S5owXIdcQf0WA
+
+
