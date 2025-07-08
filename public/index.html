@@ -202,8 +202,7 @@ if (localStorage.getItem("isAdmin") === "true") {
 }
 
     const galleryEl = document.getElementById("gallery");
-    const scrollBtn = document.getElementById("scrollTopBtn");
-    const categorySelect = document.getElementById("categorySelect");
+    const scrollBtn = document.getElementById("scrollTopBtn"); 
     const categoryFilter = document.getElementById("categoryFilter");
     let images = [];
     let page = 1;
@@ -389,7 +388,7 @@ dropzone.addEventListener("drop", (e) => {
 });
 
     function handleUpload(files) {
-  const selectedCategory = categorySelect.value;
+  const selectedCategory = categoryFilter.value;
   if (!selectedCategory) return alert("اختر تصنيفًا أولاً");
 
   // 🟡 نطلب رابط البائع من المستخدم
@@ -691,7 +690,7 @@ function logoutAdmin() {
 function uploadSingleImage() {
   const fileInput = document.getElementById("singleFileInput");
   const sellerLink = document.getElementById("sellerLink").value.trim();
-  const selectedCategory = categorySelect.value;
+  const selectedCategory = categoryFiltervalue;
 
   if (!fileInput.files[0]) return alert("اختر صورة أولاً");
   if (!selectedCategory) return alert("اختر تصنيفًا أولاً");
