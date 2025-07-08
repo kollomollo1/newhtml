@@ -681,7 +681,6 @@ function uploadSingleImage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newImg)
     }).then(() => {
-      alert("✅ تم رفع الصورة بنجاح");
       fileInput.value = "";
       document.getElementById("sellerLink").value = "";
       images.unshift(newImg);
