@@ -214,73 +214,48 @@ if (localStorage.getItem("isAdmin") === "true") {
       });
 
       Object.values(grouped).forEach(groupImgs => {
-        const img = groupImgs[0];
-        const div = document.createElement("div");
-        div.className = "square";
+  const img = groupImgs[0];
 
-        const image = document.createElement("img");
-        image.src = img.src;
-        image.onclick = e => {
-          e.stopPropagation();
-          openLightbox(groupImgs.map(i => i.src), img.category);
-        };
-        div.appendChild(image);
+  // المربع الرئيسي
+  const wrapper = document.createElement("div");
+  wrapper.style.cssText = `
+    margin-bottom: 12px;
+    text-align: center;
+  `;
 
-        if (img.seller) {
-          const contactBtn = document.createElement("a");
-          contactBtn.href = img.seller;
-          contactBtn.target = "_blank";
-          contactBtn.textContent = "تواصل مع التاجر";
-          contactBtn.style.cssText = `
-            display: block;
-            margin: 8px auto 0;
-            width: fit-content;
-            padding: 4px 8px;
-            font-size: 13px;
-            background-color: #0084FF;
-            color: white;
-            border-radius: 4px;
-            text-align: center;
-            text-decoration: none;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-          `;
-          div.appendChild(contactBtn);
-        }
+  const square = document.createElement("div");
+  square.className = "square";
 
+  const image = document.createElement("img");
+  image.src = img.src;
+  image.onclick = e => {
+    e.stopPropagation();
+    openLightbox(groupImgs.map(i => i.src), img.category);
+  };
+  square.appendChild(image);
+  wrapper.appendChild(square);
 
-        const label = document.createElement("div");
-        label.className = "label";
-        label.textContent = img.category || "";
-        div.appendChild(label);
-        if (img.seller) {
-  const contactBtn = document.createElement("a");
-contactBtn.href = img.seller;
-contactBtn.target = "_blank";
-contactBtn.textContent = "تواصل مع البائع";
-contactBtn.style.cssText = `
-  position: absolute;
-  bottom: 6px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 40%;
-  height: 20px; /* ← نحدد ارتفاع ثابت */
-  line-height: 20px; /* ← نخلي النص يتوسّط عموديًا */
-  font-size: 11px;
-  background-color: #0084FF;
-  color: white;
-  border-radius: 4px;
-  text-align: center;
-  text-decoration: none;
-  z-index: 10;
-  white-space: nowrap;
-  overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-`;
-  div.appendChild(contactBtn);
+  if (img.seller) {
+    const contactBtn = document.createElement("a");
+    contactBtn.href = img.seller;
+    contactBtn.target = "_blank";
+    contactBtn.textContent = "تواصل مع التاجر";
+    contactBtn.style.cssText = `
+      display: inline-block;
+      margin-top: 6px;
+      padding: 4px 10px;
+      font-size: 13px;
+      background-color: #0084FF;
+      color: white;
+      border-radius: 4px;
+      text-decoration: none;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    `;
+    wrapper.appendChild(contactBtn);
+  }
 
-}
-
-        if (isAdmin) {
+  galleryEl.appendChild(wrapper);
+});if (isAdmin) {
           const delBtn = document.createElement("div");
           delBtn.textContent = "✖";
           delBtn.style.cssText = `
