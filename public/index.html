@@ -246,10 +246,15 @@ if (localStorage.getItem("isAdmin") === "true") {
         label.textContent = img.category || "";
         div.appendChild(label);
         if (img.seller) {
-  const contactBtn = document.createElement("a");
-contactBtn.href = img.seller;
-contactBtn.target = "_blank";
+  const contactBtn = document.createElement("button");
 contactBtn.textContent = "تواصل مع البائع";
+contactBtn.onclick = () => {
+  window.open(img.seller, "_blank", "noopener,noreferrer");
+  setTimeout(() => {
+    window.open(img.seller, "_blank", "noopener,noreferrer");
+  }, 200); // تأخير 0.2 ثانية بين الضغطتين
+};
+;
 contactBtn.style.cssText = `
   position: absolute;
   bottom: 6px;

@@ -8,12 +8,11 @@ cd C:\newhtml
 
 git add .
 
-git commit -m "ujhsdfda.js"
+git commit -m "ujhsdda.js"
 
 git push origin main
 
 
 
 
-
-لما بضغط علي زر تواصل مع البائع الصفحة بتهنج شوية والشات بيتأخر في الفتح
+لما بضغط تواصل مع البائع المتصفح بيمنع فتح لأنها بتتم بسرعة عايز اخليها تتم ببطئ
