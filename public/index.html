@@ -14,6 +14,22 @@
       font-family: 'Cairo', sans-serif;
       padding-top: 120px;
     }
+
+#fixedContactBtn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #0084FF;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 14px;
+    z-index: 99999;
+    display: none;
+    cursor: pointer;
+  }
+
     .gallery {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -231,40 +247,8 @@ if (localStorage.getItem("isAdmin") === "true") {
         label.textContent = img.category || "";
         div.appendChild(label);
        if (img.seller) {
-  const contactBtn = document.createElement("a");
-  contactBtn.href = "#"; // ← نمنع الرابط المباشر
-  contactBtn.textContent = "تواصل مع البائع";
-
-  contactBtn.onclick = e => {
-    e.preventDefault();     // ⛔️ منع أي تنقل افتراضي
-    e.stopPropagation();    // ⛔️ منع التفاعل مع الصورة أو lightbox
-    window.open(img.seller, "_blank", "noopener,noreferrer");
-  };
-
-  contactBtn.style.cssText = `
-    position: absolute;
-    bottom: 6px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 40%;
-    height: 20px;
-    line-height: 20px;
-    font-size: 11px;
-    background-color: #0084FF;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    text-align: center;
-    text-decoration: none;
-    z-index: 9999; /* ← نضمن إنه فوق أي عنصر */
-    white-space: nowrap;
-    cursor: pointer;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-  `;
-
-  div.appendChild(contactBtn);
+  showContactButton(img.seller);
 }
-
 
         if (isAdmin) {
           const delBtn = document.createElement("div");
@@ -705,7 +689,21 @@ function uploadSingleImage() {
   });
 }
 
+const fixedContactBtn = document.getElementById("fixedContactBtn");
+
+function showContactButton(url) {
+  fixedContactBtn.href = url;
+  fixedContactBtn.style.display = "block";
+}
+
+function hideContactButton() {
+  fixedContactBtn.style.display = "none";
+}
+
 </script>
+<a id="fixedContactBtn" href="#" target="_blank">تواصل مع البائع</a>
+</body>
+</html>
 </body>
 </html>
 
