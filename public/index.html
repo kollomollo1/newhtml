@@ -253,6 +253,7 @@ contactBtn.href = img.seller;
 contactBtn.target = "_blank";
 
 contactBtn.onclick = function () {
+  e.stopPropagation();
   const overlay = document.getElementById("contactOverlay");
   overlay.style.display = "flex";
   setTimeout(() => {
