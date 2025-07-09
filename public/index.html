@@ -9,6 +9,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
   <style>
+#categoryFilter option {
+  font-size: 11px;     /* ↓ تصغير حجم الخط داخل العناصر */
+  padding: 4px 6px;    /* ↓ تقليل التباعد داخل كل عنصر */
+}
     body {
       margin: 0;
       font-family: 'Cairo', sans-serif;
@@ -101,16 +105,18 @@
       border-radius: 6px;
     }
     #categoryFilter {
-      position: fixed;
-      top: 70px;
-      left: 10px;
-      z-index: 1000;
-      background: white;
-      padding: 6px;
-      font-size: 16px;
-      border-radius: 6px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-    }
+  position: fixed;
+  top: 70px;
+  left: 10px;
+  z-index: 1000;
+  background: white;
+  padding: 2px 4px;         /* ↓ تقليل التباعد الداخلي */
+  font-size: 11px;          /* ↓ تصغير الخط */
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  width: 100px;             /* ↓ تصغير العرض */
+  height: 28px;             /* ↓ تصغير الزر نفسه */
+}
   
 @media (pointer: coarse) {
   #lightbox-img {
