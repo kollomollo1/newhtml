@@ -418,6 +418,10 @@ dropzone.addEventListener("drop", (e) => {
   const sellerLink = prompt("أدخل رابط البائع (واتساب أو ماسنجر):");
   if (!sellerLink) return alert("لم يتم إدخال رابط البائع.");
 
+// 🟢 نطلب اسم التاجر
+const sellerName = document.getElementById("sellerName")?.value || "";
+if (!sellerName) return alert("اختر اسم التاجر من القائمة قبل السحب");
+
   const groupId = Date.now();
 
   Array.from(files).forEach(file => {
@@ -431,7 +435,7 @@ dropzone.addEventListener("drop", (e) => {
     })
     .then(res => res.json())
     .then(data => {
-      const sellerName = document.getElementById("sellerName")?.value || "";
+      
 
       const newImg = {
         id: Date.now() + Math.random(),
