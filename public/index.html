@@ -145,6 +145,31 @@
   </div>
 
     <button onclick="shuffleGallery()">لخبطة الصور</button>
+    
+<div style="margin-top: 10px;">
+  <h4>تعديل اسم تصنيف:</h4>
+  <select id="oldCategorySelect">
+    <option value="">-- اختر التصنيف الحالي --</option>
+    <option value="كاشات حريمي">كاشات حريمي</option>
+    <option value="بيجامات حريمي">بيجامات حريمي</option>
+    <option value="منتجات الجمال والمكياجات">منتجات الجمال والمكياجات</option>
+    <option value="إكسسوارات حريمي">إكسسوارات حريمي</option>
+    <option value="ملابس خروج حريمي">ملابس خروج حريمي</option>
+    <option value="شنط حريمي">شنط حريمي</option>
+    <option value="أحذية حريمي">أحذية حريمي</option>
+    <option value="أدوات منزلية">أدوات منزلية</option>
+    <option value="ملابس أطفال">ملابس أطفال</option>
+    <option value="أحذية أطفال">أحذية أطفال</option>
+    <option value="ملابس رجالي">ملابس رجالي</option>
+    <option value="أحذية رجالي">أحذية رجالي</option>
+  </select>
+
+  <input type="text" id="newCategoryName" placeholder="اكتب الاسم الجديد للتصنيف" style="margin-top: 5px; padding: 5px; width: 100%;" />
+
+  <button onclick="updateCategoryName()" style="margin-top: 6px; background: orange; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">تعديل التصنيف</button>
+</div>
+
+
     <button onclick="logoutAdmin()" style="background: red; color: white; border: none; padding: 4px 10px; border-radius: 4px; width: fit-content; cursor: pointer;">🚪 تسجيل خروج</button>
   </div>
 
@@ -720,6 +745,44 @@ function uploadSingleImage() {
     console.error("❌ خطأ في الرفع:", err);
     alert("حدث خطأ أثناء رفع الصورة.");
   });
+}
+
+
+function updateCategoryName() {
+  const oldCat = document.getElementById("oldCategorySelect").value;
+  const newCat = document.getElementById("newCategoryName").value.trim();
+
+  if (!oldCat || !newCat) {
+    alert("اختر التصنيف الحالي واكتب الاسم الجديد");
+    return;
+  }
+
+  fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json")
+    .then(res => res.json())
+    .then(data => {
+      const updates = [];
+      for (const [key, value] of Object.entries(data || {})) {
+        if (value.category === oldCat) {
+          updates.push(
+            fetch(`https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images/${key}.json`, {
+              method: "PATCH",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ category: newCat })
+            })
+          );
+        }
+      }
+
+      return Promise.all(updates);
+    })
+    .then(() => {
+      alert("✅ تم تعديل التصنيف بنجاح. قم بإعادة تحميل الصفحة.");
+      location.reload();
+    })
+    .catch(err => {
+      console.error("❌ خطأ أثناء تعديل التصنيف:", err);
+      alert("حدث خطأ أثناء تعديل التصنيف.");
+    });
 }
 
 </script>

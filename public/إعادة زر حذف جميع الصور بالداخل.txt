@@ -6,4 +6,6 @@
 
 
 ده حذفناه هنرجعه تاني مكانه بس
-<button onclick="confirmClearGallery()">حذف جميع الصور</button>   
+<button onclick="confirmClearGallery()">حذف جميع الصور</button>
+
+
