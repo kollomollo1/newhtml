@@ -156,6 +156,14 @@
 <option value="Ibrahim Store">Ibrahim Store</option>
     </select>
 
+<select id="uploadCategory" style="margin-top: 6px; width: 100%; padding: 6px;">
+  <option value="">-- اختر التصنيف --</option>
+  <option value="كاشات حريمي وداخلي">كاشات حريمي وداخلي</option>
+  <option value="بيجامات">بيجامات</option>
+  <option value="شنط وأحذية">شنط وأحذية</option>
+  <!-- أضف باقي التصنيفات هنا -->
+</select>
+
     <button onclick="uploadSingleImage()" style="margin-top: 6px;">رفع الصورة</button>
   </div>
 
@@ -446,8 +454,11 @@ dropzone.addEventListener("drop", (e) => {
 });
 
     function handleUpload(files) {
-  const selectedCategory = categoryFilter.value;
-  if (!selectedCategory) return alert("اختر تصنيفًا أولاً");
+  const selectedCategory = document.getElementById("uploadCategory")?.value || "";
+  if (!selectedCategory) {
+  alert("يرجى اختيار تصنيف قبل رفع الصورة");
+  return;
+}
 
   // 🟡 نطلب رابط البائع من المستخدم
   const sellerLink = prompt("أدخل رابط البائع (واتساب أو ماسنجر):");
