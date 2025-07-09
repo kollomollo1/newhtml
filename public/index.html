@@ -572,23 +572,8 @@ if (!sellerName) return alert("اختر اسم التاجر من القائمة 
     fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json")
   .then(res => res.json())
   .then(data => {
-    const allImages = Object.values(data || {});
-const targetCategory = "ملابس خروج حريمي";
-
-// فصل الصور حسب التصنيف
-const priorityImages = allImages.filter(img => img.category === targetCategory);
-const otherImages = allImages.filter(img => img.category !== targetCategory);
-
-// ترتيبهم بنمط 2 من المميز + 1 من الآخر
-images = [];
-
-let i = 0, j = 0;
-while (i < priorityImages.length || j < otherImages.length) {
-  if (i < priorityImages.length) images.push(priorityImages[i++]);
-  if (i < priorityImages.length) images.push(priorityImages[i++]);
-  if (j < otherImages.length) images.push(otherImages[j++]);
-}
-
+    images = Object.values(data || {});
+    images = images.sort(() => Math.random() - 0.5); // ✅ لخبطة الصور تلقائيًا
 
       renderChunk();
       updateCounter();
