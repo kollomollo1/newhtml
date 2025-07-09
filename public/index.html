@@ -779,6 +779,12 @@ function updateCategoryName() {
     });
 }
 
+document.body.addEventListener("click", function () {
+  const overlay = document.getElementById("contactOverlay");
+  if (overlay.style.display === "flex") {
+    overlay.style.display = "none";
+  }
+});
 </script>
 
 <div id="contactOverlay" style="
