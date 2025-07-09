@@ -252,8 +252,8 @@ if (localStorage.getItem("isAdmin") === "true") {
 contactBtn.href = img.seller;
 contactBtn.target = "_blank";
 
-contactBtn.onclick = function () {
-  e.stopPropagation();
+contactBtn.onclick = function (e) {
+  e.stopPropagation(); // ✅ هذا يمنع body من التقاط الضغطة
   const overlay = document.getElementById("contactOverlay");
   overlay.style.display = "flex";
   setTimeout(() => {
