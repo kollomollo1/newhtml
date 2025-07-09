@@ -141,8 +141,27 @@
   <div style="margin-top: 10px;">
     <input type="file" accept="image/*" id="singleFileInput" />
     <input type="text" id="sellerLink" placeholder="رابط البائع (Messenger)" style="margin-top: 6px; width: 100%; padding: 6px;" />
+    
+    <select id="sellerName" style="margin-top: 6px; width: 100%; padding: 6px;">
+        <option value="">-- اختر التاجر --</option>
+        <option value="أحمد">أحمد</option>
+        <option value="منى">منى</option>
+        <option value="محمد">محمد</option>
+    </select>
+
     <button onclick="uploadSingleImage()" style="margin-top: 6px;">رفع الصورة</button>
   </div>
+
+<div style="margin-top: 20px; border-top: 1px solid #ccc; padding-top: 10px;">
+  <h4>🗑️ حذف صور تاجر:</h4>
+  <select id="deleteTraderSelect" style="width: 100%; padding: 6px;">
+    <option value="">-- اختر التاجر --</option>
+    <option value="أحمد">أحمد</option>
+    <option value="منى">منى</option>
+    <option value="محمد">محمد</option>
+  </select>
+  <button onclick="deleteTraderImages()" style="margin-top: 10px;">حذف كل صور التاجر</button>
+</div>
 
     <button onclick="shuffleGallery()">لخبطة الصور</button>
     
@@ -412,11 +431,14 @@ dropzone.addEventListener("drop", (e) => {
     })
     .then(res => res.json())
     .then(data => {
+      const sellerName = document.getElementById("sellerName")?.value || "";
+
       const newImg = {
         id: Date.now() + Math.random(),
         src: data.secure_url,
         category: selectedCategory,
         seller: sellerLink, // ✅ نضيف الرابط للصورة
+        trader: sellerName,
         group: groupId
       };
 
@@ -779,6 +801,42 @@ function updateCategoryName() {
     });
 }
 
+function deleteTraderImages() {
+  const trader = document.getElementById("deleteTraderSelect").value;
+  if (!trader) return alert("اختر اسم التاجر");
+
+  if (!confirm("هل أنت متأكد من حذف كل صور التاجر " + trader + "؟")) return;
+
+  fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json")
+    .then(res => res.json())
+    .then(data => {
+      const deletions = [];
+
+      for (const [key, value] of Object.entries(data || {})) {
+        if (value.trader === trader) {
+          deletions.push(
+            fetch(`https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images/${key}.json`, {
+              method: "DELETE"
+            })
+          );
+        }
+      }
+
+      return Promise.all(deletions);
+    })
+    .then(() => {
+      alert("✅ تم حذف جميع صور التاجر " + trader);
+      images = images.filter(img => img.trader !== trader);
+      galleryEl.innerHTML = "";
+      page = 1;
+      renderChunk();
+      updateCounter();
+    })
+    .catch(err => {
+      console.error("❌ فشل حذف الصور:", err);
+      alert("حدث خطأ أثناء حذف الصور.");
+    });
+}
 </script>
 
 <div id="contactOverlay" style="
