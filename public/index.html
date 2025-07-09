@@ -185,6 +185,20 @@
   <button onclick="updateCategoryName()" style="margin-top: 6px; background: orange; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">تعديل التصنيف</button>
 </div>
 
+<!-- ✅ عرض صور تاجر -->
+<div style="margin-top: 20px; border-top: 1px solid #ccc; padding-top: 10px;">
+  <h4>📁 عرض صور تاجر:</h4>
+  <select id="viewTraderSelect" style="width: 100%; padding: 6px;">
+    <option value="">-- اختر التاجر --</option>
+    <option value="أحمد">أحمد</option>
+    <option value="منى">منى</option>
+    <option value="محمد">محمد</option>
+  </select>
+  <button onclick="viewTraderImages()" style="margin-top: 10px;">عرض الصور</button>
+</div>
+
+<!-- مكان الصور -->
+<div id="traderImagesContainer" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;"></div>
 
     <button onclick="logoutAdmin()" style="background: red; color: white; border: none; padding: 4px 10px; border-radius: 4px; width: fit-content; cursor: pointer;">🚪 تسجيل خروج</button>
   </div>
@@ -839,6 +853,49 @@ function deleteTraderImages() {
     .catch(err => {
       console.error("❌ فشل حذف الصور:", err);
       alert("حدث خطأ أثناء حذف الصور.");
+    });
+}
+
+function viewTraderImages() {
+  const trader = document.getElementById("viewTraderSelect").value;
+  const container = document.getElementById("traderImagesContainer");
+  container.innerHTML = "";
+
+  if (!trader) {
+    alert("اختر اسم التاجر أولاً");
+    return;
+  }
+
+  fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json")
+    .then(res => res.json())
+    .then(data => {
+      const allImages = Object.values(data || {});
+      const traderImages = allImages.filter(img => img.trader === trader);
+
+      if (traderImages.length === 0) {
+        container.innerHTML = "<p>لا توجد صور لهذا التاجر.</p>";
+        return;
+      }
+
+      traderImages.forEach(img => {
+        const imgBox = document.createElement("div");
+        imgBox.style.width = "120px";
+        imgBox.style.height = "120px";
+        imgBox.style.border = "1px solid #ccc";
+        imgBox.style.borderRadius = "8px";
+        imgBox.style.overflow = "hidden";
+        imgBox.style.display = "flex";
+        imgBox.style.alignItems = "center";
+        imgBox.style.justifyContent = "center";
+
+        const image = document.createElement("img");
+        image.src = img.src;
+        image.style.maxWidth = "100%";
+        image.style.maxHeight = "100%";
+
+        imgBox.appendChild(image);
+        container.appendChild(imgBox);
+      });
     });
 }
 </script>
