@@ -470,20 +470,20 @@ dropzone.addEventListener("drop", (e) => {
     function handleUpload(files) {
   const selectedCategory = document.getElementById("uploadCategory")?.value || "";
   if (!selectedCategory) {
-  alert("يرجى اختيار تصنيف قبل رفع الصورة");
-  return;
-}
+    alert("يرجى اختيار تصنيف قبل رفع الصورة");
+    return;
+  }
 
-  // 🟡 نطلب رابط البائع من المستخدم
   const sellerLink = prompt("أدخل رابط البائع (واتساب أو ماسنجر):");
   if (!sellerLink) return alert("لم يتم إدخال رابط البائع.");
 
-// 🟢 نطلب اسم التاجر
-const sellerName = document.getElementById("sellerName")?.value || "";
-if (!sellerName) return alert("اختر اسم التاجر من القائمة قبل السحب");
+  const sellerName = document.getElementById("sellerName")?.value || "";
+  if (!sellerName) return alert("اختر اسم التاجر من القائمة قبل السحب");
 
+  // ✅ هنا نولّد groupId لمجموعة الصور كلها
   const groupId = Date.now();
 
+  // ✅ كل صورة هتاخد نفس الـ groupId
   Array.from(files).forEach(file => {
     const formData = new FormData();
     formData.append("file", file);
@@ -495,15 +495,13 @@ if (!sellerName) return alert("اختر اسم التاجر من القائمة 
     })
     .then(res => res.json())
     .then(data => {
-      
-
       const newImg = {
         id: Date.now() + Math.random(),
         src: data.secure_url,
         category: selectedCategory,
-        seller: sellerLink, // ✅ نضيف الرابط للصورة
+        seller: sellerLink,
         trader: sellerName,
-        group: groupId
+        group: groupId // ✅ نضيف الـ group هنا
       };
 
       return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json", {
@@ -787,7 +785,7 @@ function logoutAdmin() {
 function uploadSingleImage() {
   const fileInput = document.getElementById("singleFileInput");
   const sellerLink = document.getElementById("sellerLink").value.trim();
-  const selectedCategory = categoryFiltervalue;
+  const selectedCategory = document.getElementById("uploadCategory").value;
 
   if (!fileInput.files[0]) return alert("اختر صورة أولاً");
   if (!selectedCategory) return alert("اختر تصنيفًا أولاً");
