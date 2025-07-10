@@ -1,50 +1,1 @@
-<!DOCTYPE html>
-<html lang="ar">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>مراجعة الصور (أدمن)</title>
-  <link rel="stylesheet" href="style.css" />
-  <script src="firebase-config.js"></script>
-</head>
-<body>
-  <h2>مراجعة صور البائعين</h2>
-  <div id="pendingImages">⏳ جاري تحميل الصور الغير مؤكدة...</div>
-
-  <script>
-    window.onload = async () => {
-      const container = document.getElementById("pendingImages");
-      const pending = await fetchImages(true);
-      if (pending.length === 0) {
-        container.innerHTML = "🚫 لا توجد صور للمراجعة";
-        return;
-      }
-
-      container.innerHTML = "";
-      pending.forEach(img => {
-        const box = document.createElement("div");
-        box.innerHTML = `
-          <img src="${img.src}" width="150"><br>
-          <b>البائع:</b> ${img.seller}<br>
-          <button onclick="accept('${img.key}')">✔ قبول</button>
-          <button onclick="reject('${img.key}')">✖ رفض</button>
-          <hr>
-        `;
-        container.appendChild(box);
-      });
-    };
-
-    window.accept = async (key) => {
-      await updateImage(key, { pending: false });
-      alert("✔ تم قبول الصورة");
-      location.reload();
-    };
-
-    window.reject = async (key) => {
-      await deleteImage(key);
-      alert("✖ تم رفض الصورة");
-      location.reload();
-    };
-  </script>
-</body>
-</html>
+<!DOCTYPE html><html><body><h1>مراجعة صور البائعين</h1></body></html>
