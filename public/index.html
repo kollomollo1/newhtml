@@ -140,17 +140,47 @@
 .auth-buttons a:hover {
   background-color: #218838;
 }
+.header-buttons {
+  position: fixed;
+  top: 10px;
+  width: 100%;
+  z-index: 1001;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 15px;
+  box-sizing: border-box;
+}
+
+.header-buttons a {
+  background-color: #28a745;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 14px;
+  line-height: 1.6;
+  display: inline-block;
+}
+
+.header-buttons a.login {
+  background-color: #007bff;
+}
 </style>
 </head>
 <body>
+
+<div class="header-buttons">
+  <a href="register.html">تسجيل كبائع</a>
+  <a href="login.html" class="login">تسجيل الدخول</a>
+</div>
 
   <div id="mainTitle" style="position: fixed; top: -5px; left: 0; width: 100%; background: white; text-align: center; padding: 4px 0 2px; z-index: 1000; font-family: 'Cairo', sans-serif; box-shadow: 0 2px 4px rgba(0,0,0,0.1); line-height: 1.4;">
     <div style="font-size: 24px; font-weight: bold; color: green; margin: 0;">متجري</div>
     <div style="font-size: 13px; color: #666; margin: 2px 0 0;">مشروع كل بيت</div>
   </div>
-<div class="auth-buttons">
-  <a href="register.html">تسجيل كبائع</a>
-  <a href="login.html">تسجيل الدخول</a>
+<div class="header-buttons">
+  <a href="register.html" class="register">تسجيل كبائع</a>
+  <a href="login.html" class="login">تسجيل الدخول</a>
 </div>
 
   <button onclick="askAdmin()" style="position: absolute; top: 10px; right: 10px; z-index: 1000; background: white; color: white; border: none; border-radius: 4px; padding: 4px 8px; font-size: 12px; cursor: pointer;">أدمن</button>
