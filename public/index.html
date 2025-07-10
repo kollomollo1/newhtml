@@ -308,21 +308,9 @@ if (localStorage.getItem("isAdmin") === "true") {
     function renderChunk() {
   const filtered = getFilteredImages();
 
-  // ✅ تجميع الصور حسب الـ group
-  const groups = {};
-  filtered.forEach(img => {
-    const groupKey = img.group?.toString() || img.id?.toString();
-    if (!groups[groupKey]) groups[groupKey] = [];
-    groups[groupKey].push(img);
-  });
+  const chunk = filtered.slice((page - 1) * pageSize, page * pageSize);
 
-  const groupArrays = Object.values(groups);
-
-  // ✅ نحافظ على نفس pagination: كل صفحة = 20 مجموعة
-  const chunk = groupArrays.slice((page - 1) * pageSize, page * pageSize);
-
-  chunk.forEach(groupImgs => {
-    const img = groupImgs[0]; // أول صورة في المجموعة
+  chunk.forEach(img => {
     const div = document.createElement("div");
     div.className = "square";
 
@@ -330,7 +318,8 @@ if (localStorage.getItem("isAdmin") === "true") {
     image.src = img.src;
     image.onclick = e => {
       e.stopPropagation();
-      openLightbox(groupImgs.map(i => i.src), img.category);
+      // حتى لو الصورة مفردة، افتحها في لايت بوكس كصورة واحدة
+      openLightbox([img.src], img.category);
     };
     div.appendChild(image);
 
@@ -365,6 +354,10 @@ if (localStorage.getItem("isAdmin") === "true") {
       `;
       div.appendChild(contactBtn);
     }
+
+    galleryEl.appendChild(div);
+  });
+}
 
     if (isAdmin) {
       const delBtn = document.createElement("div");
