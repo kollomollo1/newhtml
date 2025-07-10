@@ -120,6 +120,26 @@
     
   }
 }
+
+.auth-buttons {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.auth-buttons a {
+  display: inline-block;
+  background-color: #28a745;
+  color: white;
+  padding: 8px 16px;
+  margin: 5px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.auth-buttons a:hover {
+  background-color: #218838;
+}
 </style>
 </head>
 <body>
@@ -128,14 +148,9 @@
     <div style="font-size: 24px; font-weight: bold; color: green; margin: 0;">متجري</div>
     <div style="font-size: 13px; color: #666; margin: 2px 0 0;">مشروع كل بيت</div>
   </div>
-
-<div style="margin-top: 60px; text-align: center;">
-  <a href="register.html">
-    <button style="background: #28a745; color: white; padding: 10px 20px; margin: 5px; border: none; border-radius: 6px; font-size: 16px;">✍️ تسجيل كبائع</button>
-  </a>
-  <a href="login.html">
-    <button style="background: #007bff; color: white; padding: 10px 20px; margin: 5px; border: none; border-radius: 6px; font-size: 16px;">🔐 تسجيل الدخول كبائع</button>
-  </a>
+<div class="auth-buttons">
+  <a href="register.html">تسجيل كبائع</a>
+  <a href="login.html">تسجيل الدخول</a>
 </div>
 
   <button onclick="askAdmin()" style="position: absolute; top: 10px; right: 10px; z-index: 1000; background: white; color: white; border: none; border-radius: 4px; padding: 4px 8px; font-size: 12px; cursor: pointer;">أدمن</button>
@@ -145,11 +160,6 @@
     <a href="https://wa.me/201097646018" target="_blank" style="color: white; text-decoration: none; direction: ltr;">تواصل التجار مع الأدمن</a>
   </div>
 
-<!-- ✅ مراجعة صور البائعين -->
-<div style="margin-top: 30px; border-top: 1px solid #ccc; padding-top: 10px;">
-  <h4>✅ مراجعة صور البائعين:</h4>
-  <div id="pendingApprovalContainer">جاري التحميل...</div>
-</div>
 
   <div id="adminPanel" style="display: none; flex-direction: column; gap: 10px; margin: 10px;">
   <div id="dropzone">اسحب الصورة هنا لرفعها</div>
