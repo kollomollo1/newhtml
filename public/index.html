@@ -785,18 +785,20 @@ function logoutAdmin() {
 function uploadSingleImage() {
   const fileInput = document.getElementById("singleFileInput");
   const sellerLink = document.getElementById("sellerLink").value.trim();
-  const selectedCategory = document.getElementById("uploadCategory").value;
+  const selectedCategory = document.getElementById("uploadCategory")?.value || "";
+  const sellerName = document.getElementById("sellerName")?.value || "";
 
   if (!fileInput.files[0]) return alert("اختر صورة أولاً");
   if (!selectedCategory) return alert("اختر تصنيفًا أولاً");
   if (!sellerLink) return alert("أدخل رابط البائع");
+  if (!sellerName) return alert("اختر اسم التاجر");
 
   const file = fileInput.files[0];
   const formData = new FormData();
   formData.append("file", file);
   formData.append("upload_preset", "lastlast");
 
-  const groupId = Date.now();
+  const groupId = Date.now(); // ✅ إضافة هذا السطر قبل رفع الصورة
 
   fetch("https://api.cloudinary.com/v1_1/dugzs3qbh/image/upload", {
     method: "POST",
@@ -809,7 +811,8 @@ function uploadSingleImage() {
       src: data.secure_url,
       category: selectedCategory,
       seller: sellerLink,
-      group: groupId
+      trader: sellerName,
+      group: groupId // ✅ مهم جدًا
     };
 
     return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json", {
