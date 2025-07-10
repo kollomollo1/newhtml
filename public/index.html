@@ -123,11 +123,6 @@
 </style>
 </head>
 <body>
-  <div id="mainTitle">
-    <div>متجري</div>
-    <div>مشروع كل بيت</div>
-  </div>
-
 
   <div id="mainTitle" style="position: fixed; top: -5px; left: 0; width: 100%; background: white; text-align: center; padding: 4px 0 2px; z-index: 1000; font-family: 'Cairo', sans-serif; box-shadow: 0 2px 4px rgba(0,0,0,0.1); line-height: 1.4;">
     <div style="font-size: 24px; font-weight: bold; color: green; margin: 0;">متجري</div>
@@ -311,104 +306,58 @@ if (localStorage.getItem("isAdmin") === "true") {
     }
 
     function renderChunk() {
-  const filtered = getFilteredImages();
+      const filtered = getFilteredImages();
+      const chunk = filtered.slice((page - 1) * pageSize, page * pageSize);
+      const grouped = {};
+      chunk.forEach(img => {
+        if (!grouped[img.group]) grouped[img.group] = [];
+        grouped[img.group].push(img);
+      });
 
-  // 1. تجميع الصور حسب groupId
-  const grouped = {};
-  filtered.forEach(img => {
-    const groupKey = img.group || img.id; // ← fallback لو مفيش group
-    if (!grouped[groupKey]) grouped[groupKey] = [];
-    grouped[groupKey].push(img);
-  });
+      Object.values(grouped).forEach(groupImgs => {
+        const img = groupImgs[0];
+        const div = document.createElement("div");
+        div.className = "square";
 
-  // 2. تحويل المجموعات إلى Array واخد chunk منها
-  const groupChunks = Object.values(grouped).slice((page - 1) * pageSize, page * pageSize);
+        const image = document.createElement("img");
+        image.src = img.src;
+        image.onclick = e => {
+          e.stopPropagation();
+          openLightbox(groupImgs.map(i => i.src), img.category);
+        };
+        div.appendChild(image);
 
-  // 3. عرض كل مجموعة
-  groupChunks.forEach(groupImgs => {
-    const img = groupImgs[0];
-    const div = document.createElement("div");
-    div.className = "square";
+        const label = document.createElement("div");
+        label.className = "label";
+        label.textContent = img.category || "";
+        div.appendChild(label);
+        if (img.seller) {
+  const contactBtn = document.createElement("a");
+contactBtn.href = img.seller;
+contactBtn.target = "_blank";
 
-    const image = document.createElement("img");
-    image.src = img.src;
-    image.onclick = e => {
-      e.stopPropagation();
-      openLightbox(groupImgs.map(i => i.src), img.category);
-    };
-    div.appendChild(image);
+contactBtn.textContent = "تواصل مع البائع";
+contactBtn.style.cssText = `
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40%;
+  height: 20px; /* ← نحدد ارتفاع ثابت */
+  line-height: 20px; /* ← نخلي النص يتوسّط عموديًا */
+  font-size: 11px;
+  background-color: #0084FF;
+  color: white;
+  border-radius: 4px;
+  text-align: center;
+  text-decoration: none;
+  z-index: 10;
+  white-space: nowrap;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+`;
+  div.appendChild(contactBtn);
 
-    const label = document.createElement("div");
-    label.className = "label";
-    label.textContent = img.category || "";
-    div.appendChild(label);
-
-    if (img.seller) {
-      const contactBtn = document.createElement("a");
-      contactBtn.href = img.seller;
-      contactBtn.target = "_blank";
-      contactBtn.textContent = "تواصل مع البائع";
-      contactBtn.style.cssText = `
-        position: absolute;
-        bottom: 6px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 40%;
-        height: 20px;
-        line-height: 20px;
-        font-size: 11px;
-        background-color: #0084FF;
-        color: white;
-        border-radius: 4px;
-        text-align: center;
-        text-decoration: none;
-        z-index: 10;
-        white-space: nowrap;
-        overflow: hidden;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-      `;
-      div.appendChild(contactBtn);
-    }
-
-    if (isAdmin) {
-      const delBtn = document.createElement("div");
-      delBtn.textContent = "✖";
-      delBtn.style.cssText = `
-        position: absolute; top: 4px; right: 4px;
-        background: rgba(0,0,0,0.6); color: white;
-        font-size: 14px; width: 20px; height: 20px;
-        line-height: 20px; text-align: center;
-        border-radius: 50%; cursor: pointer; z-index: 10;
-      `;
-      delBtn.onclick = e => {
-        e.stopPropagation();
-        fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json")
-          .then(res => res.json())
-          .then(data => {
-            const entries = Object.entries(data || {});
-            const match = entries.find(([key, value]) => value.id === img.id);
-            if (match) {
-              const key = match[0];
-              fetch(`https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images/${key}.json`, {
-                method: "DELETE"
-              }).then(() => {
-                images = images.filter(i => i.id !== img.id);
-                galleryEl.innerHTML = "";
-                page = 1;
-                renderChunk();
-                updateCounter();
-              }).catch(err => {
-                console.error("فشل حذف الصورة:", err);
-                alert("حدث خطأ أثناء حذف الصورة.");
-              });
-            }
-          });
-      };
-      div.appendChild(delBtn);
-    }
-
-    galleryEl.appendChild(div);
-  });
 }
 
         if (isAdmin) {
@@ -521,61 +470,59 @@ dropzone.addEventListener("drop", (e) => {
     function handleUpload(files) {
   const selectedCategory = document.getElementById("uploadCategory")?.value || "";
   if (!selectedCategory) {
-    alert("يرجى اختيار تصنيف قبل رفع الصورة");
-    return;
-  }
+  alert("يرجى اختيار تصنيف قبل رفع الصورة");
+  return;
+}
 
+  // 🟡 نطلب رابط البائع من المستخدم
   const sellerLink = prompt("أدخل رابط البائع (واتساب أو ماسنجر):");
   if (!sellerLink) return alert("لم يتم إدخال رابط البائع.");
 
-  const sellerName = document.getElementById("sellerName")?.value || "";
-  if (!sellerName) return alert("اختر اسم التاجر من القائمة قبل السحب");
+// 🟢 نطلب اسم التاجر
+const sellerName = document.getElementById("sellerName")?.value || "";
+if (!sellerName) return alert("اختر اسم التاجر من القائمة قبل السحب");
 
   const groupId = Date.now();
-  const uploadPromises = [];
 
   Array.from(files).forEach(file => {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("upload_preset", "lastlast");
 
-    const promise = fetch("https://api.cloudinary.com/v1_1/dugzs3qbh/image/upload", {
+    fetch("https://api.cloudinary.com/v1_1/dugzs3qbh/image/upload", {
       method: "POST",
       body: formData
     })
-      .then(res => res.json())
-      .then(data => {
-        const newImg = {
-          id: Date.now() + Math.random(),
-          src: data.secure_url,
-          category: selectedCategory,
-          seller: sellerLink,
-          trader: sellerName,
-          group: groupId
-        };
+    .then(res => res.json())
+    .then(data => {
+      
 
-        return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(newImg)
-        }).then(() => {
-          images.unshift(newImg);
-        });
+      const newImg = {
+        id: Date.now() + Math.random(),
+        src: data.secure_url,
+        category: selectedCategory,
+        seller: sellerLink, // ✅ نضيف الرابط للصورة
+        trader: sellerName,
+        group: groupId
+      };
+
+      return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newImg)
       })
-      .catch(err => {
-        console.error("❌ خطأ في رفع صورة:", err);
-        alert("حدث خطأ أثناء رفع إحدى الصور.");
+      .then(() => {
+        images.unshift(newImg);
+        galleryEl.innerHTML = "";
+        page = 1;
+        renderChunk();
+        updateCounter();
       });
-
-    uploadPromises.push(promise);
-  });
-
-  // بعد رفع كل الصور
-  Promise.all(uploadPromises).then(() => {
-    galleryEl.innerHTML = "";
-    page = 1;
-    renderChunk();
-    updateCounter();
+    })
+    .catch(err => {
+      console.error("❌ خطأ في الرفع:", err);
+      alert("حدث خطأ أثناء رفع الصورة.");
+    });
   });
 }
 
