@@ -29,8 +29,12 @@
       const file = document.getElementById("fileInput").files[0];
       const category = document.getElementById("category").value;
       const sellerName = localStorage.getItem("sellerName");
-      const phone = document.getElementById("sellerPhone").value.trim();
-      const sellerLink = phone ? `https://wa.me/${phone}` : "";
+      let phone = document.getElementById("sellerPhone").value.trim();
+      if (phone.startsWith("0")) {
+       phone = phone.substring(1); // يشيل أول 0
+      }
+     const sellerLink = phone ? `https://wa.me/20${phone}` : "";
+
 
 
       if (!file || !category || !sellerName || !sellerLink) {
