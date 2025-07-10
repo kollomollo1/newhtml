@@ -1034,7 +1034,7 @@ function approvePendingImage(key, imgData) {
     src: imgData.src,
     seller: imgData.seller || "#",
     trader: imgData.sellerName || "غير معروف",
-    category: "غير مصنف",
+    category: imgData.category || "غير مصنف",
     group: Date.now()
   };
 

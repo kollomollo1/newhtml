@@ -44,11 +44,13 @@
       .then(res => res.json())
       .then(data => {
         const newImg = {
-          src: data.secure_url,
-          sellerName,
-          seller: sellerLink,
-          approved: false
-        };
+            src: data.secure_url,
+            sellerName,
+            seller: sellerLink,
+            category: category,
+            approved: false
+         };
+
 
         return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages.json", {
           method: "POST",
