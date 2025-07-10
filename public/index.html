@@ -306,58 +306,86 @@ if (localStorage.getItem("isAdmin") === "true") {
     }
 
     function renderChunk() {
-      const filtered = getFilteredImages();
-      const chunk = filtered.slice((page - 1) * pageSize, page * pageSize);
-      const grouped = {};
-      chunk.forEach(img => {
-        if (!grouped[img.group]) grouped[img.group] = [];
-        grouped[img.group].push(img);
-      });
+  const filtered = getFilteredImages();
 
-      Object.values(grouped).forEach(groupImgs => {
-        const img = groupImgs[0];
-        const div = document.createElement("div");
-        div.className = "square";
+  // ✅ نعمل تجميع حسب الـ group
+  const groups = {};
+  filtered.forEach(img => {
+    const groupKey = img.group || img.id; // fallback في حال مفيش group
+    if (!groups[groupKey]) groups[groupKey] = [];
+    groups[groupKey].push(img);
+  });
 
-        const image = document.createElement("img");
-        image.src = img.src;
-        image.onclick = e => {
-          e.stopPropagation();
-          openLightbox(groupImgs.map(i => i.src), img.category);
-        };
-        div.appendChild(image);
+  const groupArrays = Object.values(groups);
 
-        const label = document.createElement("div");
-        label.className = "label";
-        label.textContent = img.category || "";
-        div.appendChild(label);
-        if (img.seller) {
-  const contactBtn = document.createElement("a");
-contactBtn.href = img.seller;
-contactBtn.target = "_blank";
+  // ✅ نقطع حسب عدد المجموعات مش عدد الصور
+  const chunk = groupArrays.slice((page - 1), page); // صفحة واحدة لكل مجموعة
 
-contactBtn.textContent = "تواصل مع البائع";
-contactBtn.style.cssText = `
-  position: absolute;
-  bottom: 6px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 40%;
-  height: 20px; /* ← نحدد ارتفاع ثابت */
-  line-height: 20px; /* ← نخلي النص يتوسّط عموديًا */
-  font-size: 11px;
-  background-color: #0084FF;
-  color: white;
-  border-radius: 4px;
-  text-align: center;
-  text-decoration: none;
-  z-index: 10;
-  white-space: nowrap;
-  overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-`;
-  div.appendChild(contactBtn);
+  chunk.forEach(groupImgs => {
+    const img = groupImgs[0];
+    const div = document.createElement("div");
+    div.className = "square";
 
+    const image = document.createElement("img");
+    image.src = img.src;
+    image.onclick = e => {
+      e.stopPropagation();
+      openLightbox(groupImgs.map(i => i.src), img.category);
+    };
+    div.appendChild(image);
+
+    // باقي الكود زي الزر + حذف + التاجر...
+    const label = document.createElement("div");
+    label.className = "label";
+    label.textContent = img.category || "";
+    div.appendChild(label);
+
+    if (img.seller) {
+      const contactBtn = document.createElement("a");
+      contactBtn.href = img.seller;
+      contactBtn.target = "_blank";
+      contactBtn.textContent = "تواصل مع البائع";
+      contactBtn.style.cssText = `
+        position: absolute;
+        bottom: 6px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 40%;
+        height: 20px;
+        line-height: 20px;
+        font-size: 11px;
+        background-color: #0084FF;
+        color: white;
+        border-radius: 4px;
+        text-align: center;
+        text-decoration: none;
+        z-index: 10;
+        white-space: nowrap;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+      `;
+      div.appendChild(contactBtn);
+    }
+
+    if (isAdmin) {
+      const delBtn = document.createElement("div");
+      delBtn.textContent = "✖";
+      delBtn.style.cssText = `
+        position: absolute; top: 4px; right: 4px;
+        background: rgba(0,0,0,0.6); color: white;
+        font-size: 14px; width: 20px; height: 20px;
+        line-height: 20px; text-align: center;
+        border-radius: 50%; cursor: pointer; z-index: 10;
+      `;
+      delBtn.onclick = e => {
+        e.stopPropagation();
+        // حذف من Firebase كما هو
+      };
+      div.appendChild(delBtn);
+    }
+
+    galleryEl.appendChild(div);
+  });
 }
 
         if (isAdmin) {
