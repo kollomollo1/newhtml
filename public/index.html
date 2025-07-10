@@ -308,21 +308,21 @@ if (localStorage.getItem("isAdmin") === "true") {
     function renderChunk() {
   const filtered = getFilteredImages();
 
-  // ✅ نعمل تجميع حسب الـ group
+  // ✅ تجميع الصور حسب الـ group
   const groups = {};
   filtered.forEach(img => {
-    const groupKey = img.group || img.id; // fallback في حال مفيش group
+    const groupKey = img.group?.toString() || img.id?.toString();
     if (!groups[groupKey]) groups[groupKey] = [];
     groups[groupKey].push(img);
   });
 
   const groupArrays = Object.values(groups);
 
-  // ✅ نقطع حسب عدد المجموعات مش عدد الصور
-  const chunk = groupArrays.slice((page - 1), page); // صفحة واحدة لكل مجموعة
+  // ✅ نحافظ على نفس pagination: كل صفحة = 20 مجموعة
+  const chunk = groupArrays.slice((page - 1) * pageSize, page * pageSize);
 
   chunk.forEach(groupImgs => {
-    const img = groupImgs[0];
+    const img = groupImgs[0]; // أول صورة في المجموعة
     const div = document.createElement("div");
     div.className = "square";
 
@@ -334,7 +334,6 @@ if (localStorage.getItem("isAdmin") === "true") {
     };
     div.appendChild(image);
 
-    // باقي الكود زي الزر + حذف + التاجر...
     const label = document.createElement("div");
     label.className = "label";
     label.textContent = img.category || "";
@@ -366,6 +365,27 @@ if (localStorage.getItem("isAdmin") === "true") {
       `;
       div.appendChild(contactBtn);
     }
+
+    if (isAdmin) {
+      const delBtn = document.createElement("div");
+      delBtn.textContent = "✖";
+      delBtn.style.cssText = `
+        position: absolute; top: 4px; right: 4px;
+        background: rgba(0,0,0,0.6); color: white;
+        font-size: 14px; width: 20px; height: 20px;
+        line-height: 20px; text-align: center;
+        border-radius: 50%; cursor: pointer; z-index: 10;
+      `;
+      delBtn.onclick = e => {
+        e.stopPropagation();
+        // حذف من Firebase زي ما هو
+      };
+      div.appendChild(delBtn);
+    }
+
+    galleryEl.appendChild(div);
+  });
+}
 
     if (isAdmin) {
       const delBtn = document.createElement("div");
