@@ -599,20 +599,27 @@ if (!sellerName) return alert("اختر اسم التاجر من القائمة 
     let currentLightboxImages = [];
   
   window.addEventListener("scroll", () => {
-    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100) {
-      const total = getFilteredImages().length;
-      if (page * pageSize < total) {
-        page++;
-        renderChunk();
-      }
-    }
+  if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 300) {
+    const total = getFilteredImages().length;
+    if (page * pageSize < total) {
+      page++;
+      renderChunk();
 
-    if (window.scrollY > 300) {
-      scrollBtn.style.display = "block";
-    } else {
-      scrollBtn.style.display = "none";
+      // إجبار فحص scroll بعد تحميل الصور
+      setTimeout(() => {
+        window.dispatchEvent(new Event("scroll"));
+      }, 200);
     }
-  });
+  }
+
+  // زر الرجوع للأعلى
+  if (window.scrollY > 300) {
+    scrollBtn.style.display = "block";
+  } else {
+    scrollBtn.style.display = "none";
+  }
+});
+
 
 
 let lightboxImg = document.getElementById('lightbox-img');
