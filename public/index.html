@@ -130,10 +130,6 @@
   </div>
 
   <button onclick="askAdmin()" style="position: absolute; top: 10px; right: 10px; z-index: 1000; background: white; color: white; border: none; border-radius: 4px; padding: 4px 8px; font-size: 12px; cursor: pointer;">أدمن</button>
-  <button onclick="location.href='admin_approve.html'" style="position: absolute; top: 45px; right: 10px; z-index: 1000; background: darkorange; color: white; border: none; border-radius: 4px; padding: 4px 8px; font-size: 12px; cursor: pointer;">
-    مراجعة صور البائعين
-  </button>
-
 
   <div style="position: absolute; top: 75px; right: 10px; z-index: 1000; display: flex; align-items: center; gap: 6px; background: #25D366; color: white; border-radius: 6px; padding: 2px 6px; font-size: 12px;">
     <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" style="width: 20px; height: 20px;">
@@ -508,6 +504,7 @@ if (!sellerName) return alert("اختر اسم التاجر من القائمة 
         seller: sellerLink, // ✅ نضيف الرابط للصورة
         trader: sellerName,
         group: groupId
+        pending: true,
       };
 
       return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json", {
@@ -593,15 +590,14 @@ if (!sellerName) return alert("اختر اسم التاجر من القائمة 
     fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json")
   .then(res => res.json())
   .then(data => {
-    images = Object.values(data || {});
-    images = images.sort(() => Math.random() - 0.5); // ✅ لخبطة الصور تلقائيًا
-
-      renderChunk();
-      updateCounter();
-    })
-    .catch(err => {
-      console.error("فشل في جلب الصور من Firebase:", err);
-    });
+    images = Object.values(data || {}).filter(img => img.pending === false); // ✅ فقط الصور المعتمدة
+    images = images.sort(() => Math.random() - 0.5);
+    renderChunk();
+    updateCounter();
+  })
+  .catch(err => {
+    console.error("فشل في جلب الصور من Firebase:", err);
+  });
     renderChunk();
     updateCounter();
 
