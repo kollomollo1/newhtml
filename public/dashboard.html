@@ -19,6 +19,9 @@
     <option value="ملابس وأحذية أطفالي">ملابس وأحذية أطفالي</option>
     <option value="ملابس وأحذية رجالي">ملابس وأحذية رجالي</option>
   </select><br>
+
+  <input type="text" id="sellerPhone" placeholder="رقم واتساب مثال: 201012345678"><br>
+
   <button onclick="uploadImage()">رفع</button>
 
   <script>
@@ -26,7 +29,9 @@
       const file = document.getElementById("fileInput").files[0];
       const category = document.getElementById("category").value;
       const sellerName = localStorage.getItem("sellerName");
-      const sellerLink = localStorage.getItem("sellerLink");
+      const phone = document.getElementById("sellerPhone").value.trim();
+      const sellerLink = phone ? `https://wa.me/${phone}` : "";
+
 
       if (!file || !category || !sellerName || !sellerLink) {
         alert("يرجى ملء جميع الحقول");
