@@ -306,99 +306,58 @@ if (localStorage.getItem("isAdmin") === "true") {
     }
 
     function renderChunk() {
-  const filtered = getFilteredImages();
+      const filtered = getFilteredImages();
+      const chunk = filtered.slice((page - 1) * pageSize, page * pageSize);
+      const grouped = {};
+      chunk.forEach(img => {
+        if (!grouped[img.group]) grouped[img.group] = [];
+        grouped[img.group].push(img);
+      });
 
-  const chunk = filtered.slice((page - 1) * pageSize, page * pageSize);
+      Object.values(grouped).forEach(groupImgs => {
+        const img = groupImgs[0];
+        const div = document.createElement("div");
+        div.className = "square";
 
-  chunk.forEach(img => {
-    const div = document.createElement("div");
-    div.className = "square";
+        const image = document.createElement("img");
+        image.src = img.src;
+        image.onclick = e => {
+          e.stopPropagation();
+          openLightbox(groupImgs.map(i => i.src), img.category);
+        };
+        div.appendChild(image);
 
-    const image = document.createElement("img");
-    image.src = img.src;
-    image.onclick = e => {
-      e.stopPropagation();
-      // حتى لو الصورة مفردة، افتحها في لايت بوكس كصورة واحدة
-      openLightbox([img.src], img.category);
-    };
-    div.appendChild(image);
+        const label = document.createElement("div");
+        label.className = "label";
+        label.textContent = img.category || "";
+        div.appendChild(label);
+        if (img.seller) {
+  const contactBtn = document.createElement("a");
+contactBtn.href = img.seller;
+contactBtn.target = "_blank";
 
-    const label = document.createElement("div");
-    label.className = "label";
-    label.textContent = img.category || "";
-    div.appendChild(label);
+contactBtn.textContent = "تواصل مع البائع";
+contactBtn.style.cssText = `
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40%;
+  height: 20px; /* ← نحدد ارتفاع ثابت */
+  line-height: 20px; /* ← نخلي النص يتوسّط عموديًا */
+  font-size: 11px;
+  background-color: #0084FF;
+  color: white;
+  border-radius: 4px;
+  text-align: center;
+  text-decoration: none;
+  z-index: 10;
+  white-space: nowrap;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+`;
+  div.appendChild(contactBtn);
 
-    if (img.seller) {
-      const contactBtn = document.createElement("a");
-      contactBtn.href = img.seller;
-      contactBtn.target = "_blank";
-      contactBtn.textContent = "تواصل مع البائع";
-      contactBtn.style.cssText = `
-        position: absolute;
-        bottom: 6px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 40%;
-        height: 20px;
-        line-height: 20px;
-        font-size: 11px;
-        background-color: #0084FF;
-        color: white;
-        border-radius: 4px;
-        text-align: center;
-        text-decoration: none;
-        z-index: 10;
-        white-space: nowrap;
-        overflow: hidden;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-      `;
-      div.appendChild(contactBtn);
-    }
-
-    galleryEl.appendChild(div);
-  });
-}
-
-    if (isAdmin) {
-      const delBtn = document.createElement("div");
-      delBtn.textContent = "✖";
-      delBtn.style.cssText = `
-        position: absolute; top: 4px; right: 4px;
-        background: rgba(0,0,0,0.6); color: white;
-        font-size: 14px; width: 20px; height: 20px;
-        line-height: 20px; text-align: center;
-        border-radius: 50%; cursor: pointer; z-index: 10;
-      `;
-      delBtn.onclick = e => {
-        e.stopPropagation();
-        // حذف من Firebase زي ما هو
-      };
-      div.appendChild(delBtn);
-    }
-
-    galleryEl.appendChild(div);
-  });
-}
-
-    if (isAdmin) {
-      const delBtn = document.createElement("div");
-      delBtn.textContent = "✖";
-      delBtn.style.cssText = `
-        position: absolute; top: 4px; right: 4px;
-        background: rgba(0,0,0,0.6); color: white;
-        font-size: 14px; width: 20px; height: 20px;
-        line-height: 20px; text-align: center;
-        border-radius: 50%; cursor: pointer; z-index: 10;
-      `;
-      delBtn.onclick = e => {
-        e.stopPropagation();
-        // حذف من Firebase كما هو
-      };
-      div.appendChild(delBtn);
-    }
-
-    galleryEl.appendChild(div);
-  });
 }
 
         if (isAdmin) {
@@ -511,20 +470,20 @@ dropzone.addEventListener("drop", (e) => {
     function handleUpload(files) {
   const selectedCategory = document.getElementById("uploadCategory")?.value || "";
   if (!selectedCategory) {
-    alert("يرجى اختيار تصنيف قبل رفع الصورة");
-    return;
-  }
+  alert("يرجى اختيار تصنيف قبل رفع الصورة");
+  return;
+}
 
+  // 🟡 نطلب رابط البائع من المستخدم
   const sellerLink = prompt("أدخل رابط البائع (واتساب أو ماسنجر):");
   if (!sellerLink) return alert("لم يتم إدخال رابط البائع.");
 
-  const sellerName = document.getElementById("sellerName")?.value || "";
-  if (!sellerName) return alert("اختر اسم التاجر من القائمة قبل السحب");
+// 🟢 نطلب اسم التاجر
+const sellerName = document.getElementById("sellerName")?.value || "";
+if (!sellerName) return alert("اختر اسم التاجر من القائمة قبل السحب");
 
-  // ✅ هنا نولّد groupId لمجموعة الصور كلها
-  const groupId = Date.now().toString(); // ✅ ضروري يكون نص
+  const groupId = Date.now();
 
-  // ✅ كل صورة هتاخد نفس الـ groupId
   Array.from(files).forEach(file => {
     const formData = new FormData();
     formData.append("file", file);
@@ -536,13 +495,15 @@ dropzone.addEventListener("drop", (e) => {
     })
     .then(res => res.json())
     .then(data => {
+      
+
       const newImg = {
         id: Date.now() + Math.random(),
         src: data.secure_url,
         category: selectedCategory,
-        seller: sellerLink,
+        seller: sellerLink, // ✅ نضيف الرابط للصورة
         trader: sellerName,
-        group: groupId // ✅ نضيف الـ group هنا
+        group: groupId
       };
 
       return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json", {
@@ -826,20 +787,18 @@ function logoutAdmin() {
 function uploadSingleImage() {
   const fileInput = document.getElementById("singleFileInput");
   const sellerLink = document.getElementById("sellerLink").value.trim();
-  const selectedCategory = document.getElementById("uploadCategory")?.value || "";
-  const sellerName = document.getElementById("sellerName")?.value || "";
+  const selectedCategory = categoryFiltervalue;
 
   if (!fileInput.files[0]) return alert("اختر صورة أولاً");
   if (!selectedCategory) return alert("اختر تصنيفًا أولاً");
   if (!sellerLink) return alert("أدخل رابط البائع");
-  if (!sellerName) return alert("اختر اسم التاجر");
 
   const file = fileInput.files[0];
   const formData = new FormData();
   formData.append("file", file);
   formData.append("upload_preset", "lastlast");
 
-  const groupId = Date.now(); // ✅ إضافة هذا السطر قبل رفع الصورة
+  const groupId = Date.now();
 
   fetch("https://api.cloudinary.com/v1_1/dugzs3qbh/image/upload", {
     method: "POST",
@@ -852,8 +811,7 @@ function uploadSingleImage() {
       src: data.secure_url,
       category: selectedCategory,
       seller: sellerLink,
-      trader: sellerName,
-      group: groupId // ✅ مهم جدًا
+      group: groupId
     };
 
     return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json", {
