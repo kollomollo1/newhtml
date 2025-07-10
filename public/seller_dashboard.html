@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>لوحة البائع</title>
+  <style>
+    body { font-family: 'Cairo', sans-serif; direction: rtl; padding: 40px; background: #f0f0f0; }
+    #uploadForm { background: white; padding: 20px; border-radius: 10px; max-width: 500px; margin: auto; }
+    input, select, button { display: block; width: 100%; margin: 10px 0; padding: 10px; }
+  </style>
+</head>
+<body>
+  <div id="uploadForm">
+    <h2>رفع صورة في انتظار مراجعة الأدمن</h2>
+    <input type="file" id="imageFile" accept="image/*" />
+    <input type="text" id="sellerLink" placeholder="رابط التواصل مع البائع (واتساب/فيسبوك)" />
+    <select id="category">
+      <option value="">اختر التصنيف</option>
+      <option value="ملابس">ملابس</option>
+      <option value="أحذية">أحذية</option>
+      <option value="مكياج">مكياج</option>
+      <option value="إكسسوارات">إكسسوارات</option>
+    </select>
+    <button onclick="uploadPendingImage()">رفع الصورة</button>
+  </div>
+  <script>
+    const seller = JSON.parse(localStorage.getItem('seller'));
+    if (!seller) location.href = 'seller_login.html';
+
+    function uploadPendingImage() {
+      const file = document.getElementById('imageFile').files[0];
+      const sellerLink = document.getElementById('sellerLink').value.trim();
+      const category = document.getElementById('category').value;
+
+      if (!file || !category || !sellerLink) return alert('يرجى استكمال البيانات');
+
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', 'lastlast');
+
+      fetch('https://api.cloudinary.com/v1_1/dugzs3qbh/image/upload', {
+        method: 'POST',
+        body: formData
+      }).then(res => res.json()).then(data => {
+        const newImg = {
+          id: Date.now() + Math.random(),
+          src: data.secure_url,
+          category,
+          seller: sellerLink,
+          trader: seller.username,
+          approved: false
+        };
+
+        return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pending_images.json", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newImg)
+        });
+      }).then(() => {
+        alert("✅ تم رفع الصورة بنجاح بانتظار مراجعة الأدمن");
+      }).catch(err => {
+        console.error("فشل الرفع", err);
+        alert("❌ حدث خطأ");
+      });
+    }
+  </script>
+</body>
+</html>
