@@ -481,7 +481,7 @@ dropzone.addEventListener("drop", (e) => {
   if (!sellerName) return alert("اختر اسم التاجر من القائمة قبل السحب");
 
   // ✅ هنا نولّد groupId لمجموعة الصور كلها
-  const groupId = Date.now();
+  const groupId = Date.now().toString(); // ✅ ضروري يكون نص
 
   // ✅ كل صورة هتاخد نفس الـ groupId
   Array.from(files).forEach(file => {
