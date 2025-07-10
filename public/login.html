@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>دخول البائع</title>
+</head>
+<body>
+  <h2>تسجيل الدخول للبائع</h2>
+  <form onsubmit="login(event)">
+    <input type="text" id="name" placeholder="اسم المتجر" required><br>
+    <input type="password" id="password" placeholder="كلمة المرور" required><br>
+    <button type="submit">دخول</button>
+  </form>
+  <script>
+    function login(e) {
+      e.preventDefault();
+      const name = document.getElementById("name").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/sellers.json")
+        .then(res => res.json())
+        .then(data => {
+          const entries = Object.entries(data || {});
+          const found = entries.find(([key, value]) => value.name === name && value.password === password);
+
+          if (found) {
+            localStorage.setItem("sellerName", found[1].name);
+            localStorage.setItem("sellerLink", found[1].link);
+            location.href = "dashboard.html";
+          } else {
+            alert("بيانات الدخول غير صحيحة");
+          }
+        });
+    }
+  </script>
+</body>
+</html>

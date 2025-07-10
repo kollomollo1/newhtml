@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>لوحة تحكم البائع</title>
+</head>
+<body>
+  <h2>لوحة البائع - رفع صورة</h2>
+  <input type="file" id="fileInput" accept="image/*"><br>
+  <select id="category">
+    <option value="">اختر التصنيف</option>
+    <option value="كاشات حريمي وداخلي">كاشات حريمي وداخلي</option>
+    <option value="بيجامات حريمي وملابس البيت">بيجامات حريمي وملابس البيت</option>
+    <option value="منتجات الجمال والمكياجات">منتجات الجمال والمكياجات</option>
+    <option value="إكسسوارات حريمي">إكسسوارات حريمي</option>
+    <option value="ملابس خروج حريمي">ملابس خروج حريمي</option>
+    <option value="شنط وأحذية حريمي">شنط وأحذية حريمي</option>
+    <option value="أدوات منزلية">أدوات منزلية</option>
+    <option value="ملابس وأحذية أطفالي">ملابس وأحذية أطفالي</option>
+    <option value="ملابس وأحذية رجالي">ملابس وأحذية رجالي</option>
+  </select><br>
+  <button onclick="uploadImage()">رفع</button>
+
+  <script>
+    function uploadImage() {
+      const file = document.getElementById("fileInput").files[0];
+      const category = document.getElementById("category").value;
+      const sellerName = localStorage.getItem("sellerName");
+      const sellerLink = localStorage.getItem("sellerLink");
+
+      if (!file || !category || !sellerName || !sellerLink) {
+        alert("يرجى ملء جميع الحقول");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", "lastlast");
+
+      fetch("https://api.cloudinary.com/v1_1/dugzs3qbh/image/upload", {
+        method: "POST",
+        body: formData
+      })
+      .then(res => res.json())
+      .then(data => {
+        const newImg = {
+          src: data.secure_url,
+          sellerName,
+          seller: sellerLink,
+          approved: false
+        };
+
+        return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages.json", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newImg)
+        });
+      })
+      .then(() => {
+        alert("✅ تم رفع الصورة بنجاح وتنتظر موافقة الأدمن");
+      });
+    }
+  </script>
+</body>
+</html>

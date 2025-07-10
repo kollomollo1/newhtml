@@ -1,50 +1,69 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>مراجعة الصور (أدمن)</title>
-  <link rel="stylesheet" href="style.css" />
-  <script src="firebase-config.js"></script>
+  <meta charset="UTF-8">
+  <title>مراجعة صور البائعين</title>
 </head>
 <body>
   <h2>مراجعة صور البائعين</h2>
-  <div id="pendingImages">⏳ جاري تحميل الصور الغير مؤكدة...</div>
+  <div id="pendingContainer">جارٍ التحميل...</div>
 
   <script>
-    window.onload = async () => {
-      const container = document.getElementById("pendingImages");
-      const pending = await fetchImages(true);
-      if (pending.length === 0) {
-        container.innerHTML = "🚫 لا توجد صور للمراجعة";
-        return;
-      }
+    function loadPending() {
+      fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages.json")
+        .then(res => res.json())
+        .then(data => {
+          const container = document.getElementById("pendingContainer");
+          container.innerHTML = "";
+          if (!data) {
+            container.innerHTML = "<p>لا توجد صور معلقة حالياً.</p>";
+            return;
+          }
 
-      container.innerHTML = "";
-      pending.forEach(img => {
-        const box = document.createElement("div");
-        box.innerHTML = `
-          <img src="${img.src}" width="150"><br>
-          <b>البائع:</b> ${img.seller}<br>
-          <button onclick="accept('${img.key}')">✔ قبول</button>
-          <button onclick="reject('${img.key}')">✖ رفض</button>
-          <hr>
-        `;
-        container.appendChild(box);
-      });
-    };
+          for (const [key, img] of Object.entries(data)) {
+            if (img.approved === false) {
+              const div = document.createElement("div");
+              div.innerHTML = `
+                <p><strong>${img.sellerName}</strong></p>
+                <img src="${img.src}" style="width:150px"><br>
+                <button onclick='approve("${key}", ${JSON.stringify(img).replace(/"/g, '&quot;')})'>✅ قبول</button>
+                <button onclick='reject("${key}")'>🗑️ حذف</button>
+                <hr>
+              `;
+              container.appendChild(div);
+            }
+          }
+        });
+    }
 
-    window.accept = async (key) => {
-      await updateImage(key, { pending: false });
-      alert("✔ تم قبول الصورة");
-      location.reload();
-    };
+    function approve(key, imgData) {
+      const approvedImage = {
+        id: Date.now() + Math.random(),
+        src: imgData.src,
+        seller: imgData.seller || "#",
+        trader: imgData.sellerName || "غير معروف",
+        category: "غير مصنف",
+        group: Date.now()
+      };
 
-    window.reject = async (key) => {
-      await deleteImage(key);
-      alert("✖ تم رفض الصورة");
-      location.reload();
-    };
+      fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(approvedImage)
+      }).then(() => {
+        return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages/" + key + ".json", {
+          method: "DELETE"
+        });
+      }).then(loadPending);
+    }
+
+    function reject(key) {
+      fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages/" + key + ".json", {
+        method: "DELETE"
+      }).then(loadPending);
+    }
+
+    loadPending();
   </script>
 </body>
 </html>
