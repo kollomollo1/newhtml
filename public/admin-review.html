@@ -3,12 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <title>مراجعة صور البائعين</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo&display=swap" rel="stylesheet">
-
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-
   <style>
     body {
       font-family: 'Cairo', sans-serif;
@@ -53,6 +47,7 @@
 </head>
 <body>
 
+  <!-- ✅ العنوان وزر إدارة البائعين جنب بعض -->
   <div class="header">
     <h2>مراجعة صور البائعين</h2>
     <a href="admin-sellers.html" class="admin-button">👤 إدارة البائعين</a>
@@ -61,30 +56,12 @@
   <div id="pendingContainer">جارٍ التحميل...</div>
 
   <script>
-    // تهيئة Firebase
-    const firebaseConfig = {
-      apiKey: "AIzaSyCP2gI3kFHg-ExtEhyMLlBe4o0yXHHXV6E",
-      authDomain: "gallery3modifiedjsless.firebaseapp.com",
-      projectId: "gallery3modifiedjsless",
-      storageBucket: "gallery3modifiedjsless.appspot.com",
-      messagingSenderId: "437182767215",
-      appId: "1:437182767215:web:0705b90e7009337a85ad9a"
-    };
+    // ✅ حماية الدخول
+    if (localStorage.getItem("isAdmin") !== "true") {
+      alert("غير مصرح لك بالدخول");
+      location.href = "index.html";
+    }
 
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-
-    // التحقق من تسجيل دخول الأدمن
-    auth.onAuthStateChanged(user => {
-      if (!user) {
-        alert("غير مصرح لك بالدخول");
-        location.href = "admin-login.html"; // تأكد أن صفحة تسجيل الدخول موجودة
-      } else {
-        loadPending(); // ✅ حمل الصور بعد التأكد من تسجيل الدخول
-      }
-    });
-
-    // تحميل الصور المعلقة
     function loadPending() {
       fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages.json")
         .then(res => res.json())
@@ -112,7 +89,6 @@
         });
     }
 
-    // قبول صورة
     function approve(key, imgData) {
       const approvedImage = {
         id: Date.now() + Math.random(),
@@ -134,12 +110,14 @@
       }).then(loadPending);
     }
 
-    // حذف صورة
     function reject(key) {
       fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages/" + key + ".json", {
         method: "DELETE"
       }).then(loadPending);
     }
+
+    // ✅ تحميل الصور عند فتح الصفحة
+    loadPending();
   </script>
 </body>
 </html>
