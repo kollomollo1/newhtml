@@ -121,7 +121,7 @@
       })
       .then(() => {
         alert("✅ تم رفع الصورة بنجاح وتنتظر موافقة الأدمن");
-        loadMyImages(); // تحديث الصور بعد الرفع
+        loadMyImages();
       });
     }
 
@@ -137,7 +137,7 @@
         },
         {
           url: "https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json",
-          deletable: false
+          deletable: true
         }
       ];
 
@@ -156,33 +156,31 @@
                 image.src = img.src;
                 image.style.width = "100%";
                 image.style.borderRadius = "6px";
-
                 div.appendChild(image);
 
-                if (source.deletable) {
-                  const btn = document.createElement("button");
-                  btn.textContent = "❌ حذف";
-                  btn.style.position = "absolute";
-                  btn.style.bottom = "6px";
-                  btn.style.right = "6px";
-                  btn.style.padding = "4px 8px";
-                  btn.style.background = "#dc3545";
-                  btn.style.color = "white";
-                  btn.style.border = "none";
-                  btn.style.borderRadius = "4px";
-                  btn.style.cursor = "pointer";
-                  btn.onclick = () => {
-                    if (confirm("هل أنت متأكد من حذف الصورة؟")) {
-                      fetch(`${source.url.replace(".json", "/" + key + ".json")}`, {
-                        method: "DELETE"
-                      }).then(() => {
-                        loadMyImages(); // تحديث الصور بعد الحذف
-                      });
-                    }
-                  };
-                  div.appendChild(btn);
-                }
+                const btn = document.createElement("button");
+                btn.textContent = "❌ حذف";
+                btn.style.position = "absolute";
+                btn.style.bottom = "6px";
+                btn.style.right = "6px";
+                btn.style.padding = "4px 8px";
+                btn.style.background = "#dc3545";
+                btn.style.color = "white";
+                btn.style.border = "none";
+                btn.style.borderRadius = "4px";
+                btn.style.cursor = "pointer";
 
+                btn.onclick = () => {
+                  if (confirm("هل أنت متأكد من حذف الصورة؟")) {
+                    fetch(`${source.url.replace(".json", "/" + key + ".json")}`, {
+                      method: "DELETE"
+                    }).then(() => {
+                      loadMyImages();
+                    });
+                  }
+                };
+
+                div.appendChild(btn);
                 container.appendChild(div);
               }
             });
