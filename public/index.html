@@ -596,6 +596,7 @@ if (!sellerName) return alert("اختر اسم التاجر من القائمة 
   }
 }
 
+let isAdmin = false;
 
     function shuffleGallery() {
       images = images.sort(() => Math.random() - 0.5);
@@ -609,16 +610,20 @@ if (!sellerName) return alert("اختر اسم التاجر من القائمة 
     function scrollToTop() {
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
+
 window.askAdmin = function () {
   const user = prompt("اسم المستخدم:");
   const pass = prompt("كلمة السر:");
   if (user === "2330498Aa" && pass === "2330498Aa") {
+    isAdmin = true;
     document.getElementById("adminPanel").style.display = "flex";
+    galleryEl.innerHTML = "";
+    page = 1;
+    renderChunk();
   } else {
     alert("بيانات الدخول غير صحيحة");
   }
 }
-
 
     categoryFilter.addEventListener("change", () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
