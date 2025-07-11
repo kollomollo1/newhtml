@@ -1118,7 +1118,7 @@ if (localStorage.getItem("isAdmin") === "true") {
     const password = prompt("كلمة المرور:");
     try {
       await firebase.auth().signInWithEmailAndPassword(email, password);
-      
+      localStorage.setItem("isAdmin", "true");
       location.reload();
     } catch (error) {
       alert("فشل تسجيل الدخول: " + error.message);
@@ -1127,17 +1127,17 @@ if (localStorage.getItem("isAdmin") === "true") {
 
   window.logoutAdmin = function () {
     firebase.auth().signOut().then(() => {
-      
+      localStorage.removeItem("isAdmin");
       location.reload();
     });
   };
 
   firebase.auth().onAuthStateChanged(user => {
     if (user) {
-      
+      localStorage.setItem("isAdmin", "true");
       document.getElementById("adminPanel").style.display = "flex";
     } else {
-      
+      localStorage.removeItem("isAdmin");
     }
   });
 </script>
