@@ -121,7 +121,9 @@
       }).then(loadPending);
     }
 
-    loadPending();
+    if (localStorage.getItem("admin") === "true") {
+  loadPending();
+}
   </script>
 </body>
 </html>
