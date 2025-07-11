@@ -155,30 +155,21 @@
 
 <div class="header-buttons">
   <a href="register.html" class="register">تسجيل كبائع</a>
-  <a href="login.html" class="login">دخول</a>
+  <a href="login.html" class="login">تسجيل الدخول</a>
 </div>
 
-<button onclick="askAdmin()" id="adminBtn" style="
-  position: fixed;
-  top: 12px;
-  right: 70px;
-  z-index: 2000;
-  background: white;
-  color: white;
-  border-radius: 6px;
-  padding: 6px 12px;
-  font-size: 14px;
-  border: none;
-  cursor: pointer;
-  font-family: 'Cairo', sans-serif;
-">
-  أدمن
-</button>
+  <button onclick="askAdmin()" style="position: absolute; top: 10px; right: 10px; z-index: 1000; background: white; color: white; border: none; border-radius: 4px; padding: 4px 8px; font-size: 12px; cursor: pointer;">أدمن</button>
 
   <div style="position: absolute; top: 75px; right: 10px; z-index: 1000; display: flex; align-items: center; gap: 6px; background: #25D366; color: white; border-radius: 6px; padding: 2px 6px; font-size: 12px;">
     <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" style="width: 20px; height: 20px;">
     <a href="https://wa.me/201097646018" target="_blank" style="color: white; text-decoration: none; direction: ltr;">تواصل التجار مع الأدمن</a>
   </div>
+
+<!-- ✅ مراجعة صور البائعين -->
+<div style="margin-top: 30px; border-top: 1px solid #ccc; padding-top: 10px;">
+  <h4>✅ مراجعة صور البائعين:</h4>
+  <div id="pendingApprovalContainer">جاري التحميل...</div>
+</div>
 
   <div id="adminPanel" style="display: none; flex-direction: column; gap: 10px; margin: 10px;">
   <div id="dropzone">اسحب الصورة هنا لرفعها</div>
@@ -602,12 +593,13 @@ if (!sellerName) return alert("اختر اسم التاجر من القائمة 
     function scrollToTop() {
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
-window.askAdmin = function () {
+
+    window.askAdmin = function () {
   const user = prompt("اسم المستخدم:");
   const pass = prompt("كلمة السر:");
   if (user === "2330498Aa" && pass === "2330498Aa") {
-    localStorage.setItem("isAdmin", "true"); // ← دي أهم تعديل
-    location.href = "admin-review.html";
+    localStorage.setItem("isAdmin", "true");
+    location.reload();
   } else {
     alert("بيانات الدخول غير صحيحة");
   }
@@ -1095,19 +1087,6 @@ if (localStorage.getItem("isAdmin") === "true") {
 }
 </script>
 
-<script>
-  if (localStorage.getItem("isAdmin") === "true") {
-    const section = document.createElement("div");
-    section.style.marginTop = "30px";
-    section.style.borderTop = "1px solid #ccc";
-    section.style.paddingTop = "10px";
-    section.innerHTML = `
-      <h4>✅ مراجعة صور البائعين:</h4>
-      <div id="pendingApprovalContainer">جاري التحميل...</div>
-    `;
-    document.body.insertBefore(section, document.getElementById("adminPanel"));
-  }
-</script>
 
 </body>
 </html>
