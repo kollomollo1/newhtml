@@ -1,54 +1,27 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8">
-  <title>تسجيل دخول الأدمن</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo&display=swap" rel="stylesheet">
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js"></script>
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyCP2gI3kFHg-ExtEhyMLlBe4o0yXHHXV6E",
-      authDomain: "gallery3modifiedjsless.firebaseapp.com",
-      projectId: "gallery3modifiedjsless",
-    };
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-  </script>
-  <style>
-    body {
-      font-family: 'Cairo', sans-serif;
-      background: #f5f5f5;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
-    .box {
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      width: 300px;
-    }
-    input, button {
-      width: 100%;
-      padding: 10px;
-      margin: 8px 0;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-    }
-    button {
-      background-color: #28a745;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #218838;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>تسجيل دخول الأدمن</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyCP2gI3kFHg-ExtEhyMLlBe4o0yXHHXV6E",
+    authDomain: "gallery3modifiedjsless.firebaseapp.com",
+    projectId: "gallery3modifiedjsless",
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+</script>
+<style>
+  body { font-family: 'Cairo', sans-serif; background: #f5f5f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+  .box { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); width: 300px; }
+  input, button { width: 100%; padding: 10px; margin: 8px 0; border-radius: 6px; border: 1px solid #ccc; }
+  button { background-color: #28a745; color: white; border: none; cursor: pointer; }
+  button:hover { background-color: #218838; }
+</style>
 </head>
 <body>
 <div class="box">
@@ -57,18 +30,13 @@
   <input type="password" id="password" placeholder="كلمة المرور" required>
   <button onclick="login()">دخول</button>
 </div>
-
 <script>
   function login() {
     const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value.trim();
     auth.signInWithEmailAndPassword(email, password)
-      .then(() => {
-        location.href = "admin-review.html";
-      })
-      .catch((error) => {
-        alert("فشل تسجيل الدخول: " + error.message);
-      });
+      .then(() => { location.href = "admin-review.html"; })
+      .catch((error) => { alert("فشل تسجيل الدخول: " + error.message); });
   }
 </script>
 </body>
