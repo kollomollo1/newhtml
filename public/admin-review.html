@@ -11,29 +11,32 @@
       text-align: center;
     }
 
+    .header {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
     h2 {
       color: #333;
+      margin: 0;
     }
 
-    .top-buttons {
-      margin-bottom: 20px;
-      text-align: center;
-    }
-
-    .top-buttons a {
-      display: inline-block;
-      margin: 0 10px;
+    .admin-button {
       background-color: #6f42c1;
       color: white;
-      padding: 10px 18px;
+      padding: 8px 16px;
       text-decoration: none;
-      border-radius: 8px;
-      font-size: 15px;
-      font-weight: bold;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: 'Cairo', sans-serif;
     }
 
-    .top-buttons a:hover {
-      background-color: #4e2c91;
+    .admin-button:hover {
+      background-color: #5936a2;
     }
 
     img {
@@ -44,12 +47,12 @@
 </head>
 <body>
 
-  <!-- ✅ زر إدارة البائعين في مكان واضح -->
-  <div class="top-buttons">
-    <a href="admin-sellers.html">👤 إدارة البائعين</a>
+  <!-- ✅ العنوان وزر إدارة البائعين جنب بعض -->
+  <div class="header">
+    <h2>مراجعة صور البائعين</h2>
+    <a href="admin-sellers.html" class="admin-button">👤 إدارة البائعين</a>
   </div>
 
-  <h2>مراجعة صور البائعين</h2>
   <div id="pendingContainer">جارٍ التحميل...</div>
 
   <script>
