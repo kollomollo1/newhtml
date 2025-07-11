@@ -640,23 +640,44 @@ window.askAdmin = function () {
       updateCounter();
     });
 
-    fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json")
+<script>
+fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json")
   .then(res => res.json())
   .then(data => {
     images = Object.values(data || {});
-    images = images.sort(() => Math.random() - 0.5); // ✅ لخبطة الصور تلقائيًا
+    console.log("الصور اللي جت من Firebase:", images);
+    images = images.sort(() => Math.random() - 0.5);
 
-      renderChunk();
-      updateCounter();
-    })
-    .catch(err => {
-      console.error("فشل في جلب الصور من Firebase:", err);
-    });
     renderChunk();
     updateCounter();
+  })
+  .catch(err => {
+    console.error("فشل في جلب الصور من Firebase:", err);
+  });
 
-    let currentLightboxIndex = 0;
-    let currentLightboxImages = [];
+let currentLightboxIndex = 0;
+let currentLightboxImages = [];
+
+window.addEventListener("scroll", () => {
+  if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 300) {
+    const total = getFilteredImages().length;
+    if (page * pageSize < total) {
+      page++;
+      renderChunk();
+
+      setTimeout(() => {
+        window.dispatchEvent(new Event("scroll"));
+      }, 200);
+    }
+  }
+
+  if (window.scrollY > 300) {
+    scrollBtn.style.display = "block";
+  } else {
+    scrollBtn.style.display = "none";
+  }
+});
+</script>
   
   window.addEventListener("scroll", () => {
   if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 300) {
