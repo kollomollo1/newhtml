@@ -121,6 +121,25 @@
   }
 }
 
+.auth-buttons {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.auth-buttons a {
+  display: inline-block;
+  background-color: #28a745;
+  color: white;
+  padding: 8px 16px;
+  margin: 5px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.auth-buttons a:hover {
+  background-color: #218838;
+}
 .header-buttons {
   position: fixed;
   top: 10px;
@@ -128,17 +147,19 @@
   z-index: 1001;
   display: flex;
   justify-content: space-between;
-  padding: 0 12px;
+  padding: 0 15px;
   box-sizing: border-box;
 }
 
 .header-buttons a {
+  background-color: #28a745;
+  color: white;
   padding: 4px 10px;
   border-radius: 6px;
   text-decoration: none;
   font-size: 14px;
-  color: white;
-  background-color: #28a745;
+  line-height: 1.6;
+  display: inline-block;
 }
 
 .header-buttons a.login {
@@ -148,11 +169,15 @@
 </head>
 <body>
 
+<div class="header-buttons">
+  <a href="register.html">تسجيل كبائع</a>
+  <a href="login.html" class="login">تسجيل الدخول</a>
+</div>
+
   <div id="mainTitle" style="position: fixed; top: -5px; left: 0; width: 100%; background: white; text-align: center; padding: 4px 0 2px; z-index: 1000; font-family: 'Cairo', sans-serif; box-shadow: 0 2px 4px rgba(0,0,0,0.1); line-height: 1.4;">
     <div style="font-size: 24px; font-weight: bold; color: green; margin: 0;">متجري</div>
     <div style="font-size: 13px; color: #666; margin: 2px 0 0;">مشروع كل بيت</div>
   </div>
-
 <div class="header-buttons">
   <a href="register.html" class="register">تسجيل كبائع</a>
   <a href="login.html" class="login">تسجيل الدخول</a>
@@ -165,11 +190,6 @@
     <a href="https://wa.me/201097646018" target="_blank" style="color: white; text-decoration: none; direction: ltr;">تواصل التجار مع الأدمن</a>
   </div>
 
-<!-- ✅ مراجعة صور البائعين -->
-<div style="margin-top: 30px; border-top: 1px solid #ccc; padding-top: 10px;">
-  <h4>✅ مراجعة صور البائعين:</h4>
-  <div id="pendingApprovalContainer">جاري التحميل...</div>
-</div>
 
   <div id="adminPanel" style="display: none; flex-direction: column; gap: 10px; margin: 10px;">
   <div id="dropzone">اسحب الصورة هنا لرفعها</div>
