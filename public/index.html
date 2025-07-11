@@ -129,15 +129,6 @@
     <div style="font-size: 13px; color: #666; margin: 2px 0 0;">مشروع كل بيت</div>
   </div>
 
-<div style="margin-top: 60px; text-align: center;">
-  <a href="register.html">
-    <button style="background: #28a745; color: white; padding: 10px 20px; margin: 5px; border: none; border-radius: 6px; font-size: 16px;">✍️ تسجيل كبائع</button>
-  </a>
-  <a href="login.html">
-    <button style="background: #007bff; color: white; padding: 10px 20px; margin: 5px; border: none; border-radius: 6px; font-size: 16px;">🔐 تسجيل الدخول كبائع</button>
-  </a>
-</div>
-
   <button onclick="askAdmin()" style="position: absolute; top: 10px; right: 10px; z-index: 1000; background: white; color: white; border: none; border-radius: 4px; padding: 4px 8px; font-size: 12px; cursor: pointer;">أدمن</button>
 
   <div style="position: absolute; top: 75px; right: 10px; z-index: 1000; display: flex; align-items: center; gap: 6px; background: #25D366; color: white; border-radius: 6px; padding: 2px 6px; font-size: 12px;">
@@ -145,11 +136,6 @@
     <a href="https://wa.me/201097646018" target="_blank" style="color: white; text-decoration: none; direction: ltr;">تواصل التجار مع الأدمن</a>
   </div>
 
-<!-- ✅ مراجعة صور البائعين -->
-<div style="margin-top: 30px; border-top: 1px solid #ccc; padding-top: 10px;">
-  <h4>✅ مراجعة صور البائعين:</h4>
-  <div id="pendingApprovalContainer">جاري التحميل...</div>
-</div>
 
   <div id="adminPanel" style="display: none; flex-direction: column; gap: 10px; margin: 10px;">
   <div id="dropzone">اسحب الصورة هنا لرفعها</div>
@@ -997,76 +983,6 @@ function viewTraderImages() {
     });
 }
 </script>
-<script>
-function loadPendingApprovalImages() {
-  fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages.json")
-    .then(res => res.json())
-    .then(data => {
-      const container = document.getElementById("pendingApprovalContainer");
-      container.innerHTML = "";
-      if (!data) {
-        container.innerHTML = "<p>لا توجد صور معلقة حالياً.</p>";
-        return;
-      }
-
-      for (const [key, img] of Object.entries(data)) {
-        if (img.approved === false) {
-          const wrapper = document.createElement("div");
-          wrapper.style.marginBottom = "20px";
-          wrapper.style.border = "1px solid #ddd";
-          wrapper.style.padding = "10px";
-          wrapper.style.borderRadius = "6px";
-          wrapper.innerHTML = `
-            <p><strong>البائع:</strong> ${img.sellerName || "غير معروف"}</p>
-            <img src="${img.src}" style="width:150px; max-width:100%; border-radius:6px;"><br>
-            <button onclick='approvePendingImage("${key}", ${JSON.stringify(img).replace(/"/g, '&quot;')})'>✅ قبول</button>
-            <button onclick='rejectPendingImage("${key}")'>🗑️ حذف</button>
-          `;
-          container.appendChild(wrapper);
-        }
-      }
-    });
-}
-
-function approvePendingImage(key, imgData) {
-  const approvedImage = {
-    id: Date.now() + Math.random(),
-    src: imgData.src,
-    seller: imgData.seller || "#",
-    trader: imgData.sellerName || "غير معروف",
-    category: imgData.category || "غير مصنف",
-    group: Date.now()
-  };
-
-  fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(approvedImage)
-  }).then(() => {
-    return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages/" + key + ".json", {
-      method: "DELETE"
-    });
-  }).then(() => {
-    alert("✅ تم قبول الصورة");
-    loadPendingApprovalImages();
-  });
-}
-
-function rejectPendingImage(key) {
-  fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages/" + key + ".json", {
-    method: "DELETE"
-  }).then(() => {
-    alert("🗑️ تم حذف الصورة");
-    loadPendingApprovalImages();
-  });
-}
-
-// عند تسجيل الدخول كأدمن، شغل تحميل الصور المعلقة
-if (localStorage.getItem("isAdmin") === "true") {
-  loadPendingApprovalImages();
-}
-</script>
-
 
 </body>
 </html>
