@@ -12,7 +12,7 @@
     body {
       margin: 0;
       font-family: 'Cairo', sans-serif;
-      padding-top: 120px;
+      padding-top: 0px;
     }
 #dropzone {
   border: 2px dashed #aaa;
@@ -122,7 +122,7 @@
 }
 
 .header-buttons {
-  position: fixed;
+  position: relative;
   top: 10px;
   width: 100%;
   z-index: 1001;
@@ -174,7 +174,7 @@
 </div>
 
 <button onclick="askAdmin()" id="adminBtn" style="
-  position: fixed;
+  position: relative;
   top: 12px;
   right: 70px;
   z-index: 2000;
@@ -343,7 +343,7 @@
   <span id="imageCount">0</span>
 </p>
 
-  <div class="gallery" id="gallery" style="margin-top: 120px;"></div>
+  <div class="gallery" id="gallery" style="margin-top: 40px;"></div>
 
   <div id="lightbox" onclick="this.style.display='none'">
     <button onclick="event.stopPropagation(); prevImage();" style="position:absolute; left:10px; top:50%; transform: translateY(-50%); font-size:30px; background:none; border:none; color:white; z-index:1001;">❮</button>
