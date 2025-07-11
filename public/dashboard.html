@@ -74,131 +74,18 @@
     <input type="text" id="sellerPhone" placeholder="رقم واتساب مثال: 01012345678">
 
     <button onclick="uploadImage()">رفع</button>
-
-    <h3 style="text-align:center">صورك المرفوعة</h3>
-    <div id="myImages" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 20px;"></div>
   </div>
 
   <script>
-  function uploadImage() {
-    const file = document.getElementById("fileInput").files[0];
-    const category = document.getElementById("category").value;
-    const sellerName = localStorage.getItem("sellerName");
-    let phone = document.getElementById("sellerPhone").value.trim();
+    function uploadImage() {
+      const file = document.getElementById("fileInput").files[0];
+      const category = document.getElementById("category").value;
+      const sellerName = localStorage.getItem("sellerName");
+      let phone = document.getElementById("sellerPhone").value.trim();
 
-    if (phone.startsWith("0")) {
-      phone = phone.substring(1);
-    }
-
-    const sellerLink = phone ? `https://wa.me/20${phone}` : "";
-
-    if (!file || !category || !sellerName || !sellerLink) {
-      alert("يرجى ملء جميع الحقول");
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", "lastlast");
-
-    fetch("https://api.cloudinary.com/v1_1/dugzs3qbh/image/upload", {
-      method: "POST",
-      body: formData
-    })
-      .then(res => res.json())
-      .then(data => {
-        const newImg = {
-          src: data.secure_url,
-          sellerName,
-          seller: sellerLink,
-          category,
-          approved: false
-        };
-
-        return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages.json", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(newImg)
-        });
-      })
-      .then(() => {
-        alert("✅ تم رفع الصورة وتنتظر موافقة الأدمن");
-        loadMyImages(); // تحميل الصور بعد الرفع
-      });
-  }
-
-  // ✅ الدالة المستقلة
-  function loadMyImages() {
-    const sellerName = localStorage.getItem("sellerName");
-    const container = document.getElementById("myImages");
-    container.innerHTML = "";
-
-    const sources = [
-      {
-        url: "https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages.json",
-        deletable: true
-      },
-      {
-        url: "https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json",
-        deletable: false
+      if (phone.startsWith("0")) {
+        phone = phone.substring(1);
       }
-    ];
-
-    sources.forEach(source => {
-      fetch(source.url)
-        .then(res => res.json())
-        .then(data => {
-          if (!data) return;
-
-          Object.entries(data).forEach(([key, img]) => {
-            if (img.sellerName === sellerName) {
-              const div = document.createElement("div");
-              div.style.position = "relative";
-
-              const image = document.createElement("img");
-              image.src = img.src;
-              image.style.width = "100%";
-              image.style.borderRadius = "6px";
-
-              div.appendChild(image);
-
-              if (source.deletable) {
-                const btn = document.createElement("button");
-                btn.textContent = "❌ حذف";
-                btn.style.position = "absolute";
-                btn.style.bottom = "6px";
-                btn.style.right = "6px";
-                btn.style.padding = "4px 8px";
-                btn.style.background = "#dc3545";
-                btn.style.color = "white";
-                btn.style.border = "none";
-                btn.style.borderRadius = "4px";
-                btn.style.cursor = "pointer";
-                btn.onclick = () => {
-                  if (confirm("هل أنت متأكد من حذف الصورة؟")) {
-                    fetch(`${source.url.replace(".json", "/" + key + ".json")}`, {
-                      method: "DELETE"
-                    }).then(() => {
-                      loadMyImages();
-                    });
-                  }
-                };
-                div.appendChild(btn);
-              }
-
-              container.appendChild(div);
-            }
-          });
-        });
-    });
-  }
-
-  // ✅ تحميل صور التاجر عند فتح الصفحة
-  window.onload = () => {
-    loadMyImages();
-  };
-</script>
-
 
       const sellerLink = phone ? `https://wa.me/20${phone}` : "";
 

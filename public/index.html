@@ -1088,9 +1088,7 @@ function approvePendingImage(key, imgData) {
     });
   }).then(() => {
     alert("✅ تم قبول الصورة");
-    if (localStorage.getItem("admin") === "true") {
-  loadPendingApprovalImages();
-}
+    loadPendingApprovalImages();
   });
 }
 
