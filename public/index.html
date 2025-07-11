@@ -310,16 +310,14 @@
 <div class="gallery" id="gallery"></div>
 <div id="lightbox" onclick="this.style.display='none'">
 <button onclick="event.stopPropagation(); prevImage();" style="position:absolute; left:10px; top:50%; transform: translateY(-50%); font-size:30px; background:none; border:none; color:white; z-index:1001;">❮</button>
-<img id="lightbox-img" src=""/>
+<img id="lightbox-img" src="">
 <button onclick="event.stopPropagation(); nextImage();" style="position:absolute; right:10px; top:50%; font-size:30px; background:none; border:none; color:white;">❯</button>
 <p id="lightbox-category"></p>
-</div>
+</img></div>
 <button id="scrollTopBtn" onclick="scrollToTop()">↑</button>
 <script>
     let isAdmin = false;
-firebase.auth().onAuthStateChanged(user => {
-  if (user) { isAdmin = true; } });
-firebase.auth().onAuthStateChanged(user => { if (user) {
+if (// removed getItem("isAdmin") === "true") {
   isAdmin = true;
   document.getElementById("adminPanel").style.display = "flex";
 }
@@ -584,6 +582,7 @@ if (!sellerName) return alert("اختر اسم التاجر من القائمة 
 
     function shuffleGallery() {
       images = images.sort(() => Math.random() - 0.5);
+      // removed setItem("gallery_images", JSON.stringify(images));
       galleryEl.innerHTML = "";
       page = 1;
       renderChunk();
@@ -597,6 +596,7 @@ window.askAdmin = function () {
   const user = prompt("اسم المستخدم:");
   const pass = prompt("كلمة السر:");
   if (user === "2330498Aa" && pass === "2330498Aa") {
+    // removed setItem("isAdmin", "true"); // ← دي أهم تعديل
     location.href = "admin-review.html";
   } else {
     alert("بيانات الدخول غير صحيحة");
@@ -812,6 +812,7 @@ function openLightbox(imgArray, category) {
 window.history.pushState({}, "");
     
 function logoutAdmin() {
+  // removed removeItem("isAdmin");
   location.reload();
 }
 
@@ -1079,9 +1080,22 @@ function rejectPendingImage(key) {
 }
 
 // عند تسجيل الدخول كأدمن، شغل تحميل الصور المعلقة
-firebase.auth().onAuthStateChanged(user => { if (user) {
+if (// removed getItem("isAdmin") === "true") {
   loadPendingApprovalImages();
 }
+</script>
+<script>
+  if (// removed getItem("isAdmin") === "true") {
+    const section = document.createElement("div");
+    section.style.marginTop = "30px";
+    section.style.borderTop = "1px solid #ccc";
+    section.style.paddingTop = "10px";
+    section.innerHTML = `
+      <h4>✅ مراجعة صور البائعين:</h4>
+      <div id="pendingApprovalContainer">جاري التحميل...</div>
+    `;
+    document.body.insertBefore(section, document.getElementById("adminPanel"));
+  }
 </script>
 
 <!-- Firebase App (the core Firebase SDK) -->
@@ -1104,6 +1118,7 @@ firebase.auth().onAuthStateChanged(user => { if (user) {
     const password = prompt("كلمة المرور:");
     try {
       await firebase.auth().signInWithEmailAndPassword(email, password);
+      // removed setItem("isAdmin", "true");
       location.reload();
     } catch (error) {
       alert("فشل تسجيل الدخول: " + error.message);
@@ -1112,26 +1127,32 @@ firebase.auth().onAuthStateChanged(user => { if (user) {
 
   window.logoutAdmin = function () {
     firebase.auth().signOut().then(() => {
+      // removed removeItem("isAdmin");
       location.reload();
     });
   };
 
   firebase.auth().onAuthStateChanged(user => {
     if (user) {
+      // removed setItem("isAdmin", "true");
       document.getElementById("adminPanel").style.display = "flex";
     } else {
+      // removed removeItem("isAdmin");
     }
   });
 </script>
+
+
+
 <script>
   firebase.auth().onAuthStateChanged(user => {
     if (user) {
       document.getElementById("adminPanel").style.display = "flex";
 
-      // تحميل الصور المعلقة
-      loadPendingApprovalImages();
+      if (typeof loadPendingApprovalImages === "function") {
+        loadPendingApprovalImages();
+      }
 
-      // إضافة واجهة مراجعة الصور
       const section = document.createElement("div");
       section.style.marginTop = "30px";
       section.style.borderTop = "1px solid #ccc";
@@ -1143,49 +1164,6 @@ firebase.auth().onAuthStateChanged(user => { if (user) {
       document.body.insertBefore(section, document.getElementById("adminPanel"));
     }
   });
-</script>
-<script>
-  firebase.auth().onAuthStateChanged(user => {
-    if (user) {
-      document.getElementById("adminPanel").style.display = "flex";
-
-      // تحميل الصور المعلقة
-      loadPendingApprovalImages();
-
-      // إضافة واجهة مراجعة الصور
-      const section = document.createElement("div");
-      section.style.marginTop = "30px";
-      section.style.borderTop = "1px solid #ccc";
-      section.style.paddingTop = "10px";
-      section.innerHTML = `
-        <h4>✅ مراجعة صور البائعين:</h4>
-        <div id="pendingApprovalContainer">جاري التحميل...</div>
-      `;
-      document.body.insertBefore(section, document.getElementById("adminPanel"));
-    }
-  });
-</script>
-
-<script>
-firebase.auth().onAuthStateChanged(user => {
-  if (user) {
-    document.getElementById("adminPanel").style.display = "flex";
-
-    // تحميل الصور المعلقة
-    loadPendingApprovalImages();
-
-    // واجهة مراجعة الصور
-    const section = document.createElement("div");
-    section.style.marginTop = "30px";
-    section.style.borderTop = "1px solid #ccc";
-    section.style.paddingTop = "10px";
-    section.innerHTML = `
-      <h4>✅ مراجعة صور البائعين:</h4>
-      <div id="pendingApprovalContainer">جاري التحميل...</div>
-    `;
-    document.body.insertBefore(section, document.getElementById("adminPanel"));
-  }
-});
 </script>
 </body>
 </html>
