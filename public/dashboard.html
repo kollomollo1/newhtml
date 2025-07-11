@@ -148,7 +148,7 @@
             if (!data) return;
 
             Object.entries(data).forEach(([key, img]) => {
-              if (img.sellerName === sellerName) {
+              if (img.sellerName === sellerName || img.trader === sellerName) {
                 const div = document.createElement("div");
                 div.style.position = "relative";
 
