@@ -1101,18 +1101,6 @@ if (localStorage.getItem("isAdmin") === "true") {
 }
 </script>
 
-<script>
-  function askAdmin() {
-    const user = prompt("اسم المستخدم:");
-    const pass = prompt("كلمة السر:");
-    if (user === "admin" && pass === "admin123") {
-      localStorage.setItem("admin", "true");
-      location.href = "admin-review.html";
-    } else {
-      alert("بيانات الدخول غير صحيحة");
-    }
-  }
-</script>
 
 </body>
 </html>
