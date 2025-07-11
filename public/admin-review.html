@@ -3,8 +3,50 @@
 <head>
   <meta charset="UTF-8">
   <title>مراجعة صور البائعين</title>
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+      background-color: #f9f9f9;
+      padding: 20px;
+      text-align: center;
+    }
+
+    h2 {
+      color: #333;
+    }
+
+    .top-buttons {
+      margin-bottom: 20px;
+    }
+
+    .top-buttons a {
+      display: inline-block;
+      margin: 0 10px;
+      background-color: #6f42c1;
+      color: white;
+      padding: 8px 16px;
+      text-decoration: none;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .top-buttons a:hover {
+      background-color: #5936a2;
+    }
+
+    img {
+      border-radius: 6px;
+      margin-bottom: 10px;
+    }
+  </style>
 </head>
 <body>
+
+  <!-- ✅ زر إدارة البائعين -->
+  <div class="top-buttons">
+    <a href="admin-sellers.html">👤 إدارة البائعين</a>
+  </div>
+
   <h2>مراجعة صور البائعين</h2>
   <div id="pendingContainer">جارٍ التحميل...</div>
 
@@ -42,7 +84,7 @@
         src: imgData.src,
         seller: imgData.seller || "#",
         trader: imgData.sellerName || "غير معروف",
-        category: "غير مصنف",
+        category: imgData.category || "غير مصنف",
         group: Date.now()
       };
 
