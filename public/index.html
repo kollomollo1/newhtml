@@ -607,13 +607,12 @@ if (!sellerName) return alert("اختر اسم التاجر من القائمة 
     function scrollToTop() {
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
-
-    window.askAdmin = function () {
+window.askAdmin = function () {
   const user = prompt("اسم المستخدم:");
   const pass = prompt("كلمة السر:");
   if (user === "2330498Aa" && pass === "2330498Aa") {
-    localStorage.setItem("isAdmin", "true");
-    location.reload();
+    localStorage.setItem("admin", "true"); // ← دي أهم تعديل
+    location.href = "admin-review.html";
   } else {
     alert("بيانات الدخول غير صحيحة");
   }
