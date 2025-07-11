@@ -75,6 +75,7 @@
       border-radius: 4px;
       cursor: pointer;
     }
+
   </style>
 </head>
 <body>
@@ -105,7 +106,7 @@
               <h3>🛍️ ${seller.name}</h3>
               <p>واتساب: <a href="${seller.link}" target="_blank">${seller.link}</a></p>
               <button class="view-btn" onclick="viewImages('${seller.name}', this)">📸 عرض الصور</button>
-              <button class="delete-btn" onclick="deleteSeller('${key}', '${seller.name}')">❌ حذف البائع</button>
+              <button class="delete-btn" onclick="deleteSeller('${key}')">❌ حذف البائع</button>
               <div class="images-container" style="display:none;"></div>
             `;
             container.appendChild(box);
@@ -113,39 +114,15 @@
         });
     }
 
-    function deleteSeller(sellerKey, sellerName) {
-      if (!confirm("هل أنت متأكد من حذف هذا البائع وجميع صوره؟")) return;
-
-      // 1. حذف البائع من قاعدة sellers
-      fetch(`${sellersUrl.replace(".json", "/" + sellerKey + ".json")}`, {
-        method: "DELETE"
-      });
-
-      // 2. حذف صوره من images و pendingImages
-      const deleteFromSource = (url) => {
-        return fetch(url)
-          .then(res => res.json())
-          .then(data => {
-            if (!data) return;
-            const deletions = [];
-
-            Object.entries(data).forEach(([key, img]) => {
-              if (img.sellerName === sellerName || img.trader === sellerName) {
-                deletions.push(fetch(`${url.replace(".json", "/" + key + ".json")}`, { method: "DELETE" }));
-              }
-            });
-
-            return Promise.all(deletions);
-          });
-      };
-
-      Promise.all([
-        deleteFromSource(imagesUrl),
-        deleteFromSource(pendingUrl)
-      ]).then(() => {
-        alert("✅ تم حذف البائع وصوره");
-        loadSellers();
-      });
+    function deleteSeller(key) {
+      if (confirm("هل أنت متأكد من حذف هذا البائع؟")) {
+        fetch(`${sellersUrl.replace(".json", "/" + key + ".json")}`, {
+          method: "DELETE"
+        }).then(() => {
+          alert("✅ تم حذف البائع");
+          loadSellers();
+        });
+      }
     }
 
     function viewImages(sellerName, btn) {
@@ -160,8 +137,6 @@
       box.style.display = "grid";
       btn.textContent = "🔽 إخفاء الصور";
 
-      let foundImages = false;
-
       Promise.all([
         fetch(pendingUrl).then(res => res.json()),
         fetch(imagesUrl).then(res => res.json())
@@ -173,36 +148,31 @@
           Object.entries(source).forEach(([key, img]) => {
             const match = (img.sellerName === sellerName || img.trader === sellerName);
             if (match) {
-              foundImages = true;
-
               const div = document.createElement("div");
               div.className = "img-box";
 
               const image = document.createElement("img");
               image.src = img.src;
 
-              const delBtn = document.createElement("button");
-              delBtn.textContent = "🗑️ حذف";
+              const btn = document.createElement("button");
+              btn.textContent = "🗑️ حذف";
               const url = index === 0 ? pendingUrl : imagesUrl;
-
-              delBtn.onclick = () => {
+              btn.onclick = () => {
                 if (confirm("هل تريد حذف هذه الصورة؟")) {
                   fetch(`${url.replace(".json", "/" + key + ".json")}`, {
                     method: "DELETE"
-                  }).then(() => div.remove());
+                  }).then(() => {
+                    div.remove();
+                  });
                 }
               };
 
               div.appendChild(image);
-              div.appendChild(delBtn);
+              div.appendChild(btn);
               box.appendChild(div);
             }
           });
         });
-
-        if (!foundImages) {
-          box.innerHTML = "<p>لا توجد صور مرفوعة لهذا التاجر.</p>";
-        }
       });
     }
 

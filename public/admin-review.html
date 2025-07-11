@@ -11,31 +11,26 @@
       text-align: center;
     }
 
-    .header {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 20px;
-      flex-wrap: wrap;
+    h2 {
+      color: #333;
+    }
+
+    .top-buttons {
       margin-bottom: 20px;
     }
 
-    .header h2 {
-      color: #333;
-      margin: 0;
-    }
-
-    .admin-button {
+    .top-buttons a {
+      display: inline-block;
+      margin: 0 10px;
       background-color: #6f42c1;
       color: white;
       padding: 8px 16px;
       text-decoration: none;
       border-radius: 6px;
       font-size: 14px;
-      font-family: 'Cairo', sans-serif;
     }
 
-    .admin-button:hover {
+    .top-buttons a:hover {
       background-color: #5936a2;
     }
 
@@ -47,12 +42,12 @@
 </head>
 <body>
 
-  <!-- ✅ العنوان وزر إدارة البائعين جنب بعض -->
-  <div class="header">
-    <h2>مراجعة صور البائعين</h2>
-    <a href="admin-sellers.html" class="admin-button">👤 إدارة البائعين</a>
+  <!-- ✅ زر الذهاب إلى صفحة إدارة البائعين -->
+  <div class="top-buttons">
+    <a href="admin-sellers.html">👤 إدارة البائعين</a>
   </div>
 
+  <h2>مراجعة صور البائعين</h2>
   <div id="pendingContainer">جارٍ التحميل...</div>
 
   <script>
