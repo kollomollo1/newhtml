@@ -584,7 +584,6 @@ if (!sellerName) return alert("اختر اسم التاجر من القائمة 
 
     function shuffleGallery() {
       images = images.sort(() => Math.random() - 0.5);
-      localStorage.setItem("gallery_images", JSON.stringify(images));
       galleryEl.innerHTML = "";
       page = 1;
       renderChunk();
@@ -598,7 +597,6 @@ window.askAdmin = function () {
   const user = prompt("اسم المستخدم:");
   const pass = prompt("كلمة السر:");
   if (user === "2330498Aa" && pass === "2330498Aa") {
-    localStorage.setItem("isAdmin", "true"); // ← دي أهم تعديل
     location.href = "admin-review.html";
   } else {
     alert("بيانات الدخول غير صحيحة");
@@ -814,7 +812,6 @@ function openLightbox(imgArray, category) {
 window.history.pushState({}, "");
     
 function logoutAdmin() {
-  localStorage.removeItem("isAdmin");
   location.reload();
 }
 
@@ -1086,8 +1083,8 @@ firebase.auth().onAuthStateChanged(user => { if (user) {
   loadPendingApprovalImages();
 }
 </script>
-<script>firebase.auth().onAuthStateChanged(user => {
-  if (user) {
+<script>
+  firebase.auth().onAuthStateChanged(user => { if (user) {
     const section = document.createElement("div");
     section.style.marginTop = "30px";
     section.style.borderTop = "1px solid #ccc";
@@ -1098,7 +1095,7 @@ firebase.auth().onAuthStateChanged(user => { if (user) {
     `;
     document.body.insertBefore(section, document.getElementById("adminPanel"));
   }
-});</script>
+</script>
 <!-- Firebase App (the core Firebase SDK) -->
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
@@ -1119,7 +1116,6 @@ firebase.auth().onAuthStateChanged(user => { if (user) {
     const password = prompt("كلمة المرور:");
     try {
       await firebase.auth().signInWithEmailAndPassword(email, password);
-      localStorage.setItem("isAdmin", "true");
       location.reload();
     } catch (error) {
       alert("فشل تسجيل الدخول: " + error.message);
@@ -1128,20 +1124,40 @@ firebase.auth().onAuthStateChanged(user => { if (user) {
 
   window.logoutAdmin = function () {
     firebase.auth().signOut().then(() => {
-      localStorage.removeItem("isAdmin");
       location.reload();
     });
   };
 
   firebase.auth().onAuthStateChanged(user => {
     if (user) {
-      localStorage.setItem("isAdmin", "true");
       document.getElementById("adminPanel").style.display = "flex";
     } else {
-      localStorage.removeItem("isAdmin");
     }
   });
 </script>
+
+<script>
+  firebase.auth().onAuthStateChanged(user => {
+    if (user) {
+      document.getElementById("adminPanel").style.display = "flex";
+
+      // تحميل الصور المعلقة
+      loadPendingApprovalImages();
+
+      // إضافة واجهة مراجعة الصور
+      const section = document.createElement("div");
+      section.style.marginTop = "30px";
+      section.style.borderTop = "1px solid #ccc";
+      section.style.paddingTop = "10px";
+      section.innerHTML = `
+        <h4>✅ مراجعة صور البائعين:</h4>
+        <div id="pendingApprovalContainer">جاري التحميل...</div>
+      `;
+      document.body.insertBefore(section, document.getElementById("adminPanel"));
+    }
+  });
+</script>
+
 
 <script>
   firebase.auth().onAuthStateChanged(user => {
