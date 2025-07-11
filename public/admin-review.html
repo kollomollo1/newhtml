@@ -3,12 +3,67 @@
 <head>
   <meta charset="UTF-8">
   <title>مراجعة صور البائعين</title>
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+      background-color: #f9f9f9;
+      padding: 20px;
+      text-align: center;
+    }
+
+    h2 {
+      color: #333;
+    }
+
+    .image-box {
+      background: white;
+      padding: 10px;
+      margin: 15px auto;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      max-width: 300px;
+      box-shadow: 0 0 6px rgba(0,0,0,0.05);
+    }
+
+    .image-box img {
+      width: 100%;
+      border-radius: 6px;
+    }
+
+    .image-box p {
+      margin: 6px 0;
+    }
+
+    .image-box button {
+      padding: 6px 12px;
+      margin: 5px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .accept-btn {
+      background-color: #28a745;
+      color: white;
+    }
+
+    .reject-btn {
+      background-color: #dc3545;
+      color: white;
+    }
+  </style>
 </head>
 <body>
   <h2>مراجعة صور البائعين</h2>
   <div id="pendingContainer">جارٍ التحميل...</div>
 
   <script>
+    // ✅ حماية بسيطة: لو مش أدمن، يخرج
+    if (localStorage.getItem("admin") !== "true") {
+      alert("غير مصرح لك بالدخول");
+      location.href = "admin.html";
+    }
+
     function loadPending() {
       fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages.json")
         .then(res => res.json())
@@ -23,12 +78,15 @@
           for (const [key, img] of Object.entries(data)) {
             if (img.approved === false) {
               const div = document.createElement("div");
+              div.className = "image-box";
               div.innerHTML = `
-                <p><strong>${img.sellerName}</strong></p>
-                <img src="${img.src}" style="width:150px"><br>
-                <button onclick='approve("${key}", ${JSON.stringify(img).replace(/"/g, '&quot;')})'>✅ قبول</button>
-                <button onclick='reject("${key}")'>🗑️ حذف</button>
-                <hr>
+                <p><strong>البائع:</strong> ${img.sellerName}</p>
+                <p><strong>التصنيف:</strong> ${img.category || "غير محدد"}</p>
+                <img src="${img.src}" alt="صورة منتج">
+                <div>
+                  <button class="accept-btn" onclick='approve("${key}", ${JSON.stringify(img).replace(/"/g, '&quot;')})'>✅ قبول</button>
+                  <button class="reject-btn" onclick='reject("${key}")'>🗑️ حذف</button>
+                </div>
               `;
               container.appendChild(div);
             }
@@ -42,7 +100,7 @@
         src: imgData.src,
         seller: imgData.seller || "#",
         trader: imgData.sellerName || "غير معروف",
-        category: "غير مصنف",
+        category: imgData.category || "غير مصنف",
         group: Date.now()
       };
 
