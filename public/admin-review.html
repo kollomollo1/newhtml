@@ -29,6 +29,7 @@
       text-decoration: none;
       border-radius: 6px;
       font-size: 14px;
+      font-family: 'Cairo', sans-serif;
     }
 
     .top-buttons a:hover {
@@ -47,21 +48,6 @@
   <div class="top-buttons">
     <a href="admin-sellers.html">👤 إدارة البائعين</a>
   </div>
-
-<div style="text-align: center; margin-bottom: 20px;">
-  <a href="admin-sellers.html" style="
-    display: inline-block;
-    background-color: #6f42c1;
-    color: white;
-    padding: 8px 16px;
-    text-decoration: none;
-    border-radius: 6px;
-    font-size: 14px;
-    font-family: 'Cairo', sans-serif;
-  ">
-    👤 إدارة البائعين
-  </a>
-</div>
 
   <h2>مراجعة صور البائعين</h2>
   <div id="pendingContainer">جارٍ التحميل...</div>
@@ -127,6 +113,7 @@
       }).then(loadPending);
     }
 
+    // ✅ تحميل الصور عند فتح الصفحة
     loadPending();
   </script>
 </body>
