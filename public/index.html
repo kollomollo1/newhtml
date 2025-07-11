@@ -180,12 +180,6 @@
     <a href="https://wa.me/201097646018" target="_blank" style="color: white; text-decoration: none; direction: ltr;">تواصل التجار مع الأدمن</a>
   </div>
 
-<!-- ✅ مراجعة صور البائعين -->
-<div style="margin-top: 30px; border-top: 1px solid #ccc; padding-top: 10px;">
-  <h4>✅ مراجعة صور البائعين:</h4>
-  <div id="pendingApprovalContainer">جاري التحميل...</div>
-</div>
-
   <div id="adminPanel" style="display: none; flex-direction: column; gap: 10px; margin: 10px;">
   <div id="dropzone">اسحب الصورة هنا لرفعها</div>
 
@@ -1101,6 +1095,19 @@ if (localStorage.getItem("isAdmin") === "true") {
 }
 </script>
 
+<script>
+  if (localStorage.getItem("isAdmin") === "true") {
+    const section = document.createElement("div");
+    section.style.marginTop = "30px";
+    section.style.borderTop = "1px solid #ccc";
+    section.style.paddingTop = "10px";
+    section.innerHTML = `
+      <h4>✅ مراجعة صور البائعين:</h4>
+      <div id="pendingApprovalContainer">جاري التحميل...</div>
+    `;
+    document.body.insertBefore(section, document.getElementById("adminPanel"));
+  }
+</script>
 
 </body>
 </html>
