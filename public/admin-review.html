@@ -52,10 +52,10 @@
 
   <script>
   // حماية الدخول
-  if (localStorage.getItem("admin") !== "true") {
-    alert("غير مصرح لك بالدخول");
-    location.href = "index.html";
-  }
+  if (localStorage.getItem("isAdmin") !== "true") {
+  alert("غير مصرح لك بالدخول");
+  location.href = "index.html";
+}
 </script>
 
     function loadPending() {
