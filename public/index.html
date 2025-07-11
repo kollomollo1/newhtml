@@ -158,11 +158,9 @@
   <a href="login.html" class="login">دخول</a>
 </div>
 
-  <a href="admin-review.html">
-  <button style="position: absolute; top: 10px; right: 125px; z-index: 1000; background: #dc3545; color: white; border: none; border-radius: 4px; padding: 4px 8px; font-size: 12px; cursor: pointer;">
-    أدمن
-  </button>
-</a>
+  <button onclick="askAdmin()" style="position: absolute; top: 10px; right: 125px; z-index: 1000; background: #dc3545; color: white; border: none; border-radius: 4px; padding: 4px 8px; font-size: 12px; cursor: pointer;">
+  أدمن
+</button>
 
   <div style="position: absolute; top: 75px; right: 10px; z-index: 1000; display: flex; align-items: center; gap: 6px; background: #25D366; color: white; border-radius: 6px; padding: 2px 6px; font-size: 12px;">
     <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" style="width: 20px; height: 20px;">
@@ -1091,6 +1089,18 @@ if (localStorage.getItem("isAdmin") === "true") {
 }
 </script>
 
+<script>
+  function askAdmin() {
+    const user = prompt("اسم المستخدم:");
+    const pass = prompt("كلمة السر:");
+    if (user === "admin" && pass === "admin123") {
+      localStorage.setItem("admin", "true");
+      location.href = "admin-review.html";
+    } else {
+      alert("بيانات الدخول غير صحيحة");
+    }
+  }
+</script>
 
 </body>
 </html>

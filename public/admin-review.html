@@ -51,11 +51,12 @@
   <div id="pendingContainer">جارٍ التحميل...</div>
 
   <script>
-    // حماية الدخول
-    if (localStorage.getItem("admin") !== "true") {
-      alert("غير مصرح لك بالدخول");
-      location.href = "admin-review.html";
-    }
+  // حماية الدخول
+  if (localStorage.getItem("admin") !== "true") {
+    alert("غير مصرح لك بالدخول");
+    location.href = "index.html";
+  }
+</script>
 
     function loadPending() {
       fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages.json")
