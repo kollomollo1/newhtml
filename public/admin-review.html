@@ -42,7 +42,7 @@
 </head>
 <body>
 
-  <!-- ✅ زر إدارة البائعين -->
+  <!-- ✅ زر الذهاب إلى صفحة إدارة البائعين -->
   <div class="top-buttons">
     <a href="admin-sellers.html">👤 إدارة البائعين</a>
   </div>
@@ -51,6 +51,12 @@
   <div id="pendingContainer">جارٍ التحميل...</div>
 
   <script>
+    // حماية الدخول
+    if (localStorage.getItem("admin") !== "true") {
+      alert("غير مصرح لك بالدخول");
+      location.href = "admin.html";
+    }
+
     function loadPending() {
       fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages.json")
         .then(res => res.json())
