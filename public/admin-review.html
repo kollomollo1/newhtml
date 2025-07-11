@@ -15,47 +15,38 @@
       color: #333;
     }
 
+    .top-buttons {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .top-buttons a {
+      display: inline-block;
+      margin: 0 10px;
+      background-color: #6f42c1;
+      color: white;
+      padding: 10px 18px;
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: bold;
+    }
+
+    .top-buttons a:hover {
+      background-color: #4e2c91;
+    }
+
     img {
       border-radius: 6px;
       margin-bottom: 10px;
-    }
-
-    button {
-      padding: 6px 12px;
-      border-radius: 6px;
-      border: none;
-      cursor: pointer;
-      font-family: 'Cairo', sans-serif;
-      margin: 4px;
-    }
-
-    .accept-btn {
-      background-color: #28a745;
-      color: white;
-    }
-
-    .reject-btn {
-      background-color: #dc3545;
-      color: white;
     }
   </style>
 </head>
 <body>
 
-  <!-- ✅ زر إدارة البائعين واضح جدًا -->
-  <div style="background: yellow; padding: 20px; margin-bottom: 30px;">
-    <a href="admin-sellers.html" style="
-      display: inline-block;
-      background-color: red;
-      color: white;
-      padding: 14px 24px;
-      text-decoration: none;
-      font-size: 20px;
-      border-radius: 8px;
-      font-weight: bold;
-    ">
-      👤 إدارة البائعين
-    </a>
+  <!-- ✅ زر إدارة البائعين في مكان واضح -->
+  <div class="top-buttons">
+    <a href="admin-sellers.html">👤 إدارة البائعين</a>
   </div>
 
   <h2>مراجعة صور البائعين</h2>
@@ -85,8 +76,8 @@
               div.innerHTML = `
                 <p><strong>${img.sellerName}</strong></p>
                 <img src="${img.src}" style="width:150px"><br>
-                <button class="accept-btn" onclick='approve("${key}", ${JSON.stringify(img).replace(/"/g, '&quot;')})'>✅ قبول</button>
-                <button class="reject-btn" onclick='reject("${key}")'>🗑️ حذف</button>
+                <button onclick='approve("${key}", ${JSON.stringify(img).replace(/"/g, '&quot;')})'>✅ قبول</button>
+                <button onclick='reject("${key}")'>🗑️ حذف</button>
                 <hr>
               `;
               container.appendChild(div);
@@ -110,19 +101,18 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(approvedImage)
       }).then(() => {
-        return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages/" + key + ".json", {
+        return fetch(`https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages/${key}.json`, {
           method: "DELETE"
         });
       }).then(loadPending);
     }
 
     function reject(key) {
-      fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages/" + key + ".json", {
+      fetch(`https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages/${key}.json`, {
         method: "DELETE"
       }).then(loadPending);
     }
 
-    // ✅ تحميل الصور عند فتح الصفحة
     loadPending();
   </script>
 </body>
