@@ -15,10 +15,6 @@
       color: #333;
     }
 
-<div class="top-buttons">
-  <a href="admin-sellers.html">👤 إدارة البائعين</a>
-</div>
-
     .top-buttons {
       margin-bottom: 20px;
       text-align: center;
@@ -47,6 +43,11 @@
   </style>
 </head>
 <body>
+
+  <!-- ✅ الزر الصحيح داخل البودي -->
+  <div class="top-buttons">
+    <a href="admin-sellers.html">👤 إدارة البائعين</a>
+  </div>
 
   <h2>مراجعة صور البائعين</h2>
   <div id="pendingContainer">جارٍ التحميل...</div>
@@ -112,7 +113,6 @@
       }).then(loadPending);
     }
 
-    // ✅ تحميل الصور عند فتح الصفحة
     loadPending();
   </script>
 </body>
