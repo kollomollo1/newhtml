@@ -3,6 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <title>مراجعة صور البائعين</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo&display=swap" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCP2gI3kFHg-ExtEhyMLlBe4o0yXHHXV6E",
+      authDomain: "gallery3modifiedjsless.firebaseapp.com",
+      projectId: "gallery3modifiedjsless",
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    // حماية الدخول
+    auth.onAuthStateChanged(user => {
+      if (!user) {
+        location.href = "admin-login.html";
+      }
+    });
+  </script>
   <style>
     body {
       font-family: 'Cairo', sans-serif;
@@ -10,7 +29,6 @@
       padding: 20px;
       text-align: center;
     }
-
     .header {
       display: flex;
       justify-content: center;
@@ -19,12 +37,10 @@
       flex-wrap: wrap;
       margin-bottom: 20px;
     }
-
     .header h2 {
       color: #333;
       margin: 0;
     }
-
     .admin-button {
       background-color: #6f42c1;
       color: white;
@@ -34,11 +50,9 @@
       font-size: 14px;
       font-family: 'Cairo', sans-serif;
     }
-
     .admin-button:hover {
       background-color: #5936a2;
     }
-
     img {
       border-radius: 6px;
       margin-bottom: 10px;
@@ -47,77 +61,77 @@
 </head>
 <body>
 
-  <!-- ✅ العنوان وزر إدارة البائعين جنب بعض -->
   <div class="header">
     <h2>مراجعة صور البائعين</h2>
     <a href="admin-sellers.html" class="admin-button">👤 إدارة البائعين</a>
+    <button onclick="logout()" class="admin-button">🚪 تسجيل الخروج</button>
   </div>
 
   <div id="pendingContainer">جارٍ التحميل...</div>
 
-  <script>
-    // ✅ حماية الدخول
-    if (localStorage.getItem("isAdmin") !== "true") {
-      alert("غير مصرح لك بالدخول");
-      location.href = "index.html";
-    }
+<script>
+function logout() {
+  auth.signOut().then(() => {
+    location.href = "admin-login.html";
+  });
+}
 
-    function loadPending() {
-      fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages.json")
-        .then(res => res.json())
-        .then(data => {
-          const container = document.getElementById("pendingContainer");
-          container.innerHTML = "";
-          if (!data) {
-            container.innerHTML = "<p>لا توجد صور معلقة حالياً.</p>";
-            return;
-          }
+function loadPending() {
+  fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages.json")
+    .then(res => res.json())
+    .then(data => {
+      const container = document.getElementById("pendingContainer");
+      container.innerHTML = "";
+      if (!data) {
+        container.innerHTML = "<p>لا توجد صور معلقة حالياً.</p>";
+        return;
+      }
 
-          for (const [key, img] of Object.entries(data)) {
-            if (img.approved === false) {
-              const div = document.createElement("div");
-              div.innerHTML = `
-                <p><strong>${img.sellerName}</strong></p>
-                <img src="${img.src}" style="width:150px"><br>
-                <button onclick='approve("${key}", ${JSON.stringify(img).replace(/"/g, '&quot;')})'>✅ قبول</button>
-                <button onclick='reject("${key}")'>🗑️ حذف</button>
-                <hr>
-              `;
-              container.appendChild(div);
-            }
-          }
-        });
-    }
+      for (const [key, img] of Object.entries(data)) {
+        if (img.approved === false) {
+          const div = document.createElement("div");
+          div.innerHTML = `
+            <p><strong>${img.sellerName}</strong></p>
+            <img src="${img.src}" style="width:150px"><br>
+            <button onclick='approve("${key}", ${JSON.stringify(img).replace(/"/g, '&quot;')})'>✅ قبول</button>
+            <button onclick='reject("${key}")'>🗑️ حذف</button>
+            <hr>
+          `;
+          container.appendChild(div);
+        }
+      }
+    });
+}
 
-    function approve(key, imgData) {
-      const approvedImage = {
-        id: Date.now() + Math.random(),
-        src: imgData.src,
-        seller: imgData.seller || "#",
-        trader: imgData.sellerName || "غير معروف",
-        category: imgData.category || "غير مصنف",
-        group: Date.now()
-      };
+function approve(key, imgData) {
+  const approvedImage = {
+    id: Date.now() + Math.random(),
+    src: imgData.src,
+    seller: imgData.seller || "#",
+    trader: imgData.sellerName || "غير معروف",
+    category: imgData.category || "غير مصنف",
+    group: Date.now()
+  };
 
-      fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(approvedImage)
-      }).then(() => {
-        return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages/" + key + ".json", {
-          method: "DELETE"
-        });
-      }).then(loadPending);
-    }
+  fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(approvedImage)
+  }).then(() => {
+    return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages/" + key + ".json", {
+      method: "DELETE"
+    });
+  }).then(loadPending);
+}
 
-    function reject(key) {
-      fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages/" + key + ".json", {
-        method: "DELETE"
-      }).then(loadPending);
-    }
+function reject(key) {
+  fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages/" + key + ".json", {
+    method: "DELETE"
+  }).then(loadPending);
+}
 
-    // ✅ تحميل الصور عند فتح الصفحة
-    loadPending();
-  </script>
+// تحميل الصور عند فتح الصفحة
+loadPending();
+</script>
 </body>
 </html>
