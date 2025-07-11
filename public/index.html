@@ -317,7 +317,8 @@
 <button id="scrollTopBtn" onclick="scrollToTop()">↑</button>
 <script>
     let isAdmin = false;
-if (localStorage.getItem("isAdmin") === "true") {
+firebase.auth().onAuthStateChanged(user => {
+  if (user) {
   isAdmin = true;
   document.getElementById("adminPanel").style.display = "flex";
 }
@@ -596,8 +597,8 @@ window.askAdmin = function () {
   const user = prompt("اسم المستخدم:");
   const pass = prompt("كلمة السر:");
   if (user === "2330498Aa" && pass === "2330498Aa") {
-    localStorage.setItem("isAdmin", "true"); // ← دي أهم تعديل
-    location.href = "admin-review.html";
+     // ← دي أهم تعديل
+    location.reload();
   } else {
     alert("بيانات الدخول غير صحيحة");
   }
@@ -1080,12 +1081,14 @@ function rejectPendingImage(key) {
 }
 
 // عند تسجيل الدخول كأدمن، شغل تحميل الصور المعلقة
-if (localStorage.getItem("isAdmin") === "true") {
+firebase.auth().onAuthStateChanged(user => {
+  if (user) {
   loadPendingApprovalImages();
 }
 </script>
 <script>
-  if (localStorage.getItem("isAdmin") === "true") {
+  firebase.auth().onAuthStateChanged(user => {
+  if (user) {
     const section = document.createElement("div");
     section.style.marginTop = "30px";
     section.style.borderTop = "1px solid #ccc";
