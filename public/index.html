@@ -339,13 +339,6 @@
 
   <button id="scrollTopBtn" onclick="scrollToTop()">↑</button>
 
-  <script>
-    let isAdmin = false;
-if (localStorage.getItem("isAdmin") === "true") {
-  isAdmin = true;
-  document.getElementById("adminPanel").style.display = "flex";
-}
-
     const galleryEl = document.getElementById("gallery");
     const scrollBtn = document.getElementById("scrollTopBtn"); 
     const categoryFilter = document.getElementById("categoryFilter");
@@ -620,12 +613,12 @@ window.askAdmin = function () {
   const user = prompt("اسم المستخدم:");
   const pass = prompt("كلمة السر:");
   if (user === "2330498Aa" && pass === "2330498Aa") {
-    localStorage.setItem("isAdmin", "true"); // ← دي أهم تعديل
-    location.href = "admin-review.html";
+    document.getElementById("adminPanel").style.display = "flex";
   } else {
     alert("بيانات الدخول غير صحيحة");
   }
 }
+
 
     categoryFilter.addEventListener("change", () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
