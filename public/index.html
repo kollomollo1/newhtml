@@ -1085,7 +1085,7 @@ function approvePendingImage(key, imgData) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(approvedImage)
   }).then(() => {
-    return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages/" + key + ".json", {
+    return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images/" + key + ".json", {
       method: "DELETE"
     });
   }).then(() => {
@@ -1095,7 +1095,7 @@ function approvePendingImage(key, imgData) {
 }
 
 function rejectPendingImage(key) {
-  fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages/" + key + ".json", {
+  fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images/" + key + ".json", {
     method: "DELETE"
   }).then(() => {
     alert("🗑️ تم حذف الصورة");
