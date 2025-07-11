@@ -170,13 +170,13 @@
 
 <div class="header-buttons">
   <a href="register.html" class="register">تسجيل كبائع</a>
-  <a href="login.html" class="login">دخول</a>
+  <a href="login.html" class="login">دخول البائع</a>
 </div>
 
 <button onclick="askAdmin()" id="adminBtn" style="
-  position: relative;
+  position: fixed;
   top: 12px;
-  right: 70px;
+  right: 150px;
   z-index: 2000;
   background: white;
   color: white;
@@ -190,7 +190,7 @@
   أدمن
 </button>
 
-  <div style="position: absolute; top: 60px; right: 10px; z-index: 1000; display: flex; align-items: center; gap: 6px; background: #25D366; color: white; border-radius: 6px; padding: 2px 6px; font-size: 12px;">
+  <div style="position: absolute; top: 62px; right: 10px; z-index: 1000; display: flex; align-items: center; gap: 6px; background: #25D366; color: white; border-radius: 6px; padding: 2px 6px; font-size: 12px;">
     <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" style="width: 20px; height: 20px;">
     <a href="https://wa.me/201097646018" target="_blank" style="color: white; text-decoration: none; direction: ltr;">الأدمن</a>
   </div>
@@ -343,7 +343,7 @@
   <span id="imageCount">0</span>
 </p>
 
-  <div class="gallery" id="gallery" style="margin-top: 30px;"></div>
+  <div class="gallery" id="gallery" style="margin-top: 67px;"></div>
 
   <div id="lightbox" onclick="this.style.display='none'">
     <button onclick="event.stopPropagation(); prevImage();" style="position:absolute; left:10px; top:50%; transform: translateY(-50%); font-size:30px; background:none; border:none; color:white; z-index:1001;">❮</button>
