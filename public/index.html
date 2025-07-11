@@ -339,277 +339,129 @@
 
   <button id="scrollTopBtn" onclick="scrollToTop()">↑</button>
 
-    const galleryEl = document.getElementById("gallery");
-    const scrollBtn = document.getElementById("scrollTopBtn"); 
-    const categoryFilter = document.getElementById("categoryFilter");
-    let images = [];
-    let page = 1;
-    const pageSize = 20;
+    <script>
+let isAdmin = false;
+let currentLightboxIndex = 0;
+let currentLightboxImages = [];
+const galleryEl = document.getElementById("gallery");
+const scrollBtn = document.getElementById("scrollTopBtn");
+const categoryFilter = document.getElementById("categoryFilter");
+let images = [];
+let page = 1;
+const pageSize = 20;
 
-    function updateCounter() {
-      document.getElementById("imageCount").textContent = getFilteredImages().length;
-    }
-
-    function getFilteredImages() {
-      const selectedCategory = categoryFilter.value;
-      return selectedCategory === "all" ? images : images.filter(i => i.category === selectedCategory);
-    }
-
-    function renderChunk() {
-      const filtered = getFilteredImages();
-      const chunk = filtered.slice((page - 1) * pageSize, page * pageSize);
-      const grouped = {};
-      chunk.forEach(img => {
-        if (!grouped[img.group]) grouped[img.group] = [];
-        grouped[img.group].push(img);
-      });
-
-      Object.values(grouped).forEach(groupImgs => {
-        const img = groupImgs[0];
-        const div = document.createElement("div");
-        div.className = "square";
-
-        const image = document.createElement("img");
-        image.src = img.src;
-        image.onclick = e => {
-          e.stopPropagation();
-          openLightbox(groupImgs.map(i => i.src), img.category);
-        };
-        div.appendChild(image);
-
-        const label = document.createElement("div");
-        label.className = "label";
-        label.textContent = img.category || "";
-        div.appendChild(label);
-        if (img.seller) {
-  const contactBtn = document.createElement("a");
-contactBtn.href = img.seller;
-contactBtn.target = "_blank";
-
-contactBtn.textContent = "تواصل مع البائع";
-contactBtn.style.cssText = `
-  position: absolute;
-  bottom: 6px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 40%;
-  height: 20px; /* ← نحدد ارتفاع ثابت */
-  line-height: 20px; /* ← نخلي النص يتوسّط عموديًا */
-  font-size: 11px;
-  background-color: #0084FF;
-  color: white;
-  border-radius: 4px;
-  text-align: center;
-  text-decoration: none;
-  z-index: 10;
-  white-space: nowrap;
-  overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-`;
-  div.appendChild(contactBtn);
-
+function updateCounter() {
+  document.getElementById("imageCount").textContent = getFilteredImages().length;
 }
 
-        if (isAdmin) {
-          const delBtn = document.createElement("div");
-          delBtn.textContent = "✖";
-          delBtn.style.cssText = `
-            position: absolute; top: 4px; right: 4px;
-            background: rgba(0,0,0,0.6); color: white;
-            font-size: 14px; width: 20px; height: 20px;
-            line-height: 20px; text-align: center;
-            border-radius: 50%; cursor: pointer; z-index: 10;
-          `;
-          
-delBtn.onclick = e => {
-  e.stopPropagation();
+function getFilteredImages() {
+  const selectedCategory = categoryFilter.value;
+  return selectedCategory === "all" ? images : images.filter(i => i.category === selectedCategory);
+}
 
-  fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json")
-    .then(res => res.json())
-    .then(data => {
-      const entries = Object.entries(data || {});
-      const match = entries.find(([key, value]) => value.id === img.id);
-      if (match) {
-        const key = match[0];
-        fetch(`https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images/${key}.json`, {
-          method: "DELETE"
-        }).then(() => {
-          images = images.filter(i => i.id !== img.id);
-          galleryEl.innerHTML = "";
-          page = 1;
-          renderChunk();
-          updateCounter();
-        }).catch(err => {
-          console.error("فشل حذف الصورة:", err);
-          alert("حدث خطأ أثناء حذف الصورة.");
-        });
-      }
-    });
-};
+function renderChunk() {
+  const filtered = getFilteredImages();
+  const chunk = filtered.slice((page - 1) * pageSize, page * pageSize);
+  const grouped = {};
+  chunk.forEach(img => {
+    if (!grouped[img.group]) grouped[img.group] = [];
+    grouped[img.group].push(img);
+  });
 
-          div.appendChild(delBtn);
-        }
+  Object.values(grouped).forEach(groupImgs => {
+    const img = groupImgs[0];
+    const div = document.createElement("div");
+    div.className = "square";
 
-        galleryEl.appendChild(div);
-      });
-    }
-
-    function openLightbox(imgArray, category) {
-      currentLightboxImages = imgArray;
-      currentLightboxIndex = 0;
-      showLightboxImage();
-      document.getElementById("lightbox").style.display = "flex";
-      document.getElementById("lightbox-category").textContent = category || "";
-    // منع إغلاق اللايت بوكس عند الضغط على الصورة نفسها
-    document.getElementById("lightbox-img").onclick = e => {
+    const image = document.createElement("img");
+    image.src = img.src;
+    image.onclick = e => {
       e.stopPropagation();
+      openLightbox(groupImgs.map(i => i.src), img.category);
     };
+    div.appendChild(image);
 
-      const leftArrow = document.querySelector("#lightbox button:nth-of-type(1)");
-      const rightArrow = document.querySelector("#lightbox button:nth-of-type(2)");
-      if (imgArray.length <= 1) {
-        leftArrow.style.display = "none";
-        rightArrow.style.display = "none";
-      } else {
-        leftArrow.style.display = "block";
-        rightArrow.style.display = "block";
-      }
+    const label = document.createElement("div");
+    label.className = "label";
+    label.textContent = img.category || "";
+    div.appendChild(label);
+
+    if (img.seller) {
+      const contactBtn = document.createElement("a");
+      contactBtn.href = img.seller;
+      contactBtn.target = "_blank";
+      contactBtn.textContent = "تواصل مع البائع";
+      contactBtn.style.cssText = `
+        position: absolute;
+        bottom: 6px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 40%;
+        height: 20px;
+        line-height: 20px;
+        font-size: 11px;
+        background-color: #0084FF;
+        color: white;
+        border-radius: 4px;
+        text-align: center;
+        text-decoration: none;
+        z-index: 10;
+        white-space: nowrap;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+      `;
+      div.appendChild(contactBtn);
     }
 
-    function showLightboxImage() {
-  lightboxImg.src = currentLightboxImages[currentLightboxIndex];
-  scale = 1;
-  moveX = 0;
-  moveY = 0;
-  lightboxImg.style.transform = `scale(1) translate(0px, 0px)`;
-}
-
-    function nextImage() {
-      if (currentLightboxIndex < currentLightboxImages.length - 1) {
-        currentLightboxIndex++;
-        showLightboxImage();
-      }
-    }
-
-    function prevImage() {
-      if (currentLightboxIndex > 0) {
-        currentLightboxIndex--;
-        showLightboxImage();
-      }
-    }
-
-// ✅ التعامل مع السحب والإفلات
-const dropzone = document.getElementById("dropzone");
-
-dropzone.addEventListener("dragover", (e) => {
-  e.preventDefault();
-  dropzone.classList.add("dragover");
-});
-
-dropzone.addEventListener("dragleave", () => {
-  dropzone.classList.remove("dragover");
-});
-
-dropzone.addEventListener("drop", (e) => {
-  e.preventDefault();
-  dropzone.classList.remove("dragover");
-  const files = e.dataTransfer.files;
-  handleUpload(files);
-});
-
-    function handleUpload(files) {
-  const selectedCategory = document.getElementById("uploadCategory")?.value || "";
-  if (!selectedCategory) {
-  alert("يرجى اختيار تصنيف قبل رفع الصورة");
-  return;
-}
-
-  // 🟡 نطلب رابط البائع من المستخدم
-  const sellerLink = prompt("أدخل رابط البائع (واتساب أو ماسنجر):");
-  if (!sellerLink) return alert("لم يتم إدخال رابط البائع.");
-
-// 🟢 نطلب اسم التاجر
-const sellerName = document.getElementById("sellerName")?.value || "";
-if (!sellerName) return alert("اختر اسم التاجر من القائمة قبل السحب");
-
-  const groupId = Date.now();
-
-  Array.from(files).forEach(file => {
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", "lastlast");
-
-    fetch("https://api.cloudinary.com/v1_1/dugzs3qbh/image/upload", {
-      method: "POST",
-      body: formData
-    })
-    .then(res => res.json())
-    .then(data => {
-      
-
-      const newImg = {
-        id: Date.now() + Math.random(),
-        src: data.secure_url,
-        category: selectedCategory,
-        seller: sellerLink, // ✅ نضيف الرابط للصورة
-        trader: sellerName,
-        group: groupId
+    if (isAdmin) {
+      const delBtn = document.createElement("div");
+      delBtn.textContent = "✖";
+      delBtn.style.cssText = `
+        position: absolute; top: 4px; right: 4px;
+        background: rgba(0,0,0,0.6); color: white;
+        font-size: 14px; width: 20px; height: 20px;
+        line-height: 20px; text-align: center;
+        border-radius: 50%; cursor: pointer; z-index: 10;
+      `;
+      delBtn.onclick = e => {
+        e.stopPropagation();
+        fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json")
+          .then(res => res.json())
+          .then(data => {
+            const entries = Object.entries(data || {});
+            const match = entries.find(([key, value]) => value.id === img.id);
+            if (match) {
+              const key = match[0];
+              fetch(`https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images/${key}.json`, {
+                method: "DELETE"
+              }).then(() => {
+                images = images.filter(i => i.id !== img.id);
+                galleryEl.innerHTML = "";
+                page = 1;
+                renderChunk();
+                updateCounter();
+              });
+            }
+          });
       };
+      div.appendChild(delBtn);
+    }
 
-      return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newImg)
-      })
-      .then(() => {
-        images.unshift(newImg);
-        galleryEl.innerHTML = "";
-        page = 1;
-        renderChunk();
-        updateCounter();
-      });
-    })
-    .catch(err => {
-      console.error("❌ خطأ في الرفع:", err);
-      alert("حدث خطأ أثناء رفع الصورة.");
-    });
+    galleryEl.appendChild(div);
   });
 }
 
-    function confirmClearGallery() {
-  if (confirm("هل أنت متأكد أنك تريد حذف جميع الصور؟")) {
-    fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json", {
-      method: "DELETE"
-    })
-    .then(() => {
-      images = [];
-      galleryEl.innerHTML = "";
-      page = 1;
-      renderChunk();
-      updateCounter();
-      alert("✅ تم حذف جميع الصور من Firebase.");
-    })
-    .catch(err => {
-      console.error("❌ فشل حذف الصور من Firebase:", err);
-      alert("حدث خطأ أثناء حذف الصور.");
-    });
-  }
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-let isAdmin = false;
-
-    function shuffleGallery() {
-      images = images.sort(() => Math.random() - 0.5);
-      localStorage.setItem("gallery_images", JSON.stringify(images));
-      galleryEl.innerHTML = "";
-      page = 1;
-      renderChunk();
-      updateCounter();
-    }
-
-    function scrollToTop() {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
+function shuffleGallery() {
+  images = images.sort(() => Math.random() - 0.5);
+  galleryEl.innerHTML = "";
+  page = 1;
+  renderChunk();
+  updateCounter();
+}
 
 window.askAdmin = function () {
   const user = prompt("اسم المستخدم:");
@@ -623,13 +475,40 @@ window.askAdmin = function () {
   } else {
     alert("بيانات الدخول غير صحيحة");
   }
+};
+
+function openLightbox(imgArray, category) {
+  currentLightboxImages = imgArray;
+  currentLightboxIndex = 0;
+  showLightboxImage();
+  document.getElementById("lightbox").style.display = "flex";
+  document.getElementById("lightbox-category").textContent = category || "";
 }
 
-    categoryFilter.addEventListener("change", () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-      page = 1;
-      galleryEl.innerHTML = "";
-      renderChunk();
+function showLightboxImage() {
+  const lightboxImg = document.getElementById("lightbox-img");
+  lightboxImg.src = currentLightboxImages[currentLightboxIndex];
+}
+
+function nextImage() {
+  if (currentLightboxIndex < currentLightboxImages.length - 1) {
+    currentLightboxIndex++;
+    showLightboxImage();
+  }
+}
+
+function prevImage() {
+  if (currentLightboxIndex > 0) {
+    currentLightboxIndex--;
+    showLightboxImage();
+  }
+}
+
+categoryFilter.addEventListener("change", () => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  page = 1;
+  galleryEl.innerHTML = "";
+  renderChunk();
   if (categoryFilter.value === "all") {
     const total = getFilteredImages().length;
     while (page * pageSize < total) {
@@ -637,26 +516,8 @@ window.askAdmin = function () {
       renderChunk();
     }
   }
-      updateCounter();
-    });
-
-<script>
-fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json")
-  .then(res => res.json())
-  .then(data => {
-    images = Object.values(data || {});
-    console.log("الصور اللي جت من Firebase:", images);
-    images = images.sort(() => Math.random() - 0.5);
-
-    renderChunk();
-    updateCounter();
-  })
-  .catch(err => {
-    console.error("فشل في جلب الصور من Firebase:", err);
-  });
-
-let currentLightboxIndex = 0;
-let currentLightboxImages = [];
+  updateCounter();
+});
 
 window.addEventListener("scroll", () => {
   if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 300) {
@@ -664,7 +525,6 @@ window.addEventListener("scroll", () => {
     if (page * pageSize < total) {
       page++;
       renderChunk();
-
       setTimeout(() => {
         window.dispatchEvent(new Event("scroll"));
       }, 200);
@@ -677,6 +537,19 @@ window.addEventListener("scroll", () => {
     scrollBtn.style.display = "none";
   }
 });
+
+fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json")
+  .then(res => res.json())
+  .then(data => {
+    images = Object.values(data || {});
+    console.log("✅ الصور:", images);
+    images = images.sort(() => Math.random() - 0.5);
+    renderChunk();
+    updateCounter();
+  })
+  .catch(err => {
+    console.error("❌ فشل تحميل الصور:", err);
+  });
 </script>
   
   window.addEventListener("scroll", () => {
