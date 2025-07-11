@@ -20,7 +20,7 @@
       margin-bottom: 20px;
     }
 
-    h2 {
+    .header h2 {
       color: #333;
       margin: 0;
     }
@@ -47,23 +47,11 @@
 </head>
 <body>
 
-  <h2>مراجعة صور البائعين</h2>
-
-<!-- ✅ زر إدارة البائعين بجوار العنوان -->
-<div style="text-align: right; margin: 10px 0;">
-  <a href="admin-sellers.html" style="
-    display: inline-block;
-    background-color: #6f42c1;
-    color: white;
-    padding: 8px 16px;
-    text-decoration: none;
-    border-radius: 6px;
-    font-size: 14px;
-    font-family: 'Cairo', sans-serif;
-  ">
-    👤 إدارة البائعين
-  </a>
-</div>
+  <!-- ✅ العنوان وزر إدارة البائعين جنب بعض -->
+  <div class="header">
+    <h2>مراجعة صور البائعين</h2>
+    <a href="admin-sellers.html" class="admin-button">👤 إدارة البائعين</a>
+  </div>
 
   <div id="pendingContainer">جارٍ التحميل...</div>
 
@@ -116,18 +104,19 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(approvedImage)
       }).then(() => {
-        return fetch(`https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages/${key}.json`, {
+        return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages/" + key + ".json", {
           method: "DELETE"
         });
       }).then(loadPending);
     }
 
     function reject(key) {
-      fetch(`https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages/${key}.json`, {
+      fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages/" + key + ".json", {
         method: "DELETE"
       }).then(loadPending);
     }
 
+    // ✅ تحميل الصور عند فتح الصفحة
     loadPending();
   </script>
 </body>
