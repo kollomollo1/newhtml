@@ -310,14 +310,16 @@
 <div class="gallery" id="gallery"></div>
 <div id="lightbox" onclick="this.style.display='none'">
 <button onclick="event.stopPropagation(); prevImage();" style="position:absolute; left:10px; top:50%; transform: translateY(-50%); font-size:30px; background:none; border:none; color:white; z-index:1001;">❮</button>
-<img id="lightbox-img" src="">
+<img id="lightbox-img" src=""/>
 <button onclick="event.stopPropagation(); nextImage();" style="position:absolute; right:10px; top:50%; font-size:30px; background:none; border:none; color:white;">❯</button>
 <p id="lightbox-category"></p>
-</img></div>
+</div>
 <button id="scrollTopBtn" onclick="scrollToTop()">↑</button>
 <script>
     let isAdmin = false;
-if (localStorage.getItem("isAdmin") === "true") {
+firebase.auth().onAuthStateChanged(user => {
+  if (user) { isAdmin = true; } });
+firebase.auth().onAuthStateChanged(user => { if (user) {
   isAdmin = true;
   document.getElementById("adminPanel").style.display = "flex";
 }
@@ -1080,12 +1082,12 @@ function rejectPendingImage(key) {
 }
 
 // عند تسجيل الدخول كأدمن، شغل تحميل الصور المعلقة
-if (localStorage.getItem("isAdmin") === "true") {
+firebase.auth().onAuthStateChanged(user => { if (user) {
   loadPendingApprovalImages();
 }
 </script>
 <script>
-  if (localStorage.getItem("isAdmin") === "true") {
+  firebase.auth().onAuthStateChanged(user => { if (user) {
     const section = document.createElement("div");
     section.style.marginTop = "30px";
     section.style.borderTop = "1px solid #ccc";
@@ -1097,7 +1099,6 @@ if (localStorage.getItem("isAdmin") === "true") {
     document.body.insertBefore(section, document.getElementById("adminPanel"));
   }
 </script>
-
 <!-- Firebase App (the core Firebase SDK) -->
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
@@ -1138,6 +1139,28 @@ if (localStorage.getItem("isAdmin") === "true") {
       document.getElementById("adminPanel").style.display = "flex";
     } else {
       localStorage.removeItem("isAdmin");
+    }
+  });
+</script>
+
+<script>
+  firebase.auth().onAuthStateChanged(user => {
+    if (user) {
+      document.getElementById("adminPanel").style.display = "flex";
+
+      // تحميل الصور المعلقة
+      loadPendingApprovalImages();
+
+      // إضافة واجهة مراجعة الصور
+      const section = document.createElement("div");
+      section.style.marginTop = "30px";
+      section.style.borderTop = "1px solid #ccc";
+      section.style.paddingTop = "10px";
+      section.innerHTML = `
+        <h4>✅ مراجعة صور البائعين:</h4>
+        <div id="pendingApprovalContainer">جاري التحميل...</div>
+      `;
+      document.body.insertBefore(section, document.getElementById("adminPanel"));
     }
   });
 </script>
