@@ -110,6 +110,8 @@
       font-size: 16px;
       border-radius: 6px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+
+      width: 160px; /* ← تصغير العرض الأفقي */
     }
   
 @media (pointer: coarse) {
@@ -117,6 +119,30 @@
     touch-action: none;
     
   }
+}
+
+.header-buttons {
+  position: fixed;
+  top: 10px;
+  width: 100%;
+  z-index: 1001;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 12px;
+  box-sizing: border-box;
+}
+
+.header-buttons a {
+  padding: 4px 10px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 14px;
+  color: white;
+  background-color: #28a745;
+}
+
+.header-buttons a.login {
+  background-color: #007bff;
 }
 </style>
 </head>
@@ -127,15 +153,48 @@
     <div style="font-size: 13px; color: #666; margin: 2px 0 0;">مشروع كل بيت</div>
   </div>
 
-  <button onclick="askAdmin()" style="position: absolute; top: 10px; right: 10px; z-index: 1000; background: white; color: white; border: none; border-radius: 4px; padding: 4px 8px; font-size: 12px; cursor: pointer;">أدمن</button>
+<div class="header-buttons">
+  <a href="register.html" class="register">تسجيل كبائع</a>
+  <a href="login.html" class="login">دخول</a>
+</div>
 
-  <div style="position: absolute; top: 70px; right: 10px; z-index: 1000; display: flex; align-items: center; gap: 6px; background: #25D366; color: white; border-radius: 6px; padding: 2px 6px; font-size: 12px;">
+<button onclick="askAdmin()" id="adminBtn" style="
+  position: fixed;
+  top: 12px;
+  right: 70px;
+  z-index: 2000;
+  background: white;
+  color: white;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+  font-family: 'Cairo', sans-serif;
+">
+  أدمن
+</button>
+
+  <div style="position: absolute; top: 75px; right: 10px; z-index: 1000; display: flex; align-items: center; gap: 6px; background: #25D366; color: white; border-radius: 6px; padding: 2px 6px; font-size: 12px;">
     <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" style="width: 20px; height: 20px;">
     <a href="https://wa.me/201097646018" target="_blank" style="color: white; text-decoration: none; direction: ltr;">تواصل التجار مع الأدمن</a>
   </div>
 
-
   <div id="adminPanel" style="display: none; flex-direction: column; gap: 10px; margin: 10px;">
+<a href="admin-sellers.html" target="_blank" style="
+  background-color: #6f42c1;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+  width: fit-content;
+  font-size: 14px;
+  margin-bottom: 10px;
+">
+  👤 إدارة البائعين
+</a>
+
+
   <div id="dropzone">اسحب الصورة هنا لرفعها</div>
 
   <div style="margin-top: 10px;">
@@ -144,16 +203,21 @@
     
     <select id="sellerName" style="margin-top: 6px; width: 100%; padding: 6px;">
         <option value="">-- اختر التاجر --</option>
-        <option value="Nancy Elshabrawy Store">NancyElshabrawyStore</option>
-<option value="Mohammed Nabil Store">MohammedNabilStore</option>
-<option value="Marwa Kandeel Store">MarwaKandeelStore</option>
+        <option value="Nancy Elshabrawy Store">Nancy Elshabrawy Store</option>
+<option value="Mohammed Nabil Store">Mohammed Nabil Store</option>
+<option value="Marwa Kandeel Store">Marwa Kandeel Store</option>
 <option value="كوليكشن ستور">كوليكشن ستور</option>
-<option value="Basma Hossam Store">BasmaHossamStore</option>
-<option value="Asmaa Saeed Store">AsmaaSaeedStore</option>
-<option value="Amal Hassan Store">AmalHassanStore</option>
-<option value="Aliaa Abdelnaser Store">liaaAbdelnaserStore</option>
+<option value="Basma Hossam Store">Basma Hossam Store</option>
+<option value="Asmaa Saeed Store">Asmaa Saeed Store</option>
+<option value="Amal Hassan Store">Amal Hassan Store</option>
+<option value="Golden Eyescat Store">Golden Eyescat Store</option>
+<option value="Aliaa Abdelnaser Store">AliaaAbdelnaser Store</option>
 <option value="Ahmed Emad Store">Ahmed Emad Store</option>
 <option value="Ibrahim Store">Ibrahim Store</option>
+<option value="Anaqt Mhjbt Store">Anaqt Mhjbt Store</option>
+<option value="So Trendy Store">So Trendy Store</option>
+<option value="Hnyn Abrahym Store">Hnyn Abrahym Store</option>
+<option value="عام">عام</option>
     </select>
 
 <select id="uploadCategory" style="margin-top: 6px; width: 100%; padding: 6px;">
@@ -176,16 +240,21 @@
   <h4>🗑️ حذف صور تاجر:</h4>
   <select id="deleteTraderSelect" style="width: 100%; padding: 6px;">
     <option value="">-- اختر التاجر --</option>
-    <option value="Nancy Elshabrawy Store">NancyElshabrawyStore</option>
-<option value="Mohammed Nabil Store">MohammedNabilStore</option>
-<option value="Marwa Kandeel Store">MarwaKandeelStore</option>
+    <option value="Nancy Elshabrawy Store">Nancy Elshabrawy Store</option>
+<option value="Mohammed Nabil Store">Mohammed Nabil Store</option>
+<option value="Marwa Kandeel Store">Marwa Kandeel Store</option>
 <option value="كوليكشن ستور">كوليكشن ستور</option>
-<option value="Basma Hossam Store">BasmaHossamStore</option>
-<option value="Asmaa Saeed Store">AsmaaSaeedStore</option>
-<option value="Amal Hassan Store">AmalHassanStore</option>
-<option value="Aliaa Abdelnaser Store">liaaAbdelnaserStore</option>
+<option value="Basma Hossam Store">Basma Hossam Store</option>
+<option value="Asmaa Saeed Store">Asmaa Saeed Store</option>
+<option value="Amal Hassan Store">Amal Hassan Store</option>
+<option value="Golden Eyescat Store">Golden Eyescat Store</option>
+<option value="Aliaa Abdelnaser Store">AliaaAbdelnaser Store</option>
 <option value="Ahmed Emad Store">Ahmed Emad Store</option>
 <option value="Ibrahim Store">Ibrahim Store</option>
+<option value="Anaqt Mhjbt Store">Anaqt Mhjbt Store</option>
+<option value="So Trendy Store">So Trendy Store</option>
+<option value="Hnyn Abrahym Store">Hnyn Abrahym Store</option>
+<option value="عام">عام</option>
   </select>
   <button onclick="deleteTraderImages()" style="margin-top: 10px;">حذف كل صور التاجر</button>
 </div>
@@ -217,16 +286,21 @@
   <h4>📁 عرض صور تاجر:</h4>
   <select id="viewTraderSelect" style="width: 100%; padding: 6px;">
     <option value="">-- اختر التاجر --</option>
-    <option value="Nancy Elshabrawy Store">NancyElshabrawyStore</option>
-<option value="Mohammed Nabil Store">MohammedNabilStore</option>
-<option value="Marwa Kandeel Store">MarwaKandeelStore</option>
+    <option value="Nancy Elshabrawy Store">Nancy Elshabrawy Store</option>
+<option value="Mohammed Nabil Store">Mohammed Nabil Store</option>
+<option value="Marwa Kandeel Store">Marwa Kandeel Store</option>
 <option value="كوليكشن ستور">كوليكشن ستور</option>
-<option value="Basma Hossam Store">BasmaHossamStore</option>
-<option value="Asmaa Saeed Store">AsmaaSaeedStore</option>
-<option value="Amal Hassan Store">AmalHassanStore</option>
-<option value="Aliaa Abdelnaser Store">liaaAbdelnaserStore</option>
+<option value="Basma Hossam Store">Basma Hossam Store</option>
+<option value="Asmaa Saeed Store">Asmaa Saeed Store</option>
+<option value="Amal Hassan Store">Amal Hassan Store</option>
+<option value="Golden Eyescat Store">Golden Eyescat Store</option>
+<option value="Aliaa Abdelnaser Store">AliaaAbdelnaser Store</option>
 <option value="Ahmed Emad Store">Ahmed Emad Store</option>
 <option value="Ibrahim Store">Ibrahim Store</option>
+<option value="Anaqt Mhjbt Store">Anaqt Mhjbt Store</option>
+<option value="So Trendy Store">So Trendy Store</option>
+<option value="Hnyn Abrahym Store">Hnyn Abrahym Store</option>
+<option value="عام">عام</option>
   </select>
   <button onclick="viewTraderImages()" style="margin-top: 10px;">عرض الصور</button>
 </div>
@@ -542,13 +616,12 @@ if (!sellerName) return alert("اختر اسم التاجر من القائمة 
     function scrollToTop() {
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
-
-    window.askAdmin = function () {
+window.askAdmin = function () {
   const user = prompt("اسم المستخدم:");
   const pass = prompt("كلمة السر:");
   if (user === "2330498Aa" && pass === "2330498Aa") {
-    localStorage.setItem("isAdmin", "true");
-    location.reload();
+    localStorage.setItem("isAdmin", "true"); // ← دي أهم تعديل
+    location.href = "admin-review.html";
   } else {
     alert("بيانات الدخول غير صحيحة");
   }
@@ -588,20 +661,27 @@ if (!sellerName) return alert("اختر اسم التاجر من القائمة 
     let currentLightboxImages = [];
   
   window.addEventListener("scroll", () => {
-    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100) {
-      const total = getFilteredImages().length;
-      if (page * pageSize < total) {
-        page++;
-        renderChunk();
-      }
-    }
+  if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 300) {
+    const total = getFilteredImages().length;
+    if (page * pageSize < total) {
+      page++;
+      renderChunk();
 
-    if (window.scrollY > 300) {
-      scrollBtn.style.display = "block";
-    } else {
-      scrollBtn.style.display = "none";
+      // إجبار فحص scroll بعد تحميل الصور
+      setTimeout(() => {
+        window.dispatchEvent(new Event("scroll"));
+      }, 200);
     }
-  });
+  }
+
+  // زر الرجوع للأعلى
+  if (window.scrollY > 300) {
+    scrollBtn.style.display = "block";
+  } else {
+    scrollBtn.style.display = "none";
+  }
+});
+
 
 
 let lightboxImg = document.getElementById('lightbox-img');
@@ -958,6 +1038,89 @@ function viewTraderImages() {
       });
     });
 }
+</script>
+<script>
+function loadPendingApprovalImages() {
+  fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages.json")
+    .then(res => res.json())
+    .then(data => {
+      const container = document.getElementById("pendingApprovalContainer");
+      container.innerHTML = "";
+      if (!data) {
+        container.innerHTML = "<p>لا توجد صور معلقة حالياً.</p>";
+        return;
+      }
+
+      for (const [key, img] of Object.entries(data)) {
+        if (img.approved === false) {
+          const wrapper = document.createElement("div");
+          wrapper.style.marginBottom = "20px";
+          wrapper.style.border = "1px solid #ddd";
+          wrapper.style.padding = "10px";
+          wrapper.style.borderRadius = "6px";
+          wrapper.innerHTML = `
+            <p><strong>البائع:</strong> ${img.sellerName || "غير معروف"}</p>
+            <img src="${img.src}" style="width:150px; max-width:100%; border-radius:6px;"><br>
+            <button onclick='approvePendingImage("${key}", ${JSON.stringify(img).replace(/"/g, '&quot;')})'>✅ قبول</button>
+            <button onclick='rejectPendingImage("${key}")'>🗑️ حذف</button>
+          `;
+          container.appendChild(wrapper);
+        }
+      }
+    });
+}
+
+function approvePendingImage(key, imgData) {
+  const approvedImage = {
+    id: Date.now() + Math.random(),
+    src: imgData.src,
+    seller: imgData.seller || "#",
+    trader: imgData.sellerName || "غير معروف",
+    category: imgData.category || "غير مصنف",
+    group: Date.now()
+  };
+
+  fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(approvedImage)
+  }).then(() => {
+    return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages/" + key + ".json", {
+      method: "DELETE"
+    });
+  }).then(() => {
+    alert("✅ تم قبول الصورة");
+    loadPendingApprovalImages();
+  });
+}
+
+function rejectPendingImage(key) {
+  fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages/" + key + ".json", {
+    method: "DELETE"
+  }).then(() => {
+    alert("🗑️ تم حذف الصورة");
+    loadPendingApprovalImages();
+  });
+}
+
+// عند تسجيل الدخول كأدمن، شغل تحميل الصور المعلقة
+if (localStorage.getItem("isAdmin") === "true") {
+  loadPendingApprovalImages();
+}
+</script>
+
+<script>
+  if (localStorage.getItem("isAdmin") === "true") {
+    const section = document.createElement("div");
+    section.style.marginTop = "30px";
+    section.style.borderTop = "1px solid #ccc";
+    section.style.paddingTop = "10px";
+    section.innerHTML = `
+      <h4>✅ مراجعة صور البائعين:</h4>
+      <div id="pendingApprovalContainer">جاري التحميل...</div>
+    `;
+    document.body.insertBefore(section, document.getElementById("adminPanel"));
+  }
 </script>
 
 </body>
