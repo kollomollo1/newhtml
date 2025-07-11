@@ -132,11 +132,6 @@
   box-sizing: border-box;
 }
 
-/* ✅ ده يتحط بعده في نفس الـ <style> أو ملف CSS */
-.header-buttons .login {
-  margin-left: 10px;
-}
-
 .header-buttons a {
   padding: 4px 10px;
   border-radius: 6px;
@@ -150,21 +145,6 @@
   background-color: #007bff;
 }
 </style>
-
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-    body {
-      margin: 0;
-      padding: 0;
-      overflow-x: hidden;
-    }
-    #gallery {
-      display: none;
-    }
-  </style>
-
 </head>
 <body>
 
@@ -614,7 +594,6 @@ if (!sellerName) return alert("اختر اسم التاجر من القائمة 
       page = 1;
       renderChunk();
       updateCounter();
-      galleryEl.style.display = "grid";
       alert("✅ تم حذف جميع الصور من Firebase.");
     })
     .catch(err => {
@@ -632,7 +611,6 @@ if (!sellerName) return alert("اختر اسم التاجر من القائمة 
       page = 1;
       renderChunk();
       updateCounter();
-      galleryEl.style.display = "grid";
     }
 
     function scrollToTop() {
@@ -672,7 +650,6 @@ window.askAdmin = function () {
 
       renderChunk();
       updateCounter();
-      galleryEl.style.display = "grid";
     })
     .catch(err => {
       console.error("فشل في جلب الصور من Firebase:", err);
@@ -905,7 +882,6 @@ function uploadSingleImage() {
       page = 1;
       renderChunk();
       updateCounter();
-      galleryEl.style.display = "grid";
     });
   })
   .catch(err => {
@@ -982,7 +958,6 @@ function deleteTraderImages() {
       page = 1;
       renderChunk();
       updateCounter();
-      galleryEl.style.display = "grid";
     })
     .catch(err => {
       console.error("❌ فشل حذف الصور:", err);
