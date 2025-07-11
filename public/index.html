@@ -317,8 +317,7 @@
 <button id="scrollTopBtn" onclick="scrollToTop()">↑</button>
 <script>
     let isAdmin = false;
-firebase.auth().onAuthStateChanged(user => {
-  if (user) {
+if (localStorage.getItem("isAdmin") === "true") {
   isAdmin = true;
   document.getElementById("adminPanel").style.display = "flex";
 }
@@ -597,8 +596,8 @@ window.askAdmin = function () {
   const user = prompt("اسم المستخدم:");
   const pass = prompt("كلمة السر:");
   if (user === "2330498Aa" && pass === "2330498Aa") {
-     // ← دي أهم تعديل
-    location.reload();
+    localStorage.setItem("isAdmin", "true"); // ← دي أهم تعديل
+    location.href = "admin-review.html";
   } else {
     alert("بيانات الدخول غير صحيحة");
   }
@@ -1081,14 +1080,12 @@ function rejectPendingImage(key) {
 }
 
 // عند تسجيل الدخول كأدمن، شغل تحميل الصور المعلقة
-firebase.auth().onAuthStateChanged(user => {
-  if (user) {
+if (localStorage.getItem("isAdmin") === "true") {
   loadPendingApprovalImages();
 }
 </script>
 <script>
-  firebase.auth().onAuthStateChanged(user => {
-  if (user) {
+  if (localStorage.getItem("isAdmin") === "true") {
     const section = document.createElement("div");
     section.style.marginTop = "30px";
     section.style.borderTop = "1px solid #ccc";
@@ -1121,7 +1118,7 @@ firebase.auth().onAuthStateChanged(user => {
     const password = prompt("كلمة المرور:");
     try {
       await firebase.auth().signInWithEmailAndPassword(email, password);
-      localStorage.setItem("isAdmin", "true");
+      
       location.reload();
     } catch (error) {
       alert("فشل تسجيل الدخول: " + error.message);
@@ -1130,17 +1127,17 @@ firebase.auth().onAuthStateChanged(user => {
 
   window.logoutAdmin = function () {
     firebase.auth().signOut().then(() => {
-      localStorage.removeItem("isAdmin");
+      
       location.reload();
     });
   };
 
   firebase.auth().onAuthStateChanged(user => {
     if (user) {
-      localStorage.setItem("isAdmin", "true");
+      
       document.getElementById("adminPanel").style.display = "flex";
     } else {
-      localStorage.removeItem("isAdmin");
+      
     }
   });
 </script>
