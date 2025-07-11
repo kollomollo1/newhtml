@@ -63,23 +63,41 @@
   </div>
 
   <script>
-    function register(e) {
-      e.preventDefault();
-      const name = document.getElementById("name").value.trim();
-      const password = document.getElementById("password").value.trim();
+    <script>
+  function register(e) {
+    e.preventDefault();
 
-      if (!name || !password) return alert("يرجى ملء جميع الحقول");
+    const name = document.getElementById("name").value.trim();
+    const password = document.getElementById("password").value.trim();
 
-      const seller = { name, password };
-      fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/sellers.json", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(seller)
-      }).then(() => {
-        alert("✅ تم التسجيل بنجاح، يمكنك الآن تسجيل الدخول.");
-        location.href = "login.html";
-      });
+    if (!name || !password) {
+      alert("يرجى ملء جميع الحقول");
+      return;
     }
-  </script>
+
+    // ✅ تحقق من وجود الاسم مسبقًا
+    fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/sellers.json")
+      .then(res => res.json())
+      .then(data => {
+        const exists = Object.values(data || {}).some(seller => seller.name === name);
+
+        if (exists) {
+          alert("⚠️ هذا الاسم مسجل بالفعل، الرجاء اختيار اسم متجر آخر.");
+        } else {
+          // ✅ الاسم غير مستخدم - يتم التسجيل
+          const seller = { name, password };
+
+          fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/sellers.json", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(seller)
+          }).then(() => {
+            alert("✅ تم التسجيل بنجاح، يمكنك الآن تسجيل الدخول.");
+            location.href = "login.html";
+          });
+        }
+      });
+  }
+</script>
 </body>
 </html>
