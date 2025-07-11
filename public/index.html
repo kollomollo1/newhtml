@@ -122,14 +122,15 @@
 }
 
 .header-buttons {
-  position: fixed;
+  position: relative; /* ← بدل fixed */
   top: 10px;
   width: 100%;
-  z-index: 1001;
+  z-index: 1;
   display: flex;
   justify-content: space-between;
   padding: 0 12px;
   box-sizing: border-box;
+  margin-top: 120px; /* علشان ما يخبطش في عنوان الموقع */
 }
 
 /* ✅ ده يتحط بعده في نفس الـ <style> أو ملف CSS */
