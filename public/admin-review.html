@@ -51,11 +51,11 @@
   <div id="pendingContainer">جارٍ التحميل...</div>
 
   <script>
-  if (localStorage.getItem("isAdmin") !== "true") {
-  alert("غير مصرح لك بالدخول");
-  location.href = "index.html";
-}
-</script>
+    // ✅ حماية الدخول
+    if (localStorage.getItem("isAdmin") !== "true") {
+      alert("غير مصرح لك بالدخول");
+      location.href = "index.html";
+    }
 
     function loadPending() {
       fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages.json")
@@ -111,6 +111,7 @@
       }).then(loadPending);
     }
 
+    // ✅ تحميل الصور عند فتح الصفحة
     loadPending();
   </script>
 </body>
