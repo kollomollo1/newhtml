@@ -1,67 +1,145 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-<meta charset="UTF-8">
-<title>مراجعة صور البائعين</title>
-<link href="https://fonts.googleapis.com/css2?family=Cairo&display=swap" rel="stylesheet">
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js"></script>
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyCP2gI3kFHg-ExtEhyMLlBe4o0yXHHXV6E",
-    authDomain: "gallery3modifiedjsless.firebaseapp.com",
-    projectId: "gallery3modifiedjsless",
-  };
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-  auth.onAuthStateChanged(user => { if (!user) location.href = "admin-login.html"; });
-</script>
-<style>
-  body { font-family: 'Cairo', sans-serif; background-color: #f9f9f9; padding: 20px; text-align: center; }
-  .header { display: flex; justify-content: center; align-items: center; gap: 20px; flex-wrap: wrap; margin-bottom: 20px; }
-  .header h2 { color: #333; margin: 0; }
-  .admin-button { background-color: #6f42c1; color: white; padding: 8px 16px; border-radius: 6px; font-size: 14px; text-decoration: none; }
-  .admin-button:hover { background-color: #5936a2; }
-</style>
+  <meta charset="UTF-8">
+  <title>مراجعة صور البائعين</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo&display=swap" rel="stylesheet">
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+      background-color: #f9f9f9;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .header {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .header h2 {
+      color: #333;
+      margin: 0;
+    }
+
+    .admin-button {
+      background-color: #6f42c1;
+      color: white;
+      padding: 8px 16px;
+      text-decoration: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: 'Cairo', sans-serif;
+    }
+
+    .admin-button:hover {
+      background-color: #5936a2;
+    }
+
+    img {
+      border-radius: 6px;
+      margin-bottom: 10px;
+    }
+  </style>
 </head>
 <body>
-<div class="header">
-  <h2>مراجعة صور البائعين</h2>
-  <a href="admin-sellers.html" class="admin-button">👤 إدارة البائعين</a>
-  <button onclick="logout()" class="admin-button">🚪 تسجيل الخروج</button>
-</div>
-<div id="pendingContainer">جارٍ التحميل...</div>
-<script>
-function logout() { auth.signOut().then(() => location.href = "admin-login.html"); }
-function loadPending() {
-  fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages.json")
-    .then(res => res.json())
-    .then(data => {
-      const container = document.getElementById("pendingContainer");
-      container.innerHTML = "";
-      if (!data) { container.innerHTML = "<p>لا توجد صور معلقة حالياً.</p>"; return; }
-      for (const [key, img] of Object.entries(data)) {
-        if (img.approved === false) {
-          const div = document.createElement("div");
-          div.innerHTML = `<p><strong>${img.sellerName}</strong></p>
-            <img src="${img.src}" style="width:150px"><br>
-            <button onclick='approve("${key}", ${JSON.stringify(img).replace(/"/g, '&quot;')})'>✅ قبول</button>
-            <button onclick='reject("${key}")'>🗑️ حذف</button><hr>`;
-          container.appendChild(div);
-        }
+
+  <div class="header">
+    <h2>مراجعة صور البائعين</h2>
+    <a href="admin-sellers.html" class="admin-button">👤 إدارة البائعين</a>
+  </div>
+
+  <div id="pendingContainer">جارٍ التحميل...</div>
+
+  <script>
+    // تهيئة Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyCP2gI3kFHg-ExtEhyMLlBe4o0yXHHXV6E",
+      authDomain: "gallery3modifiedjsless.firebaseapp.com",
+      projectId: "gallery3modifiedjsless",
+      storageBucket: "gallery3modifiedjsless.appspot.com",
+      messagingSenderId: "437182767215",
+      appId: "1:437182767215:web:0705b90e7009337a85ad9a"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    // التحقق من تسجيل دخول الأدمن
+    auth.onAuthStateChanged(user => {
+      if (!user) {
+        alert("غير مصرح لك بالدخول");
+        location.href = "admin-login.html"; // تأكد أن صفحة تسجيل الدخول موجودة
+      } else {
+        loadPending(); // ✅ حمل الصور بعد التأكد من تسجيل الدخول
       }
     });
-}
-function approve(key, imgData) {
-  const approvedImage = { id: Date.now()+Math.random(), src: imgData.src, seller: imgData.seller||"#", trader: imgData.sellerName||"غير معروف", category: imgData.category||"غير مصنف", group: Date.now() };
-  fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json", {
-    method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(approvedImage)
-  }).then(() => fetch(`https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages/${key}.json`, { method: "DELETE" })).then(loadPending);
-}
-function reject(key) {
-  fetch(`https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages/${key}.json`, { method: "DELETE" }).then(loadPending);
-}
-loadPending();
-</script>
+
+    // تحميل الصور المعلقة
+    function loadPending() {
+      fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages.json")
+        .then(res => res.json())
+        .then(data => {
+          const container = document.getElementById("pendingContainer");
+          container.innerHTML = "";
+          if (!data) {
+            container.innerHTML = "<p>لا توجد صور معلقة حالياً.</p>";
+            return;
+          }
+
+          for (const [key, img] of Object.entries(data)) {
+            if (img.approved === false) {
+              const div = document.createElement("div");
+              div.innerHTML = `
+                <p><strong>${img.sellerName}</strong></p>
+                <img src="${img.src}" style="width:150px"><br>
+                <button onclick='approve("${key}", ${JSON.stringify(img).replace(/"/g, '&quot;')})'>✅ قبول</button>
+                <button onclick='reject("${key}")'>🗑️ حذف</button>
+                <hr>
+              `;
+              container.appendChild(div);
+            }
+          }
+        });
+    }
+
+    // قبول صورة
+    function approve(key, imgData) {
+      const approvedImage = {
+        id: Date.now() + Math.random(),
+        src: imgData.src,
+        seller: imgData.seller || "#",
+        trader: imgData.sellerName || "غير معروف",
+        category: imgData.category || "غير مصنف",
+        group: Date.now()
+      };
+
+      fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(approvedImage)
+      }).then(() => {
+        return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages/" + key + ".json", {
+          method: "DELETE"
+        });
+      }).then(loadPending);
+    }
+
+    // حذف صورة
+    function reject(key) {
+      fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages/" + key + ".json", {
+        method: "DELETE"
+      }).then(loadPending);
+    }
+  </script>
 </body>
 </html>
