@@ -1086,8 +1086,8 @@ firebase.auth().onAuthStateChanged(user => { if (user) {
   loadPendingApprovalImages();
 }
 </script>
-<script>
-  firebase.auth().onAuthStateChanged(user => { if (user) {
+<script>firebase.auth().onAuthStateChanged(user => {
+  if (user) {
     const section = document.createElement("div");
     section.style.marginTop = "30px";
     section.style.borderTop = "1px solid #ccc";
@@ -1098,7 +1098,7 @@ firebase.auth().onAuthStateChanged(user => { if (user) {
     `;
     document.body.insertBefore(section, document.getElementById("adminPanel"));
   }
-</script>
+});</script>
 <!-- Firebase App (the core Firebase SDK) -->
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
