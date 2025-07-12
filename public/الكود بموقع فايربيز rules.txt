@@ -1,0 +1,12 @@
+{
+  "rules": {
+    ".read": true,
+    ".write": true
+  }
+}
+
+
+هنا
+https://console.firebase.google.com/u/0/project/gallery3modifiedjsless/database/gallery3modifiedjsless-default-rtdb/rules
+
+من realtime database , rules

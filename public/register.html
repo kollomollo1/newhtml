@@ -87,32 +87,20 @@
         return;
       }
 
-      fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/sellers.json")
-        .then(res => res.json())
-        .then(data => {
-          const sellers = data || {};
-          const exists = Object.values(sellers).some(s => s.shopName === shopName);
-
-          if (exists) {
-            message.innerText = "❌ اسم المتجر مستخدم بالفعل، اختر اسم آخر";
-          } else {
-            firebase.auth().createUserWithEmailAndPassword(email, password)
-              .then((userCredential) => {
-                const uid = userCredential.user.uid;
-                fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/sellers/" + uid + ".json", {
-                  method: "PUT",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ shopName })
-                });
-                alert("✅ تم إنشاء الحساب بنجاح");
-                window.location.href = "login.html";
-              })
-              .catch((error) => {
-                message.innerText = "❌ " + error.message;
-              });
-          }
-        });
+     firebase.auth().createUserWithEmailAndPassword(email, password)
+  .then((userCredential) => {
+    const uid = userCredential.user.uid;
+    fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/sellers/" + uid + ".json", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ shopName })
     });
+    alert("✅ تم إنشاء الحساب بنجاح");
+    window.location.href = "login.html";
+  })
+  .catch((error) => {
+    message.innerText = "❌ " + error.message;
+  });
   </script>
 </body>
 </html>

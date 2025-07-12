@@ -85,7 +85,10 @@
           const uid = userCredential.user.uid;
 
           // جلب shopName من قاعدة البيانات
-          fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/sellers/" + uid + ".json")
+          userCredential.user.getIdToken().then(token => {
+  const uid = userCredential.user.uid;
+  return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/sellers/" + uid + ".json?auth=" + token);
+})
             .then(res => res.json())
             .then(data => {
               if (data && data.shopName) {
