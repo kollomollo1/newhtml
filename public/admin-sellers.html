@@ -202,6 +202,27 @@
         Promise.all(deleteList).then(() => location.reload());
       });
     }
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyCP2gI3kFHg-ExtEhyMLlBe4o0yXHHXV6E",
+    authDomain: "gallery3modifiedjsless.firebaseapp.com",
+    projectId: "gallery3modifiedjsless",
+    storageBucket: "gallery3modifiedjsless.appspot.com",
+    messagingSenderId: "437182767215",
+    appId: "1:437182767215:web:0705b90e7009337a85ad9a"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+
+  firebase.auth().onAuthStateChanged(user => {
+    if (!user || user.email !== "kollomollo1@gmail.com") {
+      alert("🚫 غير مصرح لك بالدخول");
+      window.location.href = "admin-login-firebase.html";
+    } else {
+      loadSellers(); // ← أو أي دالة بتعرض البيانات
+    }
+  });
   </script>
 </body>
 </html>
