@@ -41,10 +41,42 @@
       background-color: #5936a2;
     }
 
-    img {
+    .card {
+      background: #fff;
+      padding: 15px;
+      margin: 10px auto;
+      border-radius: 10px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+      display: inline-block;
+      width: 180px;
+      vertical-align: top;
+    }
+
+    .card img {
+      max-width: 100%;
       border-radius: 6px;
       margin-bottom: 10px;
     }
+
+    .card .btns {
+      display: flex;
+      justify-content: space-between;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+
+    .card button {
+      flex: 1;
+      padding: 6px 8px;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .approve-btn { background-color: #28a745; }
+    .reject-btn { background-color: #dc3545; }
   </style>
 </head>
 <body>
@@ -90,32 +122,15 @@
           for (const [key, img] of Object.entries(data)) {
             if (!img.approved) {
               const div = document.createElement("div");
-              div.style = "background:#fff; margin-bottom:20px; padding:10px; border-radius:8px; box-shadow:0 0 5px rgba(0,0,0,0.1); display:inline-block; text-align:center;";
+              div.className = "card";
 
               div.innerHTML = `
-    <style>
-      .img-card-btns {
-        display: flex;
-        justify-content: center;
-        gap: 10px;
-        margin-top: 10px;
-        flex-wrap: wrap;
-      }
-      .img-card-btns button {
-        padding: 6px 10px;
-        font-size: 14px;
-        border-radius: 6px;
-        border: none;
-        cursor: pointer;
-      }
-    </style>
-    
                 <p><strong>${img.sellerName || "غير معروف"}</strong></p>
-                <img src="${img.src}" style="max-width: 100%; width: 150px; height: auto; border-radius:6px; margin-bottom:10px;">
-    <div class="img-card-btns">
-      <button onclick='approve("${key}", ${JSON.stringify(img).replace(/"/g, '&quot;')})' style="background-color:#28a745; color:white;">✅ قبول</button>
-      <button onclick='reject("${key}")' style="background-color:#dc3545; color:white;">🗑️ حذف</button>
-    </div>
+                <img src="${img.src}" alt="صورة">
+                <div class="btns">
+                  <button class="approve-btn" onclick='approve("${key}", ${JSON.stringify(img).replace(/"/g, '&quot;')})'>✅ قبول</button>
+                  <button class="reject-btn" onclick='reject("${key}")'>🗑️ حذف</button>
+                </div>
               `;
 
               container.appendChild(div);
@@ -151,6 +166,5 @@
       }).then(loadPending);
     }
   </script>
-
 </body>
 </html>
