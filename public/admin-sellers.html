@@ -110,6 +110,7 @@
         });
     }
 
+    
     function viewImages(sellerName, btn) {
       const box = btn.parentElement.querySelector(".images-container");
       if (box.style.display === "grid") {
@@ -134,7 +135,6 @@
         [pending, approved].forEach((source, index) => {
           if (!source) return;
           Object.entries(source).forEach(([key, img]) => {
-            console.log("👁 صورة:", img.sellerName, "==>", img.src);
             const match = (
               normalize(img.sellerName) === normalize(sellerName) ||
               normalize(img.trader) === normalize(sellerName) ||
@@ -173,6 +173,7 @@
         }
       });
     }
+
   </script>
 </body>
 </html>
