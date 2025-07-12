@@ -880,8 +880,12 @@ function openLightbox(imgArray, category) {
 window.history.pushState({}, "");
     
 function logoutAdmin() {
-  localStorage.removeItem("isAdmin");
-  location.reload();
+  firebase.auth().signOut().then(() => {
+    location.href = "admin-login.html"; // ← يرجع لصفحة الدخول
+  }).catch((error) => {
+    alert("❌ فشل تسجيل الخروج");
+    console.error(error);
+  });
 }
 
 function uploadSingleImage() {
