@@ -1,0 +1,159 @@
+
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>صور البائعين المعلقة فقط</title>
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+      padding: 20px;
+      background: #f5f5f5;
+      text-align: center;
+    }
+    h2 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+    .seller-section {
+      margin-bottom: 30px;
+      background: #fff;
+      padding: 10px;
+      border-radius: 10px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    .seller-section h3 {
+      color: green;
+      margin-bottom: 10px;
+    }
+    .img-box {
+      display: inline-block;
+      width: 130px;
+      margin: 10px;
+      padding: 10px;
+      background: #f9f9f9;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.05);
+    }
+    .img-box img {
+      width: 100%;
+      border-radius: 6px;
+      background: #ccc;
+    }
+    .btns {
+      margin-top: 8px;
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+    }
+    .btns button {
+      padding: 4px 6px;
+      font-size: 12px;
+      border: none;
+      border-radius: 4px;
+      color: white;
+      cursor: pointer;
+    }
+    .approve-btn { background: #28a745; }
+    .delete-btn { background: #dc3545; }
+  </style>
+</head>
+<body>
+
+  <h2>📸 مراجعة الصور المعلقة فقط</h2>
+  <div id="container">جارٍ التحميل...</div>
+
+  <script>
+    const pendingUrl = "https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages.json";
+    const imagesUrl = "https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json";
+
+    const container = document.getElementById("container");
+
+    fetch(pendingUrl)
+      .then(res => res.json())
+      .then(data => {
+        if (!data || Object.keys(data).length === 0) {
+          container.textContent = "لا توجد صور معلقة حالياً.";
+          return;
+        }
+
+        const sellersMap = {};
+
+        Object.entries(data).forEach(([key, img]) => {
+          const seller = img.sellerName || "غير معروف";
+          if (!sellersMap[seller]) sellersMap[seller] = [];
+          sellersMap[seller].push({ key, ...img });
+        });
+
+        container.innerHTML = "";
+
+        Object.entries(sellersMap).forEach(([sellerName, images]) => {
+          const section = document.createElement("div");
+          section.className = "seller-section";
+
+          const sellerTitle = document.createElement("h3");
+          sellerTitle.textContent = `🛍️ ${sellerName}`;
+          section.appendChild(sellerTitle);
+
+          images.forEach(img => {
+            const div = document.createElement("div");
+            div.className = "img-box";
+
+            const image = document.createElement("img");
+            image.src = img.src;
+
+            const btnGroup = document.createElement("div");
+            btnGroup.className = "btns";
+
+            const approveBtn = document.createElement("button");
+            approveBtn.textContent = "✅";
+            approveBtn.className = "approve-btn";
+            approveBtn.onclick = () => {
+              const approvedImage = {
+                id: Date.now() + Math.random(),
+                src: img.src,
+                seller: img.seller || "#",
+                trader: img.sellerName || "غير معروف",
+                category: img.category || "غير مصنف",
+                group: Date.now()
+              };
+              fetch(imagesUrl, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(approvedImage)
+              }).then(() => {
+                return fetch(`${pendingUrl.replace(".json", "/" + img.key + ".json")}`, {
+                  method: "DELETE"
+                });
+              }).then(() => div.remove());
+            };
+
+            const delBtn = document.createElement("button");
+            delBtn.textContent = "🗑️";
+            delBtn.className = "delete-btn";
+            delBtn.onclick = () => {
+              if (confirm("هل تريد حذف الصورة؟")) {
+                fetch(`${pendingUrl.replace(".json", "/" + img.key + ".json")}`, {
+                  method: "DELETE"
+                }).then(() => div.remove());
+              }
+            };
+
+            btnGroup.appendChild(approveBtn);
+            btnGroup.appendChild(delBtn);
+
+            div.appendChild(image);
+            div.appendChild(btnGroup);
+            section.appendChild(div);
+          });
+
+          container.appendChild(section);
+        });
+      })
+      .catch(err => {
+        container.textContent = "فشل في تحميل الصور.";
+        console.error(err);
+      });
+  </script>
+</body>
+</html>
