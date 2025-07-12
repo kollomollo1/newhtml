@@ -410,6 +410,7 @@ isAdmin = false;
     }
 
     function renderChunk() {
+      console.log("isAdmin inside renderChunk:", isAdmin);
       const filtered = getFilteredImages();
       const chunk = filtered.slice((page - 1) * pageSize, page * pageSize);
       const grouped = {};
