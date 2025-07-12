@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar">
 <head>
@@ -56,45 +57,52 @@
   <div class="container">
     <h2>تسجيل حساب بائع جديد</h2>
     <form onsubmit="register(event)">
-      <input type="text" id="name" placeholder="اسم المتجر" required><br>
+      <input type="text" id="shopName" placeholder="اسم المتجر" required><br>
+      <input type="email" id="email" placeholder="البريد الإلكتروني" required><br>
       <input type="password" id="password" placeholder="كلمة المرور" required><br>
       <button type="submit">تسجيل</button>
     </form>
+    <p id="message" style="text-align:center; color:red;"></p>
   </div>
 
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js"></script>
   <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCP2gI3kFHg-ExtEhyMLlBe4o0yXHHXV6E",
+      authDomain: "gallery3modifiedjsless.firebaseapp.com",
+      databaseURL: "https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "gallery3modifiedjsless",
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
     function register(e) {
       e.preventDefault();
 
-      const name = document.getElementById("name").value.trim();
+      const shopName = document.getElementById("shopName").value.trim();
+      const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value.trim();
+      const message = document.getElementById("message");
 
-      if (!name || !password) {
-        alert("يرجى ملء جميع الحقول");
+      if (!shopName || !email || !password) {
+        message.innerText = "يرجى ملء جميع الحقول";
         return;
       }
 
-      // ✅ التحقق من تكرار الاسم
-      fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/sellers.json")
-        .then(res => res.json())
-        .then(data => {
-          const sellers = data || {};
-          const exists = Object.values(sellers).some(s => s.name === name);
-
-          if (exists) {
-            alert("⚠️ اسم المتجر مستخدم بالفعل، يرجى اختيار اسم آخر.");
-          } else {
-            const newSeller = { name, password };
-
-            fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/sellers.json", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(newSeller)
-            }).then(() => {
-              alert("✅ تم التسجيل بنجاح، يمكنك الآن تسجيل الدخول.");
-              location.href = "login.html";
-            });
-          }
+      auth.createUserWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          const uid = userCredential.user.uid;
+          fetch(`https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/sellers/${uid}.json`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ shopName })
+          });
+          alert("✅ تم إنشاء الحساب بنجاح");
+          window.location.href = "login.html";
+        })
+        .catch((error) => {
+          message.innerText = "❌ " + error.message;
         });
     }
   </script>

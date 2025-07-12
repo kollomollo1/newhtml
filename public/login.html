@@ -1,8 +1,9 @@
+
 <!DOCTYPE html>
 <html lang="ar">
 <head>
   <meta charset="UTF-8">
-  <title>دخول</title>
+  <title>تسجيل دخول البائع</title>
   <link href="https://fonts.googleapis.com/css2?family=Cairo&display=swap" rel="stylesheet">
   <style>
     body {
@@ -31,7 +32,7 @@
       color: #333;
     }
 
-    input, select, button {
+    input, button {
       width: 100%;
       padding: 10px;
       margin: 8px 0;
@@ -41,46 +42,52 @@
     }
 
     button {
-      background-color: #28a745;
+      background-color: #007bff;
       color: white;
       border: none;
       cursor: pointer;
     }
 
     button:hover {
-      background-color: #218838;
+      background-color: #0069d9;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>تسجيل الدخول للبائع</h2>
+    <h2>تسجيل دخول البائع</h2>
     <form onsubmit="login(event)">
-      <input type="text" id="name" placeholder="اسم المتجر" required>
-      <input type="password" id="password" placeholder="كلمة المرور" required>
+      <input type="email" id="email" placeholder="البريد الإلكتروني" required><br>
+      <input type="password" id="password" placeholder="كلمة المرور" required><br>
       <button type="submit">دخول</button>
     </form>
+    <p id="message" style="text-align:center; color:red;"></p>
   </div>
 
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js"></script>
   <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCP2gI3kFHg-ExtEhyMLlBe4o0yXHHXV6E",
+      authDomain: "gallery3modifiedjsless.firebaseapp.com",
+      projectId: "gallery3modifiedjsless",
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
     function login(e) {
       e.preventDefault();
-      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value.trim();
+      const message = document.getElementById("message");
 
-      fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/sellers.json")
-        .then(res => res.json())
-        .then(data => {
-          const entries = Object.entries(data || {});
-          const found = entries.find(([key, value]) => value.name === name && value.password === password);
-
-          if (found) {
-            localStorage.setItem("sellerName", found[1].name);
-            localStorage.setItem("sellerLink", found[1].link);
-            location.href = "dashboard.html";
-          } else {
-            alert("بيانات الدخول غير صحيحة");
-          }
+      auth.signInWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          alert("✅ تم تسجيل الدخول بنجاح");
+          window.location.href = "dashboard.html"; // عدّل الصفحة حسب ما تحتاج
+        })
+        .catch((error) => {
+          message.innerText = "❌ " + error.message;
         });
     }
   </script>
