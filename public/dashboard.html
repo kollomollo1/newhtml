@@ -32,16 +32,14 @@
     }
 
     .container {
-  background: white;
-  padding: 40px 30px;
-  margin-top: 40px;
-  margin-bottom: 40px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-  width: 90%;
-  max-width: 700px;
-  min-height: 80vh;
-}
+      background: white;
+      padding: 20px;
+      margin-top: 60px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 90%;
+      max-width: 700px;
+    }
 
     h2 {
       text-align: center;
@@ -49,13 +47,13 @@
     }
 
     input, select, button {
-  font-size: 18px;
-  padding: 14px 12px;
-  border-radius: 8px;
-}
-button {
-  font-weight: bold;
-}
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
 
     button {
       background-color: #28a745;
@@ -91,7 +89,7 @@ button {
     <button onclick="uploadImage()">رفع</button>
 
     <h3 style="text-align:center">صورك المرفوعة</h3>
-    <div id="myImages" style="display: grid; grid-template-columns: repeat(1, 1fr); gap: 10px; margin-top: 20px;"></div>
+    <div id="myImages" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 20px;"></div>
   </div>
 
   <script>
@@ -172,7 +170,6 @@ button {
                 const image = document.createElement("img");
                 image.src = img.src;
                 image.style.width = "100%";
-                image.style.height = "220px";
                 image.style.borderRadius = "6px";
                 div.appendChild(image);
 
