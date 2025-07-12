@@ -54,13 +54,26 @@
       }
 
       firebase.auth().signInWithEmailAndPassword(email, password)
-        .then((userCredential) => {
+  .then((userCredential) => {
+    const uid = userCredential.user.uid;
+
+    // جلب اسم المتجر من Realtime Database
+    fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/sellers/" + uid + ".json")
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.shopName) {
+          // حفظ اسم المتجر في localStorage
+          localStorage.setItem("sellerName", data.shopName);
           alert("✅ تم تسجيل الدخول بنجاح");
           window.location.href = "dashboard.html";
-        })
-        .catch((error) => {
-          message.innerText = "❌ " + error.message;
-        });
+        } else {
+          alert("❌ لا يمكن جلب بيانات المتجر");
+        }
+      });
+  })
+  .catch((error) => {
+    document.getElementById("message").innerText = "❌ " + error.message;
+  });
     }
   </script>
 </body>
