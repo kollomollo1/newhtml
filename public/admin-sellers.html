@@ -73,7 +73,7 @@
     firebase.initializeApp(firebaseConfig);
 
     firebase.auth().onAuthStateChanged(user => {
-      if (!user || user.email !== "admin@example.com") {
+      if (!user || user.email !== "kollomollo1@gmail.com") {
         alert("🚫 غير مصرح لك بالدخول");
         window.location.href = "admin-login-firebase.html";
       } else {
