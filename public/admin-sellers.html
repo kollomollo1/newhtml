@@ -40,19 +40,27 @@
   margin-top: 10px;
 }
 .img-box {
-  position: relative;
-  width: 120px;
+  width: 130px;
+  text-align: center;
+  background: #f0f0f0;
+  border-radius: 6px;
+  padding: 6px;
 }
 .img-box img {
   width: 100%;
   height: auto;
   border-radius: 6px;
   display: block;
+  margin-bottom: 8px;
+  background: #ccc;
+}
+.img-box .btn-group {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
 }
 .img-box button {
-  position: absolute;
-  top: 5px;
-  padding: 2px 6px;
+  padding: 4px 6px;
   font-size: 12px;
   border: none;
   border-radius: 4px;
@@ -60,11 +68,9 @@
   cursor: pointer;
 }
 .img-box .approve-btn {
-  left: 5px;
   background-color: #28a745;
 }
 .img-box .delete-btn {
-  right: 5px;
   background-color: #dc3545;
 }
 .approve-btn {
@@ -197,8 +203,53 @@
               };
 
               div.appendChild(image);
-              
-              div.appendChild(delBtn);
+          const btnGroup = document.createElement("div");
+          btnGroup.className = "btn-group";
+
+          const delBtn = document.createElement("button");
+          delBtn.textContent = "🗑️";
+          delBtn.className = "delete-btn";
+          const url = index === 0 ? pendingUrl : imagesUrl;
+
+          delBtn.onclick = () => {
+            if (confirm("هل تريد حذف هذه الصورة؟")) {
+              fetch(`${url.replace(".json", "/" + key + ".json")}`, {
+                method: "DELETE"
+              }).then(() => div.remove());
+            }
+          };
+          btnGroup.appendChild(delBtn);
+
+          if (index === 0) {
+            const approveBtn = document.createElement("button");
+            approveBtn.textContent = "✅";
+            approveBtn.className = "approve-btn";
+
+            approveBtn.onclick = () => {
+              const approvedImage = {
+                id: Date.now() + Math.random(),
+                src: img.src,
+                seller: img.seller || "#",
+                trader: img.sellerName || "غير معروف",
+                category: img.category || "غير مصنف",
+                group: Date.now()
+              };
+              fetch(imagesUrl, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(approvedImage)
+              }).then(() => {
+                return fetch(`${pendingUrl.replace(".json", "/" + key + ".json")}`, {
+                  method: "DELETE"
+                });
+              }).then(() => div.remove());
+            };
+
+            btnGroup.appendChild(approveBtn);
+          }
+
+          div.appendChild(btnGroup);
+
               if (index === 0) {
                 const approveBtn = document.createElement("button");
                 approveBtn.className = "approve-btn";
