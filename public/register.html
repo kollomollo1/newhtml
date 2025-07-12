@@ -74,37 +74,38 @@
   </div>
 
   <script>
-    document.getElementById("registerForm").addEventListener("submit", function(e) {
-      e.preventDefault();
-      const shopName = document.getElementById("shopName").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value.trim();
-      const message = document.getElementById("message");
+  document.getElementById("registerForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
 
-      if (!shopName || !email || !password) {
-        message.innerText = "يرجى ملء جميع الحقول";
-        return;
-      }
+    const shopName = document.getElementById("shopName").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
+    const message = document.getElementById("message");
 
-      firebase.auth().createUserWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-          const uid = userCredential.user.uid;
-          return userCredential.user.getIdToken().then(token => {
-            return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/sellers/" + uid + ".json?auth=" + token, {
-              method: "PUT",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ shopName })
-            });
-          });
-        })
-        .then(() => {
-          alert("✅ تم إنشاء الحساب بنجاح");
-          window.location.href = "login.html";
-        })
-        .catch((error) => {
-          console.error("Registration Error:", error);
-          message.innerText = "❌ " + error.message;
-        });
-  </script>
+    if (!shopName || !email || !password) {
+      message.innerText = "يرجى ملء جميع الحقول";
+      return;
+    }
+
+    try {
+      const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
+      const user = userCredential.user;
+      const token = await user.getIdToken();
+
+      const res = await fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/sellers/" + user.uid + ".json?auth=" + token, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ shopName })
+      });
+
+      if (!res.ok) throw new Error("فشل في حفظ اسم المتجر");
+
+      alert("✅ تم إنشاء الحساب بنجاح");
+      window.location.href = "login.html";
+    } catch (error) {
+      message.innerText = "❌ " + error.message;
+    }
+  });
+</script>
 </body>
 </html>
