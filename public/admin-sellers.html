@@ -99,9 +99,9 @@
             const box = document.createElement("div");
             box.className = "seller-box";
             box.innerHTML = `
-              <h3>🛍️ ${seller.name}</h3>
+              <h3>🛍️ ${seller.name || seller.shopName || 'اسم غير معروف'}</h3>
               <p>واتساب: <a href="${seller.link || '#'}" target="_blank">${seller.link || ''}</a></p>
-              <button class="view-btn" onclick="viewImages('${seller.name}', this)">📸 عرض الصور</button>
+              <button class="view-btn" onclick="viewImages('${seller.name || seller.shopName}', this)">📸 عرض الصور</button>
               <button class="delete-btn" onclick="deleteSeller('${key}', '${seller.name}')">❌ حذف البائع</button>
               <div class="images-container" style="display:none;"></div>
             `;
