@@ -1,291 +1,68 @@
+
 <!DOCTYPE html>
 <html lang="ar">
 <head>
   <meta charset="UTF-8">
-  <title>إدارة البائعين</title>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <title>اختبار تحميل صور البائعين</title>
   <style>
     body {
       font-family: 'Cairo', sans-serif;
       padding: 20px;
       background: #f5f5f5;
-    }
-    h2 {
       text-align: center;
-      color: #333;
     }
-    .seller-box {
-      background: white;
-      padding: 15px;
-      margin-bottom: 20px;
-      border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    .img-box {
+      display: inline-block;
+      background: #fff;
+      padding: 10px;
+      margin: 10px;
+      border-radius: 8px;
+      box-shadow: 0 0 6px rgba(0,0,0,0.1);
     }
-    .seller-box h3 { margin: 0 0 10px; color: green; }
-    .seller-box button {
-      margin: 5px;
-      padding: 6px 10px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 14px;
-    }
-    .view-btn { background-color: #007bff; color: white; }
-    .delete-btn { background-color: #dc3545; color: white; }
-    .images-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 10px;
-}
-.img-box {
-  width: 130px;
-  text-align: center;
-  background: #f0f0f0;
-  border-radius: 6px;
-  padding: 6px;
-}
-.img-box img {
-  width: 100%;
-  height: auto;
-  border-radius: 6px;
-  display: block;
-  margin-bottom: 8px;
-  background: #ccc;
-}
-.img-box .btn-group {
-  display: flex;
-  justify-content: center;
-  gap: 6px;
-}
-.img-box button {
-  padding: 4px 6px;
-  font-size: 12px;
-  border: none;
-  border-radius: 4px;
-  color: white;
-  cursor: pointer;
-}
-.img-box .approve-btn {
-  background-color: #28a745;
-}
-.img-box .delete-btn {
-  background-color: #dc3545;
-}
-.approve-btn {
-  left: 6px;
-  background-color: #28a745 !important;
-}
-.reject-btn {
-  right: 6px;
-}
-
-    .images-container .img-box button {
-      position: absolute;
-      bottom: 5px;
-      right: 5px;
-      background: #dc3545;
-      color: white;
-      padding: 2px 6px;
-      font-size: 12px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
+    .img-box img {
+      width: 120px;
+      height: auto;
+      border-radius: 6px;
+      display: block;
+      background: #ccc;
     }
   </style>
 </head>
 <body>
-  <h2>قائمة البائعين</h2>
-  <div id="sellersList">جارٍ التحميل...</div>
+  <h2>📸 اختبار عرض صور من pendingImages</h2>
+  <div id="container">جارٍ التحميل...</div>
 
   <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyCP2gI3kFHg-ExtEhyMLlBe4o0yXHHXV6E",
-      authDomain: "gallery3modifiedjsless.firebaseapp.com",
-      projectId: "gallery3modifiedjsless",
-      storageBucket: "gallery3modifiedjsless.appspot.com",
-      messagingSenderId: "437182767215",
-      appId: "1:437182767215:web:0705b90e7009337a85ad9a"
-    };
-    firebase.initializeApp(firebaseConfig);
+    fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages.json")
+      .then(res => res.json())
+      .then(data => {
+        const container = document.getElementById("container");
+        container.innerHTML = "";
 
-    firebase.auth().onAuthStateChanged(user => {
-      if (!user || user.email !== "kollomollo1@gmail.com") {
-        alert("🚫 غير مصرح لك بالدخول");
-        window.location.href = "admin-login-firebase.html";
-      } else {
-        loadSellers();
-      }
-    });
-
-    const sellersUrl = "https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/sellers.json";
-    const pendingUrl = "https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages.json";
-    const imagesUrl = "https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json";
-
-    function loadSellers() {
-      fetch(sellersUrl)
-        .then(res => res.json())
-        .then(sellers => {
-          const container = document.getElementById("sellersList");
-          container.innerHTML = "";
-
-          if (!sellers) {
-            container.textContent = "لا يوجد بائعين حتى الآن.";
-            return;
-          }
-
-          Object.entries(sellers).forEach(([key, seller]) => {
-            const box = document.createElement("div");
-            box.className = "seller-box";
-            box.innerHTML = `
-              <h3>🛍️ ${seller.name || seller.shopName || 'اسم غير معروف'}</h3>
-              <p>واتساب: <a href="${seller.link || '#'}" target="_blank">${seller.link || ''}</a></p>
-              <button class="view-btn" onclick="viewImages('${seller.name || seller.shopName}', this)">📸 عرض الصور</button>
-              <button class="delete-btn" onclick="deleteSeller('${key}', '${seller.name}')">❌ حذف البائع</button>
-              <div class="images-container" style="display:none;"></div>
-            `;
-            container.appendChild(box);
-          });
-        });
-    }
-
-    
-    function viewImages(sellerName, btn) {
-      const box = btn.parentElement.querySelector(".images-container");
-      if (box.style.display === "grid") {
-        box.style.display = "none";
-        btn.textContent = "📸 عرض الصور";
-        return;
-      }
-
-      box.innerHTML = "جارٍ تحميل الصور...";
-      box.style.display = "grid";
-      btn.textContent = "🔽 إخفاء الصور";
-
-      let foundImages = false;
-      const normalize = name => (name || "").trim().toLowerCase();
-
-      Promise.all([
-        fetch(pendingUrl).then(res => res.json()),
-        fetch(imagesUrl).then(res => res.json())
-      ]).then(([pending, approved]) => {
-        box.innerHTML = "";
-
-        [pending, approved].forEach((source, index) => {
-          if (!source) return;
-          Object.entries(source).forEach(([key, img]) => {
-            const match = (
-              normalize(img.sellerName) === normalize(sellerName) ||
-              normalize(img.trader) === normalize(sellerName) ||
-              normalize(img.seller) === normalize(sellerName)
-            );
-            if (match) {
-              foundImages = true;
-
-              const div = document.createElement("div");
-              div.className = "img-box";
-
-              const image = document.createElement("img");
-              image.src = img.src;
-
-              const delBtn = document.createElement("button");
-              delBtn.className = "reject-btn";
-              delBtn.textContent = "🗑️";
-              const url = index === 0 ? pendingUrl : imagesUrl;
-
-              delBtn.onclick = () => {
-                if (confirm("هل تريد حذف هذه الصورة؟")) {
-                  fetch(`${url.replace(".json", "/" + key + ".json")}`, {
-                    method: "DELETE"
-                  }).then(() => div.remove());
-                }
-              };
-
-              div.appendChild(image);
-          const btnGroup = document.createElement("div");
-          btnGroup.className = "btn-group";
-
-          const delBtn = document.createElement("button");
-          delBtn.textContent = "🗑️";
-          delBtn.className = "delete-btn";
-          const url = index === 0 ? pendingUrl : imagesUrl;
-
-          delBtn.onclick = () => {
-            if (confirm("هل تريد حذف هذه الصورة؟")) {
-              fetch(`${url.replace(".json", "/" + key + ".json")}`, {
-                method: "DELETE"
-              }).then(() => div.remove());
-            }
-          };
-          btnGroup.appendChild(delBtn);
-
-          if (index === 0) {
-            const approveBtn = document.createElement("button");
-            approveBtn.textContent = "✅";
-            approveBtn.className = "approve-btn";
-
-            approveBtn.onclick = () => {
-              const approvedImage = {
-                id: Date.now() + Math.random(),
-                src: img.src,
-                seller: img.seller || "#",
-                trader: img.sellerName || "غير معروف",
-                category: img.category || "غير مصنف",
-                group: Date.now()
-              };
-              fetch(imagesUrl, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(approvedImage)
-              }).then(() => {
-                return fetch(`${pendingUrl.replace(".json", "/" + key + ".json")}`, {
-                  method: "DELETE"
-                });
-              }).then(() => div.remove());
-            };
-
-            btnGroup.appendChild(approveBtn);
-          }
-
-          div.appendChild(btnGroup);
-
-              if (index === 0) {
-                const approveBtn = document.createElement("button");
-                approveBtn.className = "approve-btn";
-                approveBtn.textContent = "✅";
-                approveBtn.onclick = () => {
-                  const approvedImage = {
-                    id: Date.now() + Math.random(),
-                    src: img.src,
-                    seller: img.seller || "#",
-                    trader: img.sellerName || "غير معروف",
-                    category: img.category || "غير مصنف",
-                    group: Date.now()
-                  };
-                  fetch(imagesUrl, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(approvedImage)
-                  }).then(() => {
-                    return fetch(`${pendingUrl.replace(".json", "/" + key + ".json")}`, {
-                      method: "DELETE"
-                    });
-                  }).then(() => div.remove());
-                };
-                div.appendChild(approveBtn);
-              }
-              box.appendChild(div);
-            }
-          });
-        });
-
-        if (!foundImages) {
-          box.innerHTML = "<p>لا توجد صور مرفوعة لهذا التاجر.</p>";
+        if (!data) {
+          container.innerHTML = "<p>لا توجد بيانات حالياً.</p>";
+          return;
         }
-      });
-    }
 
+        Object.entries(data).forEach(([key, img]) => {
+          const div = document.createElement("div");
+          div.className = "img-box";
+
+          const image = document.createElement("img");
+          image.src = img.src;
+
+          const label = document.createElement("p");
+          label.textContent = img.sellerName || "غير معروف";
+
+          div.appendChild(image);
+          div.appendChild(label);
+          container.appendChild(div);
+        });
+      })
+      .catch(err => {
+        document.getElementById("container").innerHTML = "فشل في جلب الصور من Firebase";
+        console.error(err);
+      });
   </script>
 </body>
 </html>
