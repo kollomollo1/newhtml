@@ -91,7 +91,7 @@
 
     if (allowedAdmins.includes(user.email)) {
       // ✅ تسجيل دخول ناجح كأدمن
-      location.href = "index.html"; // ← أو أي صفحة لوحة الأدمن
+      location.href = "admin-review.html"; // ← أو أي صفحة لوحة الأدمن
     } else {
       firebase.auth().signOut(); // طرده من الجلسة
       errorBox.textContent = "🚫 هذا الحساب لا يملك صلاحيات الأدمن.";
