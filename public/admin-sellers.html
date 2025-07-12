@@ -110,43 +110,6 @@
         });
     }
 
-    function deleteSeller(sellerKey, sellerName) {
-      if (!confirm("هل أنت متأكد من حذف هذا البائع وجميع صوره؟")) return;
-
-      fetch(`${sellersUrl.replace(".json", "/" + sellerKey + ".json")}`, { method: "DELETE" });
-
-      const deleteFromSource = (url) => {
-        return fetch(url)
-          .then(res => res.json())
-          .then(data => {
-            if (!data) return;
-            const deletions = [];
-
-            Object.entries(data).forEach(([key, img]) => {
-              const normalize = name => (name || "").trim().toLowerCase();
-              const match = (
-                normalize(img.sellerName) === normalize(sellerName) ||
-                normalize(img.trader) === normalize(sellerName) ||
-                normalize(img.seller) === normalize(sellerName)
-              );
-              if (match) {
-                deletions.push(fetch(`${url.replace(".json", "/" + key + ".json")}`, { method: "DELETE" }));
-              }
-            });
-
-            return Promise.all(deletions);
-          });
-      };
-
-      Promise.all([
-        deleteFromSource(imagesUrl),
-        deleteFromSource(pendingUrl)
-      ]).then(() => {
-        alert("✅ تم حذف البائع وبياناته وصوره بالكامل");
-        loadSellers();
-      });
-    }
-
     function viewImages(sellerName, btn) {
       const box = btn.parentElement.querySelector(".images-container");
       if (box.style.display === "grid") {
@@ -160,17 +123,18 @@
       btn.textContent = "🔽 إخفاء الصور";
 
       let foundImages = false;
+      const normalize = name => (name || "").trim().toLowerCase();
 
       Promise.all([
         fetch(pendingUrl).then(res => res.json()),
         fetch(imagesUrl).then(res => res.json())
       ]).then(([pending, approved]) => {
         box.innerHTML = "";
-        const normalize = name => (name || "").trim().toLowerCase();
 
         [pending, approved].forEach((source, index) => {
           if (!source) return;
           Object.entries(source).forEach(([key, img]) => {
+            console.log("👁 صورة:", img.sellerName, "==>", img.src);
             const match = (
               normalize(img.sellerName) === normalize(sellerName) ||
               normalize(img.trader) === normalize(sellerName) ||
