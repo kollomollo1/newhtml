@@ -90,13 +90,15 @@
      firebase.auth().createUserWithEmailAndPassword(email, password)
   .then((userCredential) => {
     const uid = userCredential.user.uid;
-    fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/sellers/" + uid + ".json", {
+        fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/sellers/" + uid + ".json", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ shopName })
+    })
+    .then(() => {
+      alert("✅ تم إنشاء الحساب بنجاح");
+      window.location.href = "login.html";
     });
-    alert("✅ تم إنشاء الحساب بنجاح");
-    window.location.href = "login.html";
   })
   .catch((error) => {
     message.innerText = "❌ " + error.message;
