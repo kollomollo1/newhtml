@@ -1,9 +1,24 @@
+
 <!DOCTYPE html>
 <html lang="ar">
 <head>
   <meta charset="UTF-8">
   <title>لوحة البائع - رفع صورة</title>
   <link href="https://fonts.googleapis.com/css2?family=Cairo&display=swap" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCP2gI3kFHg-ExtEhyMLlBe4o0yXHHXV6E",
+      authDomain: "gallery3modifiedjsless.firebaseapp.com",
+      databaseURL: "https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "gallery3modifiedjsless",
+      storageBucket: "gallery3modifiedjsless.firebasestorage.app",
+      messagingSenderId: "437182767215",
+      appId: "1:437182767215:web:0705b90e7009337a85ad9a"
+    };
+    firebase.initializeApp(firebaseConfig);
+  </script>
   <style>
     body {
       font-family: 'Cairo', sans-serif;
@@ -78,10 +93,11 @@
   </div>
 
   <script>
+    let sellerName = "";
+
     function uploadImage() {
       const file = document.getElementById("fileInput").files[0];
       const category = document.getElementById("category").value;
-      const sellerName = localStorage.getItem("sellerName");
       let phone = document.getElementById("sellerPhone").value.trim();
 
       if (phone.startsWith("0")) {
@@ -126,7 +142,6 @@
     }
 
     function loadMyImages() {
-      const sellerName = localStorage.getItem("sellerName");
       const container = document.getElementById("myImages");
       container.innerHTML = "";
 
@@ -189,7 +204,24 @@
     }
 
     window.onload = () => {
-      loadMyImages();
+      firebase.auth().onAuthStateChanged((user) => {
+        if (user) {
+          const uid = user.uid;
+          fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/sellers/" + uid + ".json")
+            .then(res => res.json())
+            .then(data => {
+              if (data && data.shopName) {
+                sellerName = data.shopName;
+                loadMyImages();
+              } else {
+                alert("❌ لا يوجد اسم متجر مرتبط بهذا الحساب");
+              }
+            });
+        } else {
+          alert("❌ يجب تسجيل الدخول أولاً");
+          window.location.href = "login.html";
+        }
+      });
     };
   </script>
 </body>
