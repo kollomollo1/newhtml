@@ -3,69 +3,10 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8">
-  <title>تسجيل دخول البائع</title>
+  <title>تسجيل حساب بائع</title>
   <link href="https://fonts.googleapis.com/css2?family=Cairo&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Cairo', sans-serif;
-      background: #f5f5f5;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: start;
-      min-height: 100vh;
-    }
-
-    .container {
-      background: white;
-      padding: 20px;
-      margin-top: 60px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      width: 90%;
-      max-width: 400px;
-    }
-
-    h2 {
-      text-align: center;
-      color: #333;
-    }
-
-    input, button {
-      width: 100%;
-      padding: 10px;
-      margin: 8px 0;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      font-size: 16px;
-    }
-
-    button {
-      background-color: #28a745;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background-color: #218838;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h2>تسجيل دخول البائع</h2>
-    <form onsubmit="register(event)">
-      <input type="email" id="email" placeholder="البريد الإلكتروني" required><br>
-      <input type="password" id="password" placeholder="كلمة المرور" required><br>
-      <button type="submit">دخول</button>
-    </form>
-    <p id="message" style="text-align:center; color:red;"></p>
-  </div>
-
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyCP2gI3kFHg-ExtEhyMLlBe4o0yXHHXV6E",
@@ -77,11 +18,31 @@
       appId: "1:437182767215:web:0705b90e7009337a85ad9a"
     };
     firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
+  </script>
+  <style>
+    body { font-family: 'Cairo', sans-serif; background: #f5f5f5; margin: 0; padding: 0; display: flex; justify-content: center; align-items: start; min-height: 100vh; }
+    .container { background: white; padding: 20px; margin-top: 60px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); width: 90%; max-width: 400px; }
+    h2 { text-align: center; color: #333; }
+    input, button { width: 100%; padding: 10px; margin: 8px 0; border-radius: 6px; border: 1px solid #ccc; font-size: 16px; }
+    button { background-color: #28a745; color: white; border: none; cursor: pointer; }
+    button:hover { background-color: #218838; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>تسجيل دخول البائع</h2>
+    <form onsubmit="login(event)">
+      
+      <input type="email" id="email" placeholder="البريد الإلكتروني" required><br>
+      <input type="password" id="password" placeholder="كلمة المرور" required><br>
+      <button type="submit">دخول</button>
+    </form>
+    <p id="message" style="text-align:center; color:red;"></p>
+  </div>
 
-    function login(e) {
+  <script>
+    function register(e) {
       e.preventDefault();
-
       const shopName = document.getElementById("shopName").value.trim();
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value.trim();
@@ -92,7 +53,7 @@
         return;
       }
 
-      auth.signInWithEmailAndPassword(email, password)
+      firebase.auth().signInWithEmailAndPassword(email, password)
         .then((userCredential) => {
           alert("✅ تم تسجيل الدخول بنجاح");
           window.location.href = "dashboard.html";
