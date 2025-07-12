@@ -41,33 +41,47 @@
   </div>
 
   <script>
-    function register(e) {
-      e.preventDefault();
-      const shopName = document.getElementById("shopName").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value.trim();
-      const message = document.getElementById("message");
+    <script>
+  function register(e) {
+    e.preventDefault();
+    const shopName = document.getElementById("shopName").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
+    const message = document.getElementById("message");
 
-      if (!shopName || !email || !password) {
-        message.innerText = "يرجى ملء جميع الحقول";
-        return;
-      }
-
-      firebase.auth().createUserWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-          const uid = userCredential.user.uid;
-          fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/sellers/" + uid + ".json", {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ shopName })
-          });
-          alert("✅ تم إنشاء الحساب بنجاح");
-          window.location.href = "login.html";
-        })
-        .catch((error) => {
-          message.innerText = "❌ " + error.message;
-        });
+    if (!shopName || !email || !password) {
+      message.innerText = "يرجى ملء جميع الحقول";
+      return;
     }
-  </script>
+
+    // ✅ تحقق من أن اسم المتجر غير مستخدم
+    fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/sellers.json")
+      .then(res => res.json())
+      .then(data => {
+        const sellers = data || {};
+        const exists = Object.values(sellers).some(s => s.shopName === shopName);
+
+        if (exists) {
+          message.innerText = "❌ اسم المتجر مستخدم بالفعل، اختر اسم آخر";
+        } else {
+          // ✅ نكمل التسجيل
+          firebase.auth().createUserWithEmailAndPassword(email, password)
+            .then((userCredential) => {
+              const uid = userCredential.user.uid;
+              fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/sellers/" + uid + ".json", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ shopName })
+              });
+              alert("✅ تم إنشاء الحساب بنجاح");
+              window.location.href = "login.html";
+            })
+            .catch((error) => {
+              message.innerText = "❌ " + error.message;
+            });
+        }
+      });
+  }
+</script>
 </body>
 </html>
