@@ -387,10 +387,7 @@
 
   <script>
     let isAdmin = false;
-if (localStorage.getItem("isAdmin") === "true") {
-  isAdmin = true;
-  document.getElementById("adminPanel").style.display = "flex";
-}
+isAdmin = false;
 
     const galleryEl = document.getElementById("gallery");
     const scrollBtn = document.getElementById("scrollTopBtn"); 
@@ -1154,19 +1151,7 @@ if (localStorage.getItem("isAdmin") === "true") {
 }
 </script>
 
-<script>
-  if (localStorage.getItem("isAdmin") === "true") {
-    const section = document.createElement("div");
-    section.style.marginTop = "30px";
-    section.style.borderTop = "1px solid #ccc";
-    section.style.paddingTop = "10px";
-    section.innerHTML = `
-      <h4>✅ مراجعة صور البائعين:</h4>
-      <div id="pendingApprovalContainer">جاري التحميل...</div>
-    `;
-    document.body.insertBefore(section, document.getElementById("adminPanel"));
-  }
-</script>
+
 
 </body>
 </html>
