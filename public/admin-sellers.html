@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar">
 <head>
@@ -102,10 +103,10 @@
             const box = document.createElement("div");
             box.className = "seller-box";
             box.innerHTML = `
-              <h3>🛍️ ${seller.name}</h3>
-              <p>واتساب: <a href="${seller.link}" target="_blank">${seller.link}</a></p>
-              <button class="view-btn" onclick="viewImages('${seller.name}', this)">📸 عرض الصور</button>
-              <button class="delete-btn" onclick="deleteSeller('${key}', '${seller.name}')">❌ حذف البائع</button>
+              <h3>🛍️ ${seller.shopName || seller.name}</h3>
+              <p>واتساب: <a href="${seller.link || '#'}" target="_blank">${seller.link || ''}</a></p>
+              <button class="view-btn" onclick="viewImages('${seller.shopName || seller.name}', this)">📸 عرض الصور</button>
+              <button class="delete-btn" onclick="deleteSeller('${key}', '${seller.shopName || seller.name}')">❌ حذف البائع</button>
               <div class="images-container" style="display:none;"></div>
             `;
             container.appendChild(box);
@@ -116,8 +117,8 @@
     function deleteSeller(sellerKey, sellerName) {
       if (!confirm("هل أنت متأكد من حذف هذا البائع وجميع صوره؟")) return;
 
-      // 1. حذف البائع من قاعدة sellers
-      fetch(`${sellersUrl.replace(".json", "/" + sellerKey + ".json")}`, {
+      // 1. حذف البائع من sellers
+      fetch(`https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/sellers/${sellerKey}.json`, {
         method: "DELETE"
       });
 
@@ -143,7 +144,7 @@
         deleteFromSource(imagesUrl),
         deleteFromSource(pendingUrl)
       ]).then(() => {
-        alert("✅ تم حذف البائع وصوره");
+        alert("✅ تم حذف البائع وبياناته وصوره بالكامل");
         loadSellers();
       });
     }
