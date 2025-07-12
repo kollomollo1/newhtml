@@ -85,21 +85,21 @@
     const errorBox = document.getElementById("error");
 
     firebase.auth().signInWithEmailAndPassword(email, password)
-      .then(userCredential => {
-        // ✅ تحقق من أن المستخدم هو الأدمن
-        const user = userCredential.user;
-        if (email === "kollomollo1@gmail.com") {
-          // تخزين الجلسة
-          localStorage.setItem("isAdmin", "true");
-          location.href = "admin-review.html";
-        } else {
-          firebase.auth().signOut();
-          errorBox.textContent = "🚫 ليس لديك صلاحيات الأدمن.";
-        }
-      })
-      .catch(error => {
-        errorBox.textContent = "❌ " + error.message;
-      });
+  .then(userCredential => {
+    const user = userCredential.user;
+    const allowedAdmins = ["kollomollo1@gmail.com"]; // ← ممكن تضيف أكتر من إيميل هنا
+
+    if (allowedAdmins.includes(user.email)) {
+      // ✅ تسجيل دخول ناجح كأدمن
+      location.href = "index.html"; // ← أو أي صفحة لوحة الأدمن
+    } else {
+      firebase.auth().signOut(); // طرده من الجلسة
+      errorBox.textContent = "🚫 هذا الحساب لا يملك صلاحيات الأدمن.";
+    }
+  })
+  .catch(error => {
+    errorBox.textContent = "❌ " + error.message;
+  });
   }
 </script>
 
