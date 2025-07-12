@@ -4,30 +4,54 @@
 <head>
   <meta charset="UTF-8">
   <title>إدارة البائعين</title>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
   <style>
-    body { font-family: 'Cairo', sans-serif; padding: 20px; background: #f5f5f5; }
-    h2 { text-align: center; color: #333; }
+    body {
+      font-family: 'Cairo', sans-serif;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    h2 {
+      text-align: center;
+      color: #333;
+    }
     .seller-box {
-      background: white; padding: 15px; margin-bottom: 20px;
-      border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      background: white;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
     .seller-box h3 { margin: 0 0 10px; color: green; }
     .seller-box button {
-      margin: 5px; padding: 6px 10px; border: none;
-      border-radius: 5px; cursor: pointer; font-size: 14px;
+      margin: 5px;
+      padding: 6px 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
     }
     .view-btn { background-color: #007bff; color: white; }
     .delete-btn { background-color: #dc3545; color: white; }
     .images-container {
-      display: grid; grid-template-columns: repeat(2, 1fr);
-      gap: 10px; margin-top: 10px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 10px;
     }
     .images-container img { width: 100%; border-radius: 6px; }
     .images-container .img-box { position: relative; }
     .images-container .img-box button {
-      position: absolute; bottom: 5px; right: 5px;
-      background: #dc3545; color: white; padding: 2px 6px;
-      font-size: 12px; border: none; border-radius: 4px;
+      position: absolute;
+      bottom: 5px;
+      right: 5px;
+      background: #dc3545;
+      color: white;
+      padding: 2px 6px;
+      font-size: 12px;
+      border: none;
+      border-radius: 4px;
       cursor: pointer;
     }
   </style>
@@ -37,11 +61,25 @@
   <div id="sellersList">جارٍ التحميل...</div>
 
   <script>
-    // ✅ حماية الصفحة للأدمن فقط
-    if (localStorage.getItem("isAdmin") !== "true") {
-      alert("🚫 غير مصرح لك بالدخول");
-      window.location.href = "admin-login.html";
-    }
+    // Firebase Auth setup
+    const firebaseConfig = {
+      apiKey: "AIzaSyCP2gI3kFHg-ExtEhyMLlBe4o0yXHHXV6E",
+      authDomain: "gallery3modifiedjsless.firebaseapp.com",
+      projectId: "gallery3modifiedjsless",
+      storageBucket: "gallery3modifiedjsless.appspot.com",
+      messagingSenderId: "437182767215",
+      appId: "1:437182767215:web:0705b90e7009337a85ad9a"
+    };
+    firebase.initializeApp(firebaseConfig);
+
+    firebase.auth().onAuthStateChanged(user => {
+      if (!user || user.email !== "admin@example.com") {
+        alert("🚫 غير مصرح لك بالدخول");
+        window.location.href = "admin-login-firebase.html";
+      } else {
+        loadSellers();
+      }
+    });
 
     const sellersUrl = "https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/sellers.json";
     const pendingUrl = "https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages.json";
@@ -63,10 +101,10 @@
             const box = document.createElement("div");
             box.className = "seller-box";
             box.innerHTML = `
-              <h3>🛍️ ${seller.shopName || seller.name}</h3>
+              <h3>🛍️ ${seller.name}</h3>
               <p>واتساب: <a href="${seller.link || '#'}" target="_blank">${seller.link || ''}</a></p>
-              <button class="view-btn" onclick="viewImages('${seller.shopName || seller.name}', this)">📸 عرض الصور</button>
-              <button class="delete-btn" onclick="deleteSeller('${key}', '${seller.shopName || seller.name}')">❌ حذف البائع</button>
+              <button class="view-btn" onclick="viewImages('${seller.name}', this)">📸 عرض الصور</button>
+              <button class="delete-btn" onclick="deleteSeller('${key}', '${seller.name}')">❌ حذف البائع</button>
               <div class="images-container" style="display:none;"></div>
             `;
             container.appendChild(box);
@@ -77,7 +115,7 @@
     function deleteSeller(sellerKey, sellerName) {
       if (!confirm("هل أنت متأكد من حذف هذا البائع وجميع صوره؟")) return;
 
-      fetch(`https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/sellers/${sellerKey}.json`, {
+      fetch(`${sellersUrl.replace(".json", "/" + sellerKey + ".json")}`, {
         method: "DELETE"
       });
 
@@ -164,8 +202,6 @@
         }
       });
     }
-
-    loadSellers();
   </script>
 </body>
 </html>

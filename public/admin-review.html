@@ -1,8 +1,11 @@
+
 <!DOCTYPE html>
 <html lang="ar">
 <head>
   <meta charset="UTF-8">
   <title>مراجعة صور البائعين</title>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
   <style>
     body {
       font-family: 'Cairo', sans-serif;
@@ -47,7 +50,6 @@
 </head>
 <body>
 
-  <!-- ✅ العنوان وزر إدارة البائعين جنب بعض -->
   <div class="header">
     <h2>مراجعة صور البائعين</h2>
     <a href="admin-sellers.html" class="admin-button">👤 إدارة البائعين</a>
@@ -56,11 +58,26 @@
   <div id="pendingContainer">جارٍ التحميل...</div>
 
   <script>
-    // ✅ حماية الدخول
-    if (localStorage.getItem("isAdmin") !== "true") {
-      alert("غير مصرح لك بالدخول");
-      location.href = "index.html";
-    }
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyCP2gI3kFHg-ExtEhyMLlBe4o0yXHHXV6E",
+      authDomain: "gallery3modifiedjsless.firebaseapp.com",
+      projectId: "gallery3modifiedjsless",
+      storageBucket: "gallery3modifiedjsless.appspot.com",
+      messagingSenderId: "437182767215",
+      appId: "1:437182767215:web:0705b90e7009337a85ad9a"
+    };
+    firebase.initializeApp(firebaseConfig);
+
+    // حماية الصفحة
+    firebase.auth().onAuthStateChanged(user => {
+      if (!user || user.email !== "admin@example.com") {
+        alert("🚫 غير مصرح لك بالدخول");
+        window.location.href = "admin-login-firebase.html";
+      } else {
+        loadPending(); // تحميل الصور بعد التأكد
+      }
+    });
 
     function loadPending() {
       fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages.json")
@@ -115,9 +132,7 @@
         method: "DELETE"
       }).then(loadPending);
     }
-
-    // ✅ تحميل الصور عند فتح الصفحة
-    loadPending();
   </script>
+
 </body>
 </html>
