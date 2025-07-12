@@ -1,0 +1,82 @@
+
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>تسجيل دخول الأدمن</title>
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+      background-color: #f0f0f0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .login-box {
+      background-color: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #6f42c1;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background-color: #5936a2;
+    }
+
+    .error {
+      color: red;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-box">
+    <h2>تسجيل دخول الأدمن</h2>
+    <input type="text" id="adminUser" placeholder="اسم الأدمن" required>
+    <input type="password" id="adminPass" placeholder="كلمة المرور" required>
+    <button onclick="loginAdmin()">دخول</button>
+    <p class="error" id="error"></p>
+  </div>
+
+  <script>
+    function loginAdmin() {
+      const username = document.getElementById("adminUser").value.trim();
+      const password = document.getElementById("adminPass").value.trim();
+      const error = document.getElementById("error");
+
+      if (username === "admin" && password === "123456") {
+        localStorage.setItem("isAdmin", "true");
+        window.location.href = "admin-review.html";
+      } else {
+        error.textContent = "❌ اسم الأدمن أو كلمة المرور غير صحيحة";
+      }
+    }
+  </script>
+</body>
+</html>
