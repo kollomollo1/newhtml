@@ -5,75 +5,29 @@
   <meta charset="UTF-8">
   <title>إدارة البائعين</title>
   <style>
-    body {
-      font-family: 'Cairo', sans-serif;
-      padding: 20px;
-      background: #f5f5f5;
-    }
-
-    h2 {
-      text-align: center;
-      color: #333;
-    }
-
+    body { font-family: 'Cairo', sans-serif; padding: 20px; background: #f5f5f5; }
+    h2 { text-align: center; color: #333; }
     .seller-box {
-      background: white;
-      padding: 15px;
-      margin-bottom: 20px;
-      border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      background: white; padding: 15px; margin-bottom: 20px;
+      border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
-
-    .seller-box h3 {
-      margin: 0 0 10px;
-      color: green;
-    }
-
+    .seller-box h3 { margin: 0 0 10px; color: green; }
     .seller-box button {
-      margin: 5px;
-      padding: 6px 10px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 14px;
+      margin: 5px; padding: 6px 10px; border: none;
+      border-radius: 5px; cursor: pointer; font-size: 14px;
     }
-
-    .view-btn {
-      background-color: #007bff;
-      color: white;
-    }
-
-    .delete-btn {
-      background-color: #dc3545;
-      color: white;
-    }
-
+    .view-btn { background-color: #007bff; color: white; }
+    .delete-btn { background-color: #dc3545; color: white; }
     .images-container {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-      margin-top: 10px;
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 10px; margin-top: 10px;
     }
-
-    .images-container img {
-      width: 100%;
-      border-radius: 6px;
-    }
-
-    .images-container .img-box {
-      position: relative;
-    }
-
+    .images-container img { width: 100%; border-radius: 6px; }
+    .images-container .img-box { position: relative; }
     .images-container .img-box button {
-      position: absolute;
-      bottom: 5px;
-      right: 5px;
-      background: #dc3545;
-      color: white;
-      padding: 2px 6px;
-      font-size: 12px;
-      border: none;
-      border-radius: 4px;
+      position: absolute; bottom: 5px; right: 5px;
+      background: #dc3545; color: white; padding: 2px 6px;
+      font-size: 12px; border: none; border-radius: 4px;
       cursor: pointer;
     }
   </style>
@@ -83,6 +37,12 @@
   <div id="sellersList">جارٍ التحميل...</div>
 
   <script>
+    // ✅ حماية الصفحة للأدمن فقط
+    if (localStorage.getItem("isAdmin") !== "true") {
+      alert("🚫 غير مصرح لك بالدخول");
+      window.location.href = "admin-login.html";
+    }
+
     const sellersUrl = "https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/sellers.json";
     const pendingUrl = "https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages.json";
     const imagesUrl = "https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json";
@@ -117,12 +77,10 @@
     function deleteSeller(sellerKey, sellerName) {
       if (!confirm("هل أنت متأكد من حذف هذا البائع وجميع صوره؟")) return;
 
-      // 1. حذف البائع من sellers
       fetch(`https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/sellers/${sellerKey}.json`, {
         method: "DELETE"
       });
 
-      // 2. حذف صوره من images و pendingImages
       const deleteFromSource = (url) => {
         return fetch(url)
           .then(res => res.json())
