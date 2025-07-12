@@ -1176,6 +1176,7 @@ if (localStorage.getItem("isAdmin") === "true") {
   firebase.auth().onAuthStateChanged(user => {
     const allowedAdmins = ["kollomollo1@gmail.com"]; // ← الإيميلات المسموحة
     if (user && allowedAdmins.includes(user.email)) {
+      isAdmin = true;
       document.getElementById("adminPanel").style.display = "flex";
     }
   });
