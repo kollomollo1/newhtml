@@ -240,60 +240,46 @@
       });
     }
 
-   const usersUrl = "https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/users.json";
+    function deleteByTraderName(traderName, deleteSellerToo = false) {
+      firebase.auth().currentUser.getIdToken().then(token => {
+        Promise.all([
+          fetch(pendingUrl).then(res => res.json()),
+          fetch(imagesUrl).then(res => res.json()),
+          fetch(sellersUrl + "?auth=" + token).then(res => res.json())
+        ]).then(([pending, approved, sellersData]) => {
+          const deleteList = [];
 
-function deleteByTraderName(traderName, deleteSellerToo = false) {
-  firebase.auth().currentUser.getIdToken().then(token => {
-    Promise.all([
-      fetch(pendingUrl).then(res => res.json()),
-      fetch(imagesUrl).then(res => res.json()),
-      fetch(sellersUrl + "?auth=" + token).then(res => res.json()),
-      fetch(usersUrl + "?auth=" + token).then(res => res.json()) // إضافة قاعدة المستخدمين
-    ]).then(([pending, approved, sellersData, usersData]) => {
-      const deleteList = [];
+          const handleDelete = (data, baseUrl) => {
+            if (!data) return;
+            Object.entries(data).forEach(([key, img]) => {
+              if (img.trader === traderName || img.sellerName === traderName) {
+                const deleteUrl = `${baseUrl.replace(".json", "/" + key + ".json")}?auth=${token}`;
+                deleteList.push(fetch(deleteUrl, { method: "DELETE" }));
+              }
+            });
+          };
 
-      const handleDelete = (data, baseUrl) => {
-        if (!data) return;
-        Object.entries(data).forEach(([key, img]) => {
-          if (img.trader === traderName || img.sellerName === traderName) {
-            const deleteUrl = `${baseUrl.replace(".json", "/" + key + ".json")}?auth=${token}`;
-            deleteList.push(fetch(deleteUrl, { method: "DELETE" }));
+          handleDelete(pending, pendingUrl);
+          handleDelete(approved, imagesUrl);
+
+          if (deleteSellerToo && sellersData) {
+            const entry = Object.entries(sellersData).find(
+  ([_, s]) => (s.shopName || "").trim().toLowerCase() === traderName.trim().toLowerCase()
+);
+            if (entry) {
+              const uid = entry[0];
+              const deleteUrl = `${sellersUrl.replace(".json", "/" + uid + ".json")}?auth=${token}`;
+              deleteList.push(fetch(deleteUrl, { method: "DELETE" }));
+            }
           }
+
+          Promise.all(deleteList).then(() => location.reload());
         });
-      };
-
-      handleDelete(pending, pendingUrl);
-      handleDelete(approved, imagesUrl);
-
-      if (deleteSellerToo) {
-        // حذف من sellers
-        if (sellersData) {
-          const entry = Object.entries(sellersData).find(([_, s]) => s.shopName === traderName);
-          if (entry) {
-            const uid = entry[0];
-            const deleteUrl = `${sellersUrl.replace(".json", "/" + uid + ".json")}?auth=${token}`;
-            deleteList.push(fetch(deleteUrl, { method: "DELETE" }));
-          }
-        }
-
-        // حذف من users
-        if (usersData) {
-          const userEntry = Object.entries(usersData).find(([_, user]) => user.name === traderName);
-          if (userEntry) {
-            const userId = userEntry[0];
-            const deleteUrl = `${usersUrl.replace(".json", "/" + userId + ".json")}?auth=${token}`;
-            deleteList.push(fetch(deleteUrl, { method: "DELETE" }));
-          }
-        }
-      }
-
-      Promise.all(deleteList).then(() => location.reload());
-    });
-  }).catch(err => {
-    alert("❌ فشل في حذف التاجر: لم يتم الحصول على التوكن");
-    console.error(err);
-  });
-}
+      }).catch(err => {
+        alert("❌ فشل في حذف التاجر: لم يتم الحصول على التوكن");
+        console.error(err);
+      });
+    }
   </script>
 </body>
 </html>
