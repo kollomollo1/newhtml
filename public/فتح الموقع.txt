@@ -11,7 +11,7 @@ cd C:\newhtml
 git add .
 
 
-git commit -m "ujdsdfwertgwfga.js"
+git commit -m "ujdstgwfga.js"
 
 
 git push origin main
