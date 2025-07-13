@@ -253,6 +253,9 @@ delBtn.onclick = () => {
 
       Promise.all(deleteList).then(() => location.reload());
     });
+  }).catch(err => {
+    alert("❌ فشل في حذف التاجر: لم يتم الحصول على التوكن");
+    console.error(err);
   });
 }
   </script>
