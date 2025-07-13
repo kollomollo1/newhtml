@@ -132,10 +132,20 @@
 
         container.innerHTML = "";
 
-        const allSellers = new Set(Object.keys(sellersData || {}).map(uid => sellersData[uid].shopName));
-        const allNames = new Set([...allSellers, ...Object.keys(allImages)]);
+        
+const allSellers = new Map();
+Object.entries(sellersData || {}).forEach(([uid, data]) => {
+  const name = (data.shopName || "").trim().toLowerCase();
+  if (name) allSellers.set(name, data.shopName);
+});
+const allNames = new Set([
+  ...Object.keys(allImages).map(name => name.trim().toLowerCase()),
+  ...allSellers.keys()
+]);
 
-        allNames.forEach(sellerName => {
+
+        allNames.forEach(sellerKey => {
+  const sellerName = allSellers.get(sellerKey) || sellerKey;
           const section = document.createElement("div");
           section.className = "seller-section";
 
@@ -264,8 +274,8 @@
 
           if (deleteSellerToo && sellersData) {
             const entry = Object.entries(sellersData).find(
-  ([_, s]) => (s.shopName || "").trim().toLowerCase() === traderName.trim().toLowerCase()
-);
+              ([_, s]) => s.shopName === traderName
+            );
             if (entry) {
               const uid = entry[0];
               const deleteUrl = `${sellersUrl.replace(".json", "/" + uid + ".json")}?auth=${token}`;
