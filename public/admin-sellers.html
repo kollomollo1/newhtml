@@ -81,7 +81,6 @@
   <a class="review-link" href="https://www.matgary.shop/admin-review.html" target="_blank">🔍 مراجعة الصور المعلقة</a>
   <div id="container">جارٍ التحميل...</div>
 
-  <!-- Firebase SDK أولًا -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
   <script>
@@ -149,27 +148,24 @@
           section.appendChild(imagesContainer);
 
           const deleteSellerBtn = document.createElement("button");
-deleteSellerBtn.textContent = "❌ حذف التاجر";
-deleteSellerBtn.className = "remove-seller";
-deleteSellerBtn.onclick = () => {
-  if (confirm("هل أنت متأكد من حذف هذا التاجر وصوره؟")) {
-    deleteByTraderName(sellerName, true); // حذف الصور والتاجر
-  }
-};
-section.appendChild(deleteSellerBtn);
+          deleteSellerBtn.textContent = "❌ حذف التاجر";
+          deleteSellerBtn.className = "remove-seller";
+          deleteSellerBtn.onclick = () => {
+            if (confirm("هل أنت متأكد من حذف هذا التاجر وصوره وبياناته؟")) {
+              deleteByTraderName(sellerName, true);
+            }
+          };
+          section.appendChild(deleteSellerBtn);
 
-// 👇 زر جديد لحذف الصور فقط
-const deleteImagesBtn = document.createElement("button");
-deleteImagesBtn.textContent = "🧹 حذف جميع صور التاجر";
-deleteImagesBtn.className = "remove-seller";
-deleteImagesBtn.style.background = "#6c757d"; // لون مختلف
-deleteImagesBtn.onclick = () => {
-  if (confirm("هل تريد حذف جميع صور هذا التاجر فقط بدون حذف بياناته؟")) {
-    deleteByTraderName(sellerName, false); // حذف الصور فقط
-  }
-};
-section.appendChild(deleteImagesBtn);
-
+          const deleteImagesBtn = document.createElement("button");
+          deleteImagesBtn.textContent = "🖼️ حذف جميع الصور";
+          deleteImagesBtn.className = "remove-seller";
+          deleteImagesBtn.onclick = () => {
+            if (confirm("هل أنت متأكد من حذف جميع صور هذا التاجر فقط؟")) {
+              deleteByTraderName(sellerName);
+            }
+          };
+          section.appendChild(deleteImagesBtn);
 
           (allImages[sellerName] || []).forEach(img => {
             const div = document.createElement("div");
@@ -207,18 +203,18 @@ section.appendChild(deleteImagesBtn);
             }
 
             const delBtn = document.createElement("button");
-delBtn.textContent = "🗑️";
-delBtn.className = "delete-btn";
-delBtn.onclick = () => {
-  const url = img.approved ? imagesUrl : pendingUrl;
-  if (confirm("هل تريد حذف الصورة؟")) {
-    firebase.auth().currentUser.getIdToken().then(token => {
-      fetch(`${url.replace(".json", "/" + img.key + ".json")}?auth=${token}`, {
-        method: "DELETE"
-      }).then(() => div.remove());
-    });
-  }
-};
+            delBtn.textContent = "🗑️";
+            delBtn.className = "delete-btn";
+            delBtn.onclick = () => {
+              const url = img.approved ? imagesUrl : pendingUrl;
+              if (confirm("هل تريد حذف الصورة؟")) {
+                firebase.auth().currentUser.getIdToken().then(token => {
+                  fetch(`${url.replace(".json", "/" + img.key + ".json")}?auth=${token}`, {
+                    method: "DELETE"
+                  }).then(() => div.remove());
+                });
+              }
+            };
 
             btnGroup.appendChild(delBtn);
             div.appendChild(image);
@@ -243,34 +239,44 @@ delBtn.onclick = () => {
       });
     }
 
-  function deleteByTraderName(traderName) {
-  firebase.auth().currentUser.getIdToken().then(token => {
-    Promise.all([
-      fetch(pendingUrl).then(res => res.json()),
-      fetch(imagesUrl).then(res => res.json())
-    ]).then(([pending, approved]) => {
-      const deleteList = [];
+    function deleteByTraderName(traderName, deleteSellerToo = false) {
+      firebase.auth().currentUser.getIdToken().then(token => {
+        Promise.all([
+          fetch(pendingUrl).then(res => res.json()),
+          fetch(imagesUrl).then(res => res.json())
+        ]).then(([pending, approved]) => {
+          const deleteList = [];
+          const handleDelete = (data, baseUrl) => {
+            if (!data) return;
+            Object.entries(data).forEach(([key, img]) => {
+              if (img.trader === traderName || img.sellerName === traderName) {
+                const deleteUrl = `${baseUrl.replace(".json", "/" + key + ".json")}?auth=${token}`;
+                deleteList.push(fetch(deleteUrl, { method: "DELETE" }));
+              }
+            });
+          };
+          handleDelete(pending, pendingUrl);
+          handleDelete(approved, imagesUrl);
 
-      const handleDelete = (data, baseUrl) => {
-        if (!data) return;
-        Object.entries(data).forEach(([key, img]) => {
-          if (img.trader === traderName || img.sellerName === traderName) {
-            const deleteUrl = `${baseUrl.replace(".json", "/" + key + ".json")}?auth=${token}`;
-            deleteList.push(fetch(deleteUrl, { method: "DELETE" }));
+          if (deleteSellerToo) {
+            fetch(sellersUrl + "?auth=" + token)
+              .then(res => res.json())
+              .then(sellers => {
+                const sellerEntry = Object.entries(sellers || {}).find(([_, s]) => s.shopName === traderName);
+                if (sellerEntry) {
+                  const uid = sellerEntry[0];
+                  deleteList.push(fetch(`${sellersUrl.replace(".json", "/" + uid + ".json")}?auth=${token}`, {
+                    method: "DELETE"
+                  }));
+                }
+                Promise.all(deleteList).then(() => location.reload());
+              });
+          } else {
+            Promise.all(deleteList).then(() => location.reload());
           }
         });
-      };
-
-      handleDelete(pending, pendingUrl);
-      handleDelete(approved, imagesUrl);
-
-      Promise.all(deleteList).then(() => location.reload());
-    });
-  }).catch(err => {
-    alert("❌ فشل في حذف التاجر: لم يتم الحصول على التوكن");
-    console.error(err);
-  });
-}
+      });
+    }
   </script>
 </body>
 </html>
