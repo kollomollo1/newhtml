@@ -136,11 +136,12 @@
           section.className = "seller-section";
 
           const sellerTitle = document.createElement("h3");
-          sellerTitle.innerHTML = `🛍️ ${sellerName} <button class="toggle-images">👁️ إخفاء الصور</button>`;
+          sellerTitle.innerHTML = `🛍️ ${sellerName} <button class="toggle-images">👁️‍🗨️ إظهار الصور</button>`;
           section.appendChild(sellerTitle);
 
           const imagesContainer = document.createElement("div");
           imagesContainer.className = "images-container";
+          imagesContainer.style.display = "none";
           section.appendChild(imagesContainer);
 
           const deleteSellerBtn = document.createElement("button");
