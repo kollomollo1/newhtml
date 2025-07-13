@@ -1,0 +1,229 @@
+
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>لوحة البائع - رفع صورة</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo&display=swap" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCP2gI3kFHg-ExtEhyMLlBe4o0yXHHXV6E",
+      authDomain: "gallery3modifiedjsless.firebaseapp.com",
+      databaseURL: "https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "gallery3modifiedjsless",
+      storageBucket: "gallery3modifiedjsless.firebasestorage.app",
+      messagingSenderId: "437182767215",
+      appId: "1:437182767215:web:0705b90e7009337a85ad9a"
+    };
+    firebase.initializeApp(firebaseConfig);
+  </script>
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: start;
+      min-height: 100vh;
+    }
+
+    .container {
+      background: white;
+      padding: 20px;
+      margin-top: 60px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 90%;
+      max-width: 700px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+
+    button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #218838;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>لوحة البائع - رفع صورة</h2>
+
+    <input type="file" id="fileInput" accept="image/*">
+    <select id="category">
+      <option value="">اختر التصنيف</option>
+      <option value="كاشات حريمي وداخلي">كاشات حريمي وداخلي</option>
+      <option value="بيجامات حريمي وملابس البيت">بيجامات حريمي وملابس البيت</option>
+      <option value="منتجات الجمال والمكياجات">منتجات الجمال والمكياجات</option>
+      <option value="إكسسوارات حريمي">إكسسوارات حريمي</option>
+      <option value="ملابس خروج حريمي">ملابس خروج حريمي</option>
+      <option value="شنط وأحذية حريمي">شنط وأحذية حريمي</option>
+      <option value="أدوات منزلية">أدوات منزلية</option>
+      <option value="ملابس وأحذية أطفالي">ملابس وأحذية أطفالي</option>
+      <option value="ملابس وأحذية رجالي">ملابس وأحذية رجالي</option>
+    </select>
+
+    <input type="text" id="sellerPhone" placeholder="رقم واتساب مثال: 01012345678">
+    <button onclick="uploadImage()">رفع</button>
+
+    <h3 style="text-align:center">صورك المرفوعة</h3>
+    <div id="myImages" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 20px;"></div>
+  </div>
+
+  <script>
+    let sellerName = "";
+
+    function uploadImage() {
+      const file = document.getElementById("fileInput").files[0];
+      const category = document.getElementById("category").value;
+      let phone = document.getElementById("sellerPhone").value.trim();
+
+      if (phone.startsWith("0")) {
+        phone = phone.substring(1);
+      }
+
+      const sellerLink = phone ? `https://wa.me/20${phone}` : "";
+
+      if (!file || !category || !sellerName || !sellerLink) {
+        alert("يرجى ملء جميع الحقول");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", "lastlast");
+
+      fetch("https://api.cloudinary.com/v1_1/dugzs3qbh/image/upload", {
+        method: "POST",
+        body: formData
+      })
+      .then(res => res.json())
+      .then(data => {
+        const newImg = {
+  src: data.secure_url,
+  sellerName: sellerName,
+  trader: sellerName,       // ✅ إضافة مهمة
+  seller: sellerLink,
+  category: category,
+  approved: false
+};
+
+        return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages.json", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newImg)
+        });
+      })
+      .then(() => {
+        alert("✅ تم رفع الصورة بنجاح وتنتظر موافقة الأدمن");
+        loadMyImages();
+      });
+    }
+
+    function loadMyImages() {
+      const container = document.getElementById("myImages");
+      container.innerHTML = "";
+
+      const sources = [
+        {
+          url: "https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages.json",
+          deletable: true
+        },
+        {
+          url: "https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json",
+          deletable: true
+        }
+      ];
+
+      sources.forEach(source => {
+        fetch(source.url)
+          .then(res => res.json())
+          .then(data => {
+            if (!data) return;
+
+            Object.entries(data).forEach(([key, img]) => {
+              if (img.sellerName === sellerName || img.trader === sellerName) {
+                const div = document.createElement("div");
+                div.style.position = "relative";
+
+                const image = document.createElement("img");
+                image.src = img.src;
+                image.style.width = "100%";
+                image.style.borderRadius = "6px";
+                div.appendChild(image);
+
+                const btn = document.createElement("button");
+                btn.textContent = "❌ حذف";
+                btn.style.position = "absolute";
+                btn.style.bottom = "6px";
+                btn.style.right = "6px";
+                btn.style.padding = "4px 8px";
+                btn.style.background = "#dc3545";
+                btn.style.color = "white";
+                btn.style.border = "none";
+                btn.style.borderRadius = "4px";
+                btn.style.cursor = "pointer";
+
+                btn.onclick = () => {
+                  if (confirm("هل أنت متأكد من حذف الصورة؟")) {
+                    fetch(`${source.url.replace(".json", "/" + key + ".json")}`, {
+                      method: "DELETE"
+                    }).then(() => {
+                      loadMyImages();
+                    });
+                  }
+                };
+
+                div.appendChild(btn);
+                container.appendChild(div);
+              }
+            });
+          });
+      });
+    }
+
+    window.onload = () => {
+      firebase.auth().onAuthStateChanged((user) => {
+        if (user) {
+          const uid = user.uid;
+          fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/sellers/" + uid + ".json")
+            .then(res => res.json())
+            .then(data => {
+              if (data && data.shopName) {
+                sellerName = data.shopName;
+                loadMyImages();
+              } else {
+                alert("❌ لا يوجد اسم متجر مرتبط بهذا الحساب");
+              }
+            });
+        } else {
+          alert("❌ يجب تسجيل الدخول أولاً");
+          window.location.href = "login.html";
+        }
+      });
+    };
+  </script>
+</body>
+</html>
