@@ -179,13 +179,6 @@
   }
 };
 
-                if (confirm("هل أنت متأكد من حذف الصورة؟")) {
-                  fetch(`${source.url.replace(".json", "/" + key + ".json")}`, {
-                    method: "DELETE"
-                  }).then(() => loadMyImages());
-                }
-              };
-
               div.appendChild(btn);
               container.appendChild(div);
             }
