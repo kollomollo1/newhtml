@@ -122,11 +122,8 @@
           email: firebase.auth().currentUser.email,
           uid: firebase.auth().currentUser?.uid || "guest"
         };
-       
-        console.log("🔥 newImg:", newImg);
 
-        firebase.database().ref("images").push(newImg);
-   });
+        console.log("🔥 newImg:", newImg);
 
         return firebase.auth().currentUser.getIdToken().then(token => {
           return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages.json?auth=" + token, {
