@@ -10,3 +10,24 @@
 https://console.firebase.google.com/u/0/project/gallery3modifiedjsless/database/gallery3modifiedjsless-default-rtdb/rules
 
 من realtime database , rules
+
+
+
+{
+  "rules": {
+    "images": {
+      ".read": true,
+      ".write": "auth != null"
+    },
+    "pendingImages": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    "sellers": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid"
+      }
+    }
+  }
+}
