@@ -446,19 +446,50 @@ contactBtn.style.cssText = `
 
 }
 
-        if (isAdmin) {
-          const delBtn = document.createElement("div");
-          delBtn.textContent = "✖";
-          delBtn.style.cssText = `
-            position: absolute; top: 4px; right: 4px;
-            background: rgba(0,0,0,0.6); color: white;
-            font-size: 14px; width: 20px; height: 20px;
-            line-height: 20px; text-align: center;
-            border-radius: 50%; cursor: pointer; z-index: 10;
-          `;
-          
-delBtn.onclick = e => {
+        delBtn.onclick = e => {
   e.stopPropagation();
+
+  const user = firebase.auth().currentUser;
+  if (!user) {
+    alert("❌ يجب تسجيل الدخول لحذف الصور");
+    return;
+  }
+
+  console.log("🧾 المستخدم الحالي:", user.email);
+
+  fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json")
+    .then(res => res.json())
+    .then(data => {
+      const entries = Object.entries(data || {});
+      const match = entries.find(([key, value]) => value.id === img.id);
+      if (match) {
+        const key = match[0];
+
+        // 🔐 تحقق من أن الأدمن فقط هو من يستطيع الحذف
+        if (user.email !== "kollomollo1@gmail.com") {
+          alert("❌ الحذف مسموح للأدمن فقط");
+          return;
+        }
+
+        fetch(`https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images/${key}.json`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json"
+          }
+        }).then(() => {
+          images = images.filter(i => i.id !== img.id);
+          galleryEl.innerHTML = "";
+          page = 1;
+          renderChunk();
+          updateCounter();
+        }).catch(err => {
+          console.error("فشل حذف الصورة:", err);
+          alert("حدث خطأ أثناء حذف الصورة.");
+        });
+      }
+    });
+};
+
 
   fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json")
     .then(res => res.json())
