@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar">
 <head>
@@ -75,44 +74,38 @@
   </div>
 
   <script>
-    document.getElementById("registerForm").addEventListener("submit", function(e) {
-      e.preventDefault();
-      const shopName = document.getElementById("shopName").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value.trim();
-      const message = document.getElementById("message");
+  document.getElementById("registerForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
 
-      if (!shopName || !email || !password) {
-        message.innerText = "يرجى ملء جميع الحقول";
-        return;
-      }
+    const shopName = document.getElementById("shopName").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
+    const message = document.getElementById("message");
 
-      fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/sellers.json")
-        .then(res => res.json())
-        .then(data => {
-          const sellers = data || {};
-          const exists = Object.values(sellers).some(s => s.shopName === shopName);
+    if (!shopName || !email || !password) {
+      message.innerText = "يرجى ملء جميع الحقول";
+      return;
+    }
 
-          if (exists) {
-            message.innerText = "❌ اسم المتجر مستخدم بالفعل، اختر اسم آخر";
-          } else {
-            firebase.auth().createUserWithEmailAndPassword(email, password)
-              .then((userCredential) => {
-                const uid = userCredential.user.uid;
-                fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/sellers/" + uid + ".json", {
-                  method: "PUT",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ shopName })
-                });
-                alert("✅ تم إنشاء الحساب بنجاح");
-                window.location.href = "login.html";
-              })
-              .catch((error) => {
-                message.innerText = "❌ " + error.message;
-              });
-          }
-        });
-    });
-  </script>
+    try {
+      const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
+      const user = userCredential.user;
+      const token = await user.getIdToken();
+
+      const res = await fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/sellers/" + user.uid + ".json?auth=" + token, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ shopName })
+      });
+
+      if (!res.ok) throw new Error("فشل في حفظ اسم المتجر");
+
+      alert("✅ تم إنشاء الحساب بنجاح");
+      window.location.href = "login.html";
+    } catch (error) {
+      message.innerText = "❌ " + error.message;
+    }
+  });
+</script>
 </body>
 </html>

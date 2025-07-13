@@ -1,3 +1,6 @@
+
+دي الاصلية بدون حماية 
+
 {
   "rules": {
     ".read": true,
@@ -12,6 +15,7 @@ https://console.firebase.google.com/u/0/project/gallery3modifiedjsless/database/
 من realtime database , rules
 
 
+ودي للحماية الكاملة اللي شغالة حاليا بعد تعديلات كتيير في الملفات
 
 {
   "rules": {

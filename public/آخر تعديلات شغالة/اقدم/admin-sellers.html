@@ -136,12 +136,8 @@
           section.className = "seller-section";
 
           const sellerTitle = document.createElement("h3");
-          sellerTitle.innerHTML = `🛍️ ${sellerName} <button class="toggle-images">👁️ إخفاء الصور</button>`;
+          sellerTitle.textContent = `🛍️ ${sellerName}`;
           section.appendChild(sellerTitle);
-
-          const imagesContainer = document.createElement("div");
-          imagesContainer.className = "images-container";
-          section.appendChild(imagesContainer);
 
           const deleteSellerBtn = document.createElement("button");
           deleteSellerBtn.textContent = "❌ حذف التاجر";
@@ -204,17 +200,8 @@
             btnGroup.appendChild(delBtn);
             div.appendChild(image);
             div.appendChild(btnGroup);
-            imagesContainer.appendChild(div);
+            section.appendChild(div);
           });
-
-            const toggleBtn = sellerTitle.querySelector(".toggle-images");
-            let visible = true;
-            toggleBtn.onclick = () => {
-            visible = !visible;
-            imagesContainer.style.display = visible ? "block" : "none";
-            toggleBtn.textContent = visible ? "👁️ إخفاء الصور" : "👁️‍🗨️ إظهار الصور";
-         };
-
 
           container.appendChild(section);
         });

@@ -3,7 +3,7 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8">
-  <title>تسجيل دخول البائع</title>
+  <title>تسجيل حساب بائع</title>
   <link href="https://fonts.googleapis.com/css2?family=Cairo&display=swap" rel="stylesheet">
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
@@ -52,61 +52,67 @@
       font-size: 16px;
     }
     button {
-      background-color: #007bff;
+      background-color: #28a745;
       color: white;
       border: none;
       cursor: pointer;
     }
     button:hover {
-      background-color: #0069d9;
+      background-color: #218838;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>تسجيل دخول البائع</h2>
-    <form onsubmit="login(event)">
+    <h2>تسجيل حساب بائع جديد</h2>
+    <form id="registerForm">
+      <input type="text" id="shopName" placeholder="اسم المتجر" required><br>
       <input type="email" id="email" placeholder="البريد الإلكتروني" required><br>
       <input type="password" id="password" placeholder="كلمة المرور" required><br>
-      <button type="submit">دخول</button>
+      <button type="submit">تسجيل</button>
     </form>
     <p id="message" style="text-align:center; color:red;"></p>
   </div>
 
   <script>
-    function login(e) {
+    document.getElementById("registerForm").addEventListener("submit", function(e) {
       e.preventDefault();
+      const shopName = document.getElementById("shopName").value.trim();
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value.trim();
       const message = document.getElementById("message");
 
-      firebase.auth().signInWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-          const uid = userCredential.user.uid;
+      if (!shopName || !email || !password) {
+        message.innerText = "يرجى ملء جميع الحقول";
+        return;
+      }
 
-          // جلب shopName من قاعدة البيانات
-          userCredential.user.getIdToken().then(token => {
-  const uid = userCredential.user.uid;
-  return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/sellers/" + uid + ".json?auth=" + token);
-})
-            .then(res => res.json())
-            .then(data => {
-              if (data && data.shopName) {
-                localStorage.setItem("sellerName", data.shopName);
-                alert("✅ تم تسجيل الدخول بنجاح");
-                window.location.href = "dashboard.html";
-              } else {
-                message.innerText = "❌ لم يتم العثور على بيانات التاجر";
-              }
-            })
-            .catch((error) => {
-              message.innerText = "❌ خطأ في جلب البيانات: " + error.message;
-            });
-        })
-        .catch((error) => {
-          message.innerText = "❌ " + error.message;
+      fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/sellers.json")
+        .then(res => res.json())
+        .then(data => {
+          const sellers = data || {};
+          const exists = Object.values(sellers).some(s => s.shopName === shopName);
+
+          if (exists) {
+            message.innerText = "❌ اسم المتجر مستخدم بالفعل، اختر اسم آخر";
+          } else {
+            firebase.auth().createUserWithEmailAndPassword(email, password)
+              .then((userCredential) => {
+                const uid = userCredential.user.uid;
+                fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/sellers/" + uid + ".json", {
+                  method: "PUT",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ shopName })
+                });
+                alert("✅ تم إنشاء الحساب بنجاح");
+                window.location.href = "login.html";
+              })
+              .catch((error) => {
+                message.innerText = "❌ " + error.message;
+              });
+          }
         });
-    }
+    });
   </script>
 </body>
 </html>
