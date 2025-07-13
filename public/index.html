@@ -894,13 +894,10 @@ function openLightbox(imgArray, category) {
 }
 
 window.history.pushState({}, "");
-    
-function logoutAdmin() {
-  firebase.auth().signOut().then(() => {
-    location.href = "admin-login.html"; // ← يرجع لصفحة الدخول
-  }).catch((error) => {
-    alert("❌ فشل تسجيل الخروج");
-    console.error(error);
+    function logoutAdmin() {
+  sessionStorage.removeItem("adminLoggedIn");
+  firebase.auth().signOut().finally(() => {
+    location.href = "admin-login.html";
   });
 }
 
@@ -1170,9 +1167,10 @@ function rejectPendingImage(key) {
 }
 
 // عند تسجيل الدخول كأدمن، شغل تحميل الصور المعلقة
-if (localStorage.getItem("isAdmin") === "true") {
+if (sessionStorage.getItem("adminLoggedIn") === "true") {
   loadPendingApprovalImages();
 }
+
 </script>
 
 <!-- Firebase SDK -->
@@ -1184,15 +1182,17 @@ if (localStorage.getItem("isAdmin") === "true") {
 
   // ✅ التحقق من أن المستخدم هو الأدمن
   firebase.auth().onAuthStateChanged(user => {
-    const allowedAdmins = ["kollomollo1@gmail.com"]; // ← الإيميلات المسموحة
-    if (user && allowedAdmins.includes(user.email)) {
-      isAdmin = true;
-      document.getElementById("adminPanel").style.display = "flex";
-      galleryEl.innerHTML = "";
-     page = 1;
-     renderChunk();
-    }
-  });
+  const allowedAdmins = ["kollomollo1@gmail.com"];
+  if (user && allowedAdmins.includes(user.email)) {
+    sessionStorage.setItem("adminLoggedIn", "true"); // ← نحفظ الجلسة هنا
+    document.getElementById("adminPanel").style.display = "flex";
+    galleryEl.innerHTML = "";
+    page = 1;
+    renderChunk();
+  } else {
+    sessionStorage.removeItem("adminLoggedIn");
+  }
+});
 </script>
 
 
