@@ -932,7 +932,7 @@ function uploadSingleImage() {
       src: data.secure_url,
       category: selectedCategory,
       seller: sellerLink,
-      group: groupId
+      group: groupId,
       uid: firebase.auth().currentUser?.uid || "guest"
     };
 
