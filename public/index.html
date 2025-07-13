@@ -1243,9 +1243,10 @@ if (localStorage.getItem("isAdmin") === "true") {
 </script>
 
 
-
+<!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+
 <script>
   const firebaseConfig = {
     apiKey: "AIzaSyCP2gI3kFHg-ExtEhyMLlBe4o0yXHHXV6E",
@@ -1253,11 +1254,13 @@ if (localStorage.getItem("isAdmin") === "true") {
     projectId: "gallery3modifiedjsless",
     appId: "1:437182767215:web:0705b90e7009337a85ad9a"
   };
-  firebase.initializeApp(firebaseConfig);
+
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
 </script>
 
 <script>
-  // فحص الجلسة عند تحميل الصفحة
   const isAdminSession = sessionStorage.getItem("adminLoggedIn") === "true";
   if (isAdminSession) {
     document.getElementById("adminPanel").style.display = "flex";
