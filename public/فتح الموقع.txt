@@ -4,11 +4,15 @@
 وهيظهر التعديلات اوتوماتيك علي vercel
 cd pathالمشروع
 
+
 cd C:\newhtml
+
 
 git add .
 
+
 git commit -m "ujdsdfwertgwfga.js"
+
 
 git push origin main
 

@@ -623,7 +623,7 @@ if (!sellerName) return alert("اختر اسم التاجر من القائمة 
         category: selectedCategory,
         seller: sellerLink, // ✅ نضيف الرابط للصورة
         trader: sellerName,
-        group: groupId
+        group: groupId,
         uid: firebase.auth().currentUser?.uid || "guest"
       };
 
