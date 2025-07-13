@@ -481,7 +481,10 @@ contactBtn.style.cssText = `
 }
 
         if (isAdmin) {
-         delBtn.onclick = e => {
+          const delBtn = document.createElement("div");
+          delBtn.textContent = "✖";
+          delBtn.style.cssText = `
+            delBtn.onclick = e => {
   e.stopPropagation();
 
   fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json")
