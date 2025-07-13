@@ -1,13 +1,1234 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8" /> 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>متجري</title>
-  ...
-  <!-- كامل الكود كما تم تقديمه من المستخدم -->  
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Cairo', sans-serif;
+      padding-top: 0px;
+    }
+#dropzone {
+  border: 2px dashed #aaa;
+  padding: 50px;
+  margin: 10px;
+  text-align: center;
+  color: #666;
+  border-radius: 6px;
+  transition: 0.2s;
+}
+#dropzone.dragover {
+  background-color: #f0f8ff;
+  border-color: #0084FF;
+  color: #0084FF;
+}
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 4px;
+      padding: 0;
+    }
+    .square {
+      position: relative;
+      width: 100%;
+      padding-bottom: 100%;
+      overflow: hidden;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .square img {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      top: 0;
+      left: 0;
+    }
+    .square .label {
+  display: none;
+}
+    #scrollTopBtn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      font-size: 24px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      display: none;
+      z-index: 1000;
+    }
+    #lightbox {
+      display: none;
+      overflow: hidden;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.8);
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+      flex-direction: column;
+      color: white;
+      text-align: center;
+    }
+    #lightbox img {
+  width: 90%;
+  height: auto;
+  transform: none;
+      transform: scale(1);
+      
+      border-radius: 8px;
+    }
+    #dropzone {
+      border: 2px dashed #aaa;
+      padding: 50px;
+      margin: 10px;
+      text-align: center;
+      color: #666;
+      border-radius: 6px;
+    }
+    #categoryFilter {
+      position: fixed;
+      top: 60px;
+      left: 10px;
+      z-index: 1000;
+      background: white;
+      padding: 6px;
+      font-size: 16px;
+      border-radius: 6px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+
+      width: 160px; /* ← تصغير العرض الأفقي */
+    }
+  
+@media (pointer: coarse) {
+  #lightbox-img {
+    touch-action: none;
+    
+  }
+}
+
+.header-buttons {
+  position: relative;
+  top: 10px;
+  width: fit-content;
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;   /* ← يجعل الزرين تحت بعض */
+  gap: 4px;                 /* ← مسافة صغيرة بينهم */
+  padding: 0 12px;
+  box-sizing: border-box;
+}
+
+.header-buttons a {
+  font-size: 10px;          /* ← خط أصغر */
+  padding: 1px 4px;         /* ← حشوة أقل */
+  border-radius: 4px;       /* ← زوايا أقل */
+  text-decoration: none;
+  color: white;
+  margin-top: -5px;         /* ← رفع بسيط */
+  display: inline-block;
+}
+
+.header-buttons a.register {
+  background-color: #28a745;
+}
+
+.header-buttons a.login {
+  background-color: #007bff;
+  margin-top: -1px; /* ← ينزل الزر للأسفل */
+  text-indent: 3px;
+}
+
+</style>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+    #gallery {
+      display: none;
+    }
+  </style>
+
 </head>
 <body>
-<!-- تم الاختصار هنا لتوفير المساحة -->
+
+  <div id="mainTitle" style="position: fixed; top: -5px; left: 0; width: 100%; background: white; text-align: center; padding: 4px 0 2px; z-index: 1000; font-family: 'Cairo', sans-serif; box-shadow: 0 2px 4px rgba(0,0,0,0.1); line-height: 1.4;">
+    <div style="font-size: 24px; font-weight: bold; color: green; margin: 0;">متجري</div>
+    <div style="font-size: 13px; color: #666; margin: 2px 0 0;">مشروع كل بيت</div>
+  </div>
+
+<a href="https://wa.me/201097646018" target="_blank" style="
+  position: absolute;
+  top: 5px;
+  right: 260px;
+  background-color: #fd7e14;
+  color: white;
+  border-radius: 4px;
+  padding: 0.4px 4px;
+  font-size: 11px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 2000;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
+       alt="WhatsApp"
+       style="width: 14px; height: 14px; transform: translateX(2px); display: inline-block;">
+  <span style="transform: translateX(-2px); display: inline-block;">الأدمن</span>
+</a>
+
+
+
+
+
+
+<div class="header-buttons">
+  <a href="register.html" class="register">تسجيل كبائع</a>
+  <a href="login.html" class="login">دخول البائع</a>
+</div>
+
+<button onclick="askAdmin()" id="adminBtn" style="
+  position: fixed;
+  top: 12px;
+  right: 100px;
+  z-index: 2000;
+  background: white;
+  color: white;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+  font-family: 'Cairo', sans-serif;
+">
+  أدمن
+</button>
+
+
+  <div id="adminPanel" style="display: none; flex-direction: column; gap: 10px; margin: 10px;">
+<a href="admin-sellers.html" target="_blank" style="
+  background-color: #6f42c1;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+  width: fit-content;
+  font-size: 14px;
+  margin-bottom: 10px;
+  position: relative;
+  right: -170px; /* ✅ ده اللي يحركه فعليًا لليمين */
+  top: 10px; /*
+">
+  👤 إدارة البائعين
+</a>
+
+  <a href="admin-review.html" target="_blank" style="
+    background-color: #007bff;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    width: fit-content;
+    font-size: 14px;
+    margin-bottom: 10px;
+    position: relative;
+    right: -170px;
+    top: 10px;
+  ">
+    🔍 مراجعة الصور المعلقة
+  </a>
+
+  <div id="dropzone">اسحب الصورة هنا لرفعها</div>
+
+  <div style="margin-top: 10px;">
+    <input type="file" accept="image/*" id="singleFileInput" />
+    <input type="text" id="sellerLink" placeholder="رابط البائع (Messenger)" style="margin-top: 6px; width: 100%; padding: 6px;" />
+    
+    <select id="sellerName" style="margin-top: 6px; width: 100%; padding: 6px;">
+        <option value="">-- اختر التاجر --</option>
+        <option value="Nancy Elshabrawy Store">Nancy Elshabrawy Store</option>
+<option value="Mohammed Nabil Store">Mohammed Nabil Store</option>
+<option value="Marwa Kandeel Store">Marwa Kandeel Store</option>
+<option value="كوليكشن ستور">كوليكشن ستور</option>
+<option value="Basma Hossam Store">Basma Hossam Store</option>
+<option value="Asmaa Saeed Store">Asmaa Saeed Store</option>
+<option value="Amal Hassan Store">Amal Hassan Store</option>
+<option value="Golden Eyescat Store">Golden Eyescat Store</option>
+<option value="Aliaa Abdelnaser Store">AliaaAbdelnaser Store</option>
+<option value="Ahmed Emad Store">Ahmed Emad Store</option>
+<option value="Ibrahim Store">Ibrahim Store</option>
+<option value="Anaqt Mhjbt Store">Anaqt Mhjbt Store</option>
+<option value="So Trendy Store">So Trendy Store</option>
+<option value="Hnyn Abrahym Store">Hnyn Abrahym Store</option>
+<option value="عام">عام</option>
+    </select>
+
+<select id="uploadCategory" style="margin-top: 6px; width: 100%; padding: 6px;">
+  <option value="">-- اختر التصنيف --</option>
+  <option value="كاشات حريمي وداخلي">كاشات حريمي وداخلي</option>
+  <option value="بيجامات حريمي وملابس البيت">بيجامات حريمي وملابس البيت</option>
+  <option value="منتجات الجمال والمكياجات">منتجات الجمال والمكياجات</option>
+  <option value="إكسسوارات حريمي">إكسسوارات حريمي</option>
+  <option value="ملابس خروج حريمي">ملابس خروج حريمي</option>
+  <option value="شنط وأحذية حريمي">شنط وأحذية حريمي</option>
+  <option value="أدوات منزلية">أدوات منزلية</option>
+  <option value="ملابس وأحذية أطفالي">ملابس وأحذية أطفالي</option>
+  <option value="ملابس وأحذية رجالي">ملابس وأحذية رجالي</option>
+</select>
+
+    <button onclick="uploadSingleImage()" style="margin-top: 6px;">رفع الصورة</button>
+  </div>
+
+<div style="margin-top: 20px; border-top: 1px solid #ccc; padding-top: 10px;">
+  <h4>🗑️ حذف صور تاجر:</h4>
+  <select id="deleteTraderSelect" style="width: 100%; padding: 6px;">
+    <option value="">-- اختر التاجر --</option>
+    <option value="Nancy Elshabrawy Store">Nancy Elshabrawy Store</option>
+<option value="Mohammed Nabil Store">Mohammed Nabil Store</option>
+<option value="Marwa Kandeel Store">Marwa Kandeel Store</option>
+<option value="كوليكشن ستور">كوليكشن ستور</option>
+<option value="Basma Hossam Store">Basma Hossam Store</option>
+<option value="Asmaa Saeed Store">Asmaa Saeed Store</option>
+<option value="Amal Hassan Store">Amal Hassan Store</option>
+<option value="Golden Eyescat Store">Golden Eyescat Store</option>
+<option value="Aliaa Abdelnaser Store">AliaaAbdelnaser Store</option>
+<option value="Ahmed Emad Store">Ahmed Emad Store</option>
+<option value="Ibrahim Store">Ibrahim Store</option>
+<option value="Anaqt Mhjbt Store">Anaqt Mhjbt Store</option>
+<option value="So Trendy Store">So Trendy Store</option>
+<option value="Hnyn Abrahym Store">Hnyn Abrahym Store</option>
+<option value="عام">عام</option>
+  </select>
+  <button onclick="deleteTraderImages()" style="margin-top: 10px;">حذف كل صور التاجر</button>
+</div>
+
+    <button onclick="shuffleGallery()">لخبطة الصور</button>
+    
+<div style="margin-top: 10px;">
+  <h4>تعديل اسم تصنيف:</h4>
+  <select id="oldCategorySelect">
+    <option value="">-- اختر التصنيف الحالي --</option>
+    <option value="كاشات حريمي وداخلي">كاشات حريمي وداخلي</option>
+    <option value="بيجامات حريمي وملابس البيت">بيجامات حريمي وملابس البيت</option>
+    <option value="منتجات الجمال والمكياجات">منتجات الجمال والمكياجات</option>
+    <option value="إكسسوارات حريمي">إكسسوارات حريمي</option>
+    <option value="ملابس خروج حريمي">ملابس خروج حريمي</option>
+    <option value="شنط وأحذية حريمي">شنط وأحذية حريمي</option>
+    <option value="أدوات منزلية">أدوات منزلية</option>
+    <option value="ملابس وأحذية أطفالي">ملابس وأحذية أطفالي</option>
+    <option value="ملابس وأحذية رجالي">ملابس وأحذية رجالي</option>
+  </select>
+
+  <input type="text" id="newCategoryName" placeholder="اكتب الاسم الجديد للتصنيف" style="margin-top: 5px; padding: 5px; width: 100%;" />
+
+  <button onclick="updateCategoryName()" style="margin-top: 6px; background: orange; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">تعديل التصنيف</button>
+</div>
+
+<!-- ✅ عرض صور تاجر -->
+<div style="margin-top: 20px; border-top: 1px solid #ccc; padding-top: 10px;">
+  <h4>📁 عرض صور تاجر:</h4>
+  <select id="viewTraderSelect" style="width: 100%; padding: 6px;">
+    <option value="">-- اختر التاجر --</option>
+    <option value="Nancy Elshabrawy Store">Nancy Elshabrawy Store</option>
+<option value="Mohammed Nabil Store">Mohammed Nabil Store</option>
+<option value="Marwa Kandeel Store">Marwa Kandeel Store</option>
+<option value="كوليكشن ستور">كوليكشن ستور</option>
+<option value="Basma Hossam Store">Basma Hossam Store</option>
+<option value="Asmaa Saeed Store">Asmaa Saeed Store</option>
+<option value="Amal Hassan Store">Amal Hassan Store</option>
+<option value="Golden Eyescat Store">Golden Eyescat Store</option>
+<option value="Aliaa Abdelnaser Store">AliaaAbdelnaser Store</option>
+<option value="Ahmed Emad Store">Ahmed Emad Store</option>
+<option value="Ibrahim Store">Ibrahim Store</option>
+<option value="Anaqt Mhjbt Store">Anaqt Mhjbt Store</option>
+<option value="So Trendy Store">So Trendy Store</option>
+<option value="Hnyn Abrahym Store">Hnyn Abrahym Store</option>
+<option value="عام">عام</option>
+  </select>
+  <button onclick="viewTraderImages()" style="margin-top: 10px;">عرض الصور</button>
+</div>
+
+<!-- مكان الصور -->
+<div id="traderImagesContainer" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;"></div>
+
+    <button onclick="logoutAdmin()" style="background: red; color: white; border: none; padding: 4px 10px; border-radius: 4px; width: fit-content; cursor: pointer;">🚪 تسجيل خروج</button>
+  </div>
+
+  <select id="categoryFilter">
+    <option value="all">عرض الكل</option>
+    <option value="كاشات حريمي وداخلي">كاشات حريمي وداخلي</option>
+    <option value="بيجامات حريمي وملابس البيت">بيجامات حريمي وملابس البيت</option>
+    <option value="منتجات الجمال والمكياجات">منتجات الجمال والمكياجات</option>
+    <option value="إكسسوارات حريمي">إكسسوارات حريمي</option>
+    <option value="ملابس خروج حريمي">ملابس خروج حريمي</option>
+    <option value="شنط وأحذية حريمي">شنط وأحذية حريمي</option>
+    <option value="أدوات منزلية">أدوات منزلية</option>
+    <option value="ملابس وأحذية أطفالي">ملابس وأحذية أطفالي</option>
+    <option value="ملابس وأحذية رجالي">ملابس وأحذية رجالي</option>
+  </select>
+
+<p id="imageCountWrapper" style="display:none;">
+  <span id="imageCount">0</span>
+</p>
+
+  <div class="gallery" id="gallery" style="margin-top: 67px;"></div>
+
+  <div id="lightbox" onclick="this.style.display='none'">
+    <button onclick="event.stopPropagation(); prevImage();" style="position:absolute; left:10px; top:50%; transform: translateY(-50%); font-size:30px; background:none; border:none; color:white; z-index:1001;">❮</button>
+    <img id="lightbox-img" src="" />
+    <button onclick="event.stopPropagation(); nextImage();" style="position:absolute; right:10px; top:50%; font-size:30px; background:none; border:none; color:white;">❯</button>
+    <p id="lightbox-category"></p>
+  </div>
+
+  <button id="scrollTopBtn" onclick="scrollToTop()">↑</button>
+
+  <script>
+    let isAdmin = false;
+isAdmin = false;
+
+    const galleryEl = document.getElementById("gallery");
+    const scrollBtn = document.getElementById("scrollTopBtn"); 
+    const categoryFilter = document.getElementById("categoryFilter");
+    let images = [];
+    let page = 1;
+    const pageSize = 20;
+
+    function updateCounter() {
+      document.getElementById("imageCount").textContent = getFilteredImages().length;
+    }
+
+    function getFilteredImages() {
+      const selectedCategory = categoryFilter.value;
+      return selectedCategory === "all" ? images : images.filter(i => i.category === selectedCategory);
+    }
+
+    function renderChunk() {
+      console.log("isAdmin inside renderChunk:", isAdmin);
+      const filtered = getFilteredImages();
+      const chunk = filtered.slice((page - 1) * pageSize, page * pageSize);
+      const grouped = {};
+      chunk.forEach(img => {
+        if (!grouped[img.group]) grouped[img.group] = [];
+        grouped[img.group].push(img);
+      });
+
+      Object.values(grouped).forEach(groupImgs => {
+        const img = groupImgs[0];
+        const div = document.createElement("div");
+        div.className = "square";
+
+        const image = document.createElement("img");
+        image.src = img.src;
+        image.onclick = e => {
+          e.stopPropagation();
+          openLightbox(groupImgs.map(i => i.src), img.category);
+        };
+        div.appendChild(image);
+
+        const label = document.createElement("div");
+        label.className = "label";
+        label.textContent = img.category || "";
+        div.appendChild(label);
+        if (img.seller) {
+  const contactBtn = document.createElement("a");
+contactBtn.href = img.seller;
+contactBtn.target = "_blank";
+
+contactBtn.textContent = "تواصل مع البائع";
+contactBtn.style.cssText = `
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40%;
+  height: 20px; /* ← نحدد ارتفاع ثابت */
+  line-height: 20px; /* ← نخلي النص يتوسّط عموديًا */
+  font-size: 11px;
+  background-color: #0084FF;
+  color: white;
+  border-radius: 4px;
+  text-align: center;
+  text-decoration: none;
+  z-index: 10;
+  white-space: nowrap;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+`;
+  div.appendChild(contactBtn);
+
+}
+
+        if (isAdmin) {
+          const delBtn = document.createElement("div");
+          delBtn.textContent = "✖";
+          delBtn.style.cssText = `
+            position: absolute; top: 4px; right: 4px;
+            background: rgba(0,0,0,0.6); color: white;
+            font-size: 14px; width: 20px; height: 20px;
+            line-height: 20px; text-align: center;
+            border-radius: 50%; cursor: pointer; z-index: 10;
+          `;
+          
+delBtn.onclick = e => {
+  e.stopPropagation();
+
+  fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json")
+    .then(res => res.json())
+    .then(data => {
+      const entries = Object.entries(data || {});
+      const match = entries.find(([key, value]) => value.id === img.id);
+      if (match) {
+        const key = match[0];
+        fetch(`https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images/${key}.json`, {
+          method: "DELETE"
+        }).then(() => {
+          images = images.filter(i => i.id !== img.id);
+          galleryEl.innerHTML = "";
+          page = 1;
+          renderChunk();
+          updateCounter();
+        }).catch(err => {
+          console.error("فشل حذف الصورة:", err);
+          alert("حدث خطأ أثناء حذف الصورة.");
+        });
+      }
+    });
+};
+
+          div.appendChild(delBtn);
+        }
+
+        galleryEl.appendChild(div);
+      });
+    }
+
+    function openLightbox(imgArray, category) {
+      currentLightboxImages = imgArray;
+      currentLightboxIndex = 0;
+      showLightboxImage();
+      document.getElementById("lightbox").style.display = "flex";
+      document.getElementById("lightbox-category").textContent = category || "";
+    // منع إغلاق اللايت بوكس عند الضغط على الصورة نفسها
+    document.getElementById("lightbox-img").onclick = e => {
+      e.stopPropagation();
+    };
+
+      const leftArrow = document.querySelector("#lightbox button:nth-of-type(1)");
+      const rightArrow = document.querySelector("#lightbox button:nth-of-type(2)");
+      if (imgArray.length <= 1) {
+        leftArrow.style.display = "none";
+        rightArrow.style.display = "none";
+      } else {
+        leftArrow.style.display = "block";
+        rightArrow.style.display = "block";
+      }
+    }
+
+    function showLightboxImage() {
+  lightboxImg.src = currentLightboxImages[currentLightboxIndex];
+  scale = 1;
+  moveX = 0;
+  moveY = 0;
+  lightboxImg.style.transform = `scale(1) translate(0px, 0px)`;
+}
+
+    function nextImage() {
+      if (currentLightboxIndex < currentLightboxImages.length - 1) {
+        currentLightboxIndex++;
+        showLightboxImage();
+      }
+    }
+
+    function prevImage() {
+      if (currentLightboxIndex > 0) {
+        currentLightboxIndex--;
+        showLightboxImage();
+      }
+    }
+
+// ✅ التعامل مع السحب والإفلات
+const dropzone = document.getElementById("dropzone");
+
+dropzone.addEventListener("dragover", (e) => {
+  e.preventDefault();
+  dropzone.classList.add("dragover");
+});
+
+dropzone.addEventListener("dragleave", () => {
+  dropzone.classList.remove("dragover");
+});
+
+dropzone.addEventListener("drop", (e) => {
+  e.preventDefault();
+  dropzone.classList.remove("dragover");
+  const files = e.dataTransfer.files;
+  handleUpload(files);
+});
+
+    function handleUpload(files) {
+  const selectedCategory = document.getElementById("uploadCategory")?.value || "";
+  if (!selectedCategory) {
+  alert("يرجى اختيار تصنيف قبل رفع الصورة");
+  return;
+}
+
+  // 🟡 نطلب رابط البائع من المستخدم
+  const sellerLink = prompt("أدخل رابط البائع (واتساب أو ماسنجر):");
+  if (!sellerLink) return alert("لم يتم إدخال رابط البائع.");
+
+// 🟢 نطلب اسم التاجر
+const sellerName = document.getElementById("sellerName")?.value || "";
+if (!sellerName) return alert("اختر اسم التاجر من القائمة قبل السحب");
+
+  const groupId = Date.now();
+
+  Array.from(files).forEach(file => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "lastlast");
+
+    fetch("https://api.cloudinary.com/v1_1/dugzs3qbh/image/upload", {
+      method: "POST",
+      body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+      
+
+      const newImg = {
+        id: Date.now() + Math.random(),
+        src: data.secure_url,
+        category: selectedCategory,
+        seller: sellerLink, // ✅ نضيف الرابط للصورة
+        trader: sellerName,
+        group: groupId
+      };
+
+      return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newImg)
+      })
+      .then(() => {
+        images.unshift(newImg);
+        galleryEl.innerHTML = "";
+        page = 1;
+        renderChunk();
+        updateCounter();
+      });
+    })
+    .catch(err => {
+      console.error("❌ خطأ في الرفع:", err);
+      alert("حدث خطأ أثناء رفع الصورة.");
+    });
+  });
+}
+
+    function confirmClearGallery() {
+  if (confirm("هل أنت متأكد أنك تريد حذف جميع الصور؟")) {
+    fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json", {
+      method: "DELETE"
+    })
+    .then(() => {
+      images = [];
+      galleryEl.innerHTML = "";
+      page = 1;
+      renderChunk();
+      updateCounter();
+      galleryEl.style.display = "grid";
+      alert("✅ تم حذف جميع الصور من Firebase.");
+    })
+    .catch(err => {
+      console.error("❌ فشل حذف الصور من Firebase:", err);
+      alert("حدث خطأ أثناء حذف الصور.");
+    });
+  }
+}
+
+
+    function shuffleGallery() {
+      images = images.sort(() => Math.random() - 0.5);
+      localStorage.setItem("gallery_images", JSON.stringify(images));
+      galleryEl.innerHTML = "";
+      page = 1;
+      renderChunk();
+      updateCounter();
+      galleryEl.style.display = "grid";
+    }
+
+    function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+function askAdmin() {
+  window.location.href = "admin-login.html";
+}
+
+    categoryFilter.addEventListener("change", () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+      page = 1;
+      galleryEl.innerHTML = "";
+      renderChunk();
+  if (categoryFilter.value === "all") {
+    const total = getFilteredImages().length;
+    while (page * pageSize < total) {
+      page++;
+      renderChunk();
+    }
+  }
+      updateCounter();
+    });
+
+    fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json")
+  .then(res => res.json())
+  .then(data => {
+    images = Object.values(data || {});
+    images = images.sort(() => Math.random() - 0.5); // ✅ لخبطة الصور تلقائيًا
+
+      renderChunk();
+      updateCounter();
+      galleryEl.style.display = "grid";
+    })
+    .catch(err => {
+      console.error("فشل في جلب الصور من Firebase:", err);
+    });
+    renderChunk();
+    updateCounter();
+
+    let currentLightboxIndex = 0;
+    let currentLightboxImages = [];
+  
+  window.addEventListener("scroll", () => {
+  if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 300) {
+    const total = getFilteredImages().length;
+    if (page * pageSize < total) {
+      page++;
+      renderChunk();
+
+      // إجبار فحص scroll بعد تحميل الصور
+      setTimeout(() => {
+        window.dispatchEvent(new Event("scroll"));
+      }, 200);
+    }
+  }
+
+  // زر الرجوع للأعلى
+  if (window.scrollY > 300) {
+    scrollBtn.style.display = "block";
+  } else {
+    scrollBtn.style.display = "none";
+  }
+});
+
+
+
+let lightboxImg = document.getElementById('lightbox-img');
+let scale = 1;
+let ignoreNextSingleTouch = false;
+let ignoreTimeout;
+let prevTouchX = 0;
+let prevTouchY = 0;
+let lastTouchDistance = 0;
+let startX = 0, startY = 0;
+let moveX = 0, moveY = 0;
+let isPanning = false;
+
+lightboxImg.addEventListener('touchstart', function (e) {
+  if (e.touches.length === 2) {
+    // 👆 بداية زوم (بأصبعين)
+    e.preventDefault();
+    lastTouchDistance = Math.hypot(
+      e.touches[0].clientX - e.touches[1].clientX,
+      e.touches[0].clientY - e.touches[1].clientY
+    );
+  } else if (e.touches.length === 1) {
+    // 👆 بداية سحب بأصبع واحد
+    if (ignoreNextSingleTouch) {
+      ignoreNextSingleTouch = false;
+      return; // ✅ منع السحب المفاجئ بعد الزوم مباشرة
+    }
+    isPanning = true;
+    startX = e.touches[0].clientX - moveX;
+    startY = e.touches[0].clientY - moveY;
+    prevTouchX = e.touches[0].clientX;
+    prevTouchY = e.touches[0].clientY;
+  }
+}, { passive: false });
+
+lightboxImg.addEventListener('touchmove', function (e) {
+  if (e.touches.length === 2) {
+    e.preventDefault();
+    let currentDistance = Math.hypot(
+      e.touches[0].clientX - e.touches[1].clientX,
+      e.touches[0].clientY - e.touches[1].clientY
+    );
+    let delta = currentDistance - lastTouchDistance;
+    scale += delta * 0.007;
+    scale = Math.max(1, Math.min(scale, 3));
+
+if (scale === 1) {
+  moveX = 0;
+  moveY = 0;
+  lightboxImg.style.transformOrigin = "center center";
+}
+
+lightboxImg.style.transform = `scale(${scale}) translate(${moveX}px, ${moveY}px)`;
+    lightboxImg.style.transform = `scale(${scale}) translate(${moveX}px, ${moveY}px)`;
+    lastTouchDistance = currentDistance;
+ignoreNextSingleTouch = true;
+clearTimeout(ignoreTimeout);
+ignoreTimeout = setTimeout(() => {
+  ignoreNextSingleTouch = false;
+}, 200);
+  } else if (e.touches.length === 1 && scale > 1) {
+  if (ignoreNextSingleTouch) return;
+  if (!isPanning) return;
+    e.preventDefault();
+    let deltaX = e.touches[0].clientX - prevTouchX;
+    let deltaY = e.touches[0].clientY - prevTouchY;
+
+    moveX += deltaX;
+    moveY += deltaY;
+
+    const imgWidth = lightboxImg.offsetWidth;
+    const imgHeight = lightboxImg.offsetHeight;
+    const maxMoveX = (imgWidth * (scale - 1)) / 2;
+    const maxMoveY = (imgHeight * (scale - 1)) / 2;
+
+    moveX = Math.max(-maxMoveX, Math.min(moveX, maxMoveX));
+    moveY = Math.max(-maxMoveY, Math.min(moveY, maxMoveY));
+
+    lightboxImg.style.transform = `scale(${scale}) translate(${moveX}px, ${moveY}px)`;
+
+    prevTouchX = e.touches[0].clientX;
+    prevTouchY = e.touches[0].clientY;
+  }
+}, { passive: false });
+
+lightboxImg.addEventListener('touchend', function (e) {
+  if (e.touches.length === 0) {
+    isPanning = false;
+  }
+});
+
+let lastTapTime = 0;
+
+lightboxImg.addEventListener('touchstart', function (e) {
+  if (e.touches.length === 1) {
+    const currentTime = new Date().getTime();
+    const tapLength = currentTime - lastTapTime;
+
+    if (tapLength > 0 && tapLength < 300) {
+      // ✅ Double Tap → Zoom In or Reset
+      if (scale === 1) {
+        scale = 2;
+      } else {
+        scale = 1;
+        moveX = 0;
+        moveY = 0;
+      }
+
+      lightboxImg.style.transform = `scale(${scale}) translate(${moveX}px, ${moveY}px)`;
+    }
+
+    lastTapTime = currentTime;
+  }
+}, { passive: true });
+
+
+window.addEventListener("popstate", function () {
+  const lightbox = document.getElementById("lightbox");
+  if (lightbox.style.display === "flex") {
+    lightbox.style.display = "none";
+    history.pushState(null, null, location.href);
+  }
+});
+
+// عند فتح اللايت بوكس، أضف حالة إلى التاريخ
+function openLightbox(imgArray, category) {
+  currentLightboxImages = imgArray;
+  currentLightboxIndex = 0;
+  showLightboxImage();
+  const lightbox = document.getElementById("lightbox");
+  lightbox.style.display = "flex";
+  document.getElementById("lightbox-category").textContent = category || "";
+
+  // منع إغلاق اللايت بوكس عند الضغط على الصورة نفسها
+  document.getElementById("lightbox-img").onclick = e => {
+    e.stopPropagation();
+  };
+
+  const leftArrow = document.querySelector("#lightbox button:nth-of-type(1)");
+  const rightArrow = document.querySelector("#lightbox button:nth-of-type(2)");
+  if (imgArray.length <= 1) {
+    leftArrow.style.display = "none";
+    rightArrow.style.display = "none";
+  } else {
+    leftArrow.style.display = "block";
+    rightArrow.style.display = "block";
+  }
+
+  history.pushState(null, null, location.href); // إضافة الحالة عند فتح اللايت بوكس
+}
+
+window.history.pushState({}, "");
+    
+function logoutAdmin() {
+  firebase.auth().signOut().then(() => {
+    location.href = "admin-login.html"; // ← يرجع لصفحة الدخول
+  }).catch((error) => {
+    alert("❌ فشل تسجيل الخروج");
+    console.error(error);
+  });
+}
+
+function uploadSingleImage() {
+  const fileInput = document.getElementById("singleFileInput");
+  const sellerLink = document.getElementById("sellerLink").value.trim();
+  const selectedCategory = categoryFiltervalue;
+
+  if (!fileInput.files[0]) return alert("اختر صورة أولاً");
+  if (!selectedCategory) return alert("اختر تصنيفًا أولاً");
+  if (!sellerLink) return alert("أدخل رابط البائع");
+
+  const file = fileInput.files[0];
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", "lastlast");
+
+  const groupId = Date.now();
+
+  fetch("https://api.cloudinary.com/v1_1/dugzs3qbh/image/upload", {
+    method: "POST",
+    body: formData
+  })
+  .then(res => res.json())
+  .then(data => {
+    const newImg = {
+      id: Date.now() + Math.random(),
+      src: data.secure_url,
+      category: selectedCategory,
+      seller: sellerLink,
+      group: groupId
+    };
+
+    return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newImg)
+    }).then(() => {
+      fileInput.value = "";
+      document.getElementById("sellerLink").value = "";
+      images.unshift(newImg);
+      galleryEl.innerHTML = "";
+      page = 1;
+      renderChunk();
+      updateCounter();
+      galleryEl.style.display = "grid";
+    });
+  })
+  .catch(err => {
+    console.error("❌ خطأ في الرفع:", err);
+    alert("حدث خطأ أثناء رفع الصورة.");
+  });
+}
+
+
+function updateCategoryName() {
+  const oldCat = document.getElementById("oldCategorySelect").value;
+  const newCat = document.getElementById("newCategoryName").value.trim();
+
+  if (!oldCat || !newCat) {
+    alert("اختر التصنيف الحالي واكتب الاسم الجديد");
+    return;
+  }
+
+  fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json")
+    .then(res => res.json())
+    .then(data => {
+      const updates = [];
+      for (const [key, value] of Object.entries(data || {})) {
+        if (value.category === oldCat) {
+          updates.push(
+            fetch(`https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images/${key}.json`, {
+              method: "PATCH",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ category: newCat })
+            })
+          );
+        }
+      }
+
+      return Promise.all(updates);
+    })
+    .then(() => {
+      alert("✅ تم تعديل التصنيف بنجاح. قم بإعادة تحميل الصفحة.");
+      location.reload();
+    })
+    .catch(err => {
+      console.error("❌ خطأ أثناء تعديل التصنيف:", err);
+      alert("حدث خطأ أثناء تعديل التصنيف.");
+    });
+}
+
+function deleteTraderImages() {
+  const trader = document.getElementById("deleteTraderSelect").value;
+  if (!trader) return alert("اختر اسم التاجر");
+
+  if (!confirm("هل أنت متأكد من حذف كل صور التاجر " + trader + "؟")) return;
+
+  fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json")
+    .then(res => res.json())
+    .then(data => {
+      const deletions = [];
+
+      for (const [key, value] of Object.entries(data || {})) {
+        if (value.trader === trader) {
+          deletions.push(
+            fetch(`https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images/${key}.json`, {
+              method: "DELETE"
+            })
+          );
+        }
+      }
+
+      return Promise.all(deletions);
+    })
+    .then(() => {
+      alert("✅ تم حذف جميع صور التاجر " + trader);
+      images = images.filter(img => img.trader !== trader);
+      galleryEl.innerHTML = "";
+      page = 1;
+      renderChunk();
+      updateCounter();
+      galleryEl.style.display = "grid";
+    })
+    .catch(err => {
+      console.error("❌ فشل حذف الصور:", err);
+      alert("حدث خطأ أثناء حذف الصور.");
+    });
+}
+
+function viewTraderImages() {
+  const trader = document.getElementById("viewTraderSelect").value;
+  const container = document.getElementById("traderImagesContainer");
+  container.innerHTML = "";
+
+  if (!trader) {
+    alert("اختر اسم التاجر أولاً");
+    return;
+  }
+
+  fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json")
+    .then(res => res.json())
+    .then(data => {
+      if (!data) {
+        container.innerHTML = "<p>لا توجد صور حالياً.</p>";
+        return;
+      }
+
+      const traderImages = Object.entries(data).filter(([key, img]) => img.trader === trader);
+
+      if (traderImages.length === 0) {
+        container.innerHTML = "<p>لا توجد صور لهذا التاجر.</p>";
+        return;
+      }
+
+      traderImages.forEach(([key, img]) => {
+        const imgBox = document.createElement("div");
+        imgBox.style.position = "relative";
+        imgBox.style.width = "120px";
+        imgBox.style.height = "120px";
+        imgBox.style.border = "1px solid #ccc";
+        imgBox.style.borderRadius = "8px";
+        imgBox.style.overflow = "hidden";
+        imgBox.style.display = "flex";
+        imgBox.style.alignItems = "center";
+        imgBox.style.justifyContent = "center";
+
+        const image = document.createElement("img");
+        image.src = img.src;
+        image.style.maxWidth = "100%";
+        image.style.maxHeight = "100%";
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.innerText = "✖";
+        deleteBtn.title = "حذف الصورة";
+        deleteBtn.style.position = "absolute";
+        deleteBtn.style.top = "4px";
+        deleteBtn.style.right = "4px";
+        deleteBtn.style.background = "red";
+        deleteBtn.style.color = "white";
+        deleteBtn.style.border = "none";
+        deleteBtn.style.borderRadius = "50%";
+        deleteBtn.style.cursor = "pointer";
+        deleteBtn.style.width = "24px";
+        deleteBtn.style.height = "24px";
+        deleteBtn.style.fontSize = "14px";
+
+        deleteBtn.onclick = () => {
+          if (confirm("هل أنت متأكد من حذف هذه الصورة؟")) {
+            fetch(`https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images/${key}.json`, {
+              method: "DELETE"
+            }).then(() => {
+              imgBox.remove(); // حذف العنصر من الصفحة
+            });
+          }
+        };
+
+        imgBox.appendChild(image);
+        imgBox.appendChild(deleteBtn);
+        container.appendChild(imgBox);
+      });
+    });
+}
+</script>
+<script>
+function loadPendingApprovalImages() {
+  fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages.json")
+    .then(res => res.json())
+    .then(data => {
+      const container = document.getElementById("pendingApprovalContainer");
+      container.innerHTML = "";
+      if (!data) {
+        container.innerHTML = "<p>لا توجد صور معلقة حالياً.</p>";
+        return;
+      }
+
+      for (const [key, img] of Object.entries(data)) {
+        if (img.approved === false) {
+          const wrapper = document.createElement("div");
+          wrapper.style.marginBottom = "20px";
+          wrapper.style.border = "1px solid #ddd";
+          wrapper.style.padding = "10px";
+          wrapper.style.borderRadius = "6px";
+          wrapper.innerHTML = `
+            <p><strong>البائع:</strong> ${img.sellerName || "غير معروف"}</p>
+            <img src="${img.src}" style="width:150px; max-width:100%; border-radius:6px;"><br>
+            <button onclick='approvePendingImage("${key}", ${JSON.stringify(img).replace(/"/g, '&quot;')})'>✅ قبول</button>
+            <button onclick='rejectPendingImage("${key}")'>🗑️ حذف</button>
+          `;
+          container.appendChild(wrapper);
+        }
+      }
+    });
+}
+
+function approvePendingImage(key, imgData) {
+  const approvedImage = {
+    id: Date.now() + Math.random(),
+    src: imgData.src,
+    seller: imgData.seller || "#",
+    trader: imgData.sellerName || "غير معروف",
+    category: imgData.category || "غير مصنف",
+    group: Date.now()
+  };
+
+  fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(approvedImage)
+  }).then(() => {
+    return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages/" + key + ".json", {
+      method: "DELETE"
+    });
+  }).then(() => {
+    alert("✅ تم قبول الصورة");
+    loadPendingApprovalImages();
+  });
+}
+
+function rejectPendingImage(key) {
+  fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages/" + key + ".json", {
+    method: "DELETE"
+  }).then(() => {
+    alert("🗑️ تم حذف الصورة");
+    loadPendingApprovalImages();
+  });
+}
+
+// عند تسجيل الدخول كأدمن، شغل تحميل الصور المعلقة
+if (localStorage.getItem("isAdmin") === "true") {
+  loadPendingApprovalImages();
+}
+</script>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyCP2gI3kFHg-ExtEhyMLlBe4o0yXHHXV6E",
+    authDomain: "gallery3modifiedjsless.firebaseapp.com",
+    projectId: "gallery3modifiedjsless",
+    appId: "1:437182767215:web:0705b90e7009337a85ad9a"
+  };
+  firebase.initializeApp(firebaseConfig);
+
+  // ✅ التحقق من أن المستخدم هو الأدمن
+  firebase.auth().onAuthStateChanged(user => {
+    const allowedAdmins = ["kollomollo1@gmail.com"]; // ← الإيميلات المسموحة
+    if (user && allowedAdmins.includes(user.email)) {
+      isAdmin = true;
+      document.getElementById("adminPanel").style.display = "flex";
+      galleryEl.innerHTML = "";
+     page = 1;
+     renderChunk();
+    }
+  });
+</script>
+
+
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCP2gI3kFHg-ExtEhyMLlBe4o0yXHHXV6E",
+      authDomain: "gallery3modifiedjsless.firebaseapp.com",
+      projectId: "gallery3modifiedjsless",
+      appId: "1:437182767215:web:0705b90e7009337a85ad9a"
+    };
+    firebase.initializeApp(firebaseConfig);
+
+    function login() {
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const errorEl = document.getElementById('error');
+      firebase.auth().signInWithEmailAndPassword(email, password)
+        .then(() => {
+          // حفظ جلسة
+          sessionStorage.setItem('adminLoggedIn', 'true');
+          location.href = "index.html"; // توجيه للوحة التحكم بعد الدخول
+        })
+        .catch(error => {
+          errorEl.textContent = "❌ " + error.message;
+        });
+    }
+  </script>
 </body>
 </html>
+
+
