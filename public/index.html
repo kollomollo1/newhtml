@@ -686,6 +686,16 @@ function askAdmin() {
   window.location.href = "admin-login.html";
 }
 
+<script>
+  const isAdmin = sessionStorage.getItem('adminLoggedIn') === 'true';
+
+  if (isAdmin) {
+    document.getElementById("adminPanel").style.display = "flex";
+  } else {
+    document.getElementById("adminPanel").style.display = "none";
+  }
+</script>
+
     categoryFilter.addEventListener("change", () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
       page = 1;
@@ -1187,14 +1197,6 @@ if (localStorage.getItem("isAdmin") === "true") {
     appId: "1:437182767215:web:0705b90e7009337a85ad9a"
   };
   firebase.initializeApp(firebaseConfig);
-
-  firebase.auth().signInWithEmailAndPassword("kollomollo1@gmail.com", "0129675816Aasdfgh")
-  .then(() => {
-    console.log("✅ تم تسجيل الدخول");
-  })
-  .catch((error) => {
-    console.error("❌ فشل تسجيل الدخول:", error.message);
-  });
 
   // ✅ التحقق من أن المستخدم هو الأدمن
   firebase.auth().onAuthStateChanged(user => {
