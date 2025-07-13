@@ -119,7 +119,7 @@
           seller: sellerLink,
           category: category,
           approved: false,
-          email: firebase.auth().currentUser ? firebase.auth().currentUser.email : "unknown" // ✅ السطر الجديد
+          email: firebase.auth().currentUser.email
         };
 
         return firebase.auth().currentUser.getIdToken().then(token => {

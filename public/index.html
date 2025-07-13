@@ -1109,6 +1109,7 @@ function viewTraderImages() {
       const allowedAdmins = ["kollomollo1@gmail.com"];
       if (user && allowedAdmins.includes(user.email)) {
         sessionStorage.setItem("adminLoggedIn", "true");
+        isAdmin = true;
         document.getElementById("adminPanel").style.display = "flex";
         galleryEl.innerHTML = "";
         page = 1;
