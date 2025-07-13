@@ -188,7 +188,7 @@
                   return fetch(`${pendingUrl.replace(".json", "/" + img.key + ".json")}`, {
                     method: "DELETE"
                   });
-                }).then(() => loadData());
+                }).then(() => div.remove());
               };
               btnGroup.appendChild(approveBtn);
             }
@@ -201,7 +201,7 @@
               if (confirm("هل تريد حذف الصورة؟")) {
                 fetch(`${url.replace(".json", "/" + img.key + ".json")}`, {
                   method: "DELETE"
-                }).then(() => loadData());
+                }).then(() => div.remove());
               }
             };
 
@@ -229,33 +229,18 @@
     }
 
     function deleteByTraderName(traderName) {
-  firebase.auth().currentUser.getIdToken().then(token => {
-    Promise.all([
-      fetch(pendingUrl).then(res => res.json()),
-      fetch(imagesUrl).then(res => res.json())
-    ]).then(([pending, approved]) => {
-      const deleteList = [];
+      Promise.all([
+        fetch(pendingUrl).then(res => res.json()),
+        fetch(imagesUrl).then(res => res.json())
+      ]).then(([pending, approved]) => {
+        const deleteList = [];
 
-      const handleDelete = (data, baseUrl) => {
-        if (!data) return;
-        Object.entries(data).forEach(([key, img]) => {
-          if (img.trader === traderName || img.sellerName === traderName) {
-            deleteList.push(
-              fetch(`${baseUrl.replace(".json", "/" + key + ".json")}?auth=${token}`, {
-                method: "DELETE"
-              })
-            );
-          }
-        });
-      };
-
-      handleDelete(pending, pendingUrl);
-      handleDelete(approved, imagesUrl);
-
-      Promise.all(deleteList).then(() => location.reload());
-    });
-  });
-}`, { method: "DELETE" })
+        const handleDelete = (data, baseUrl) => {
+          if (!data) return;
+          Object.entries(data).forEach(([key, img]) => {
+            if (img.trader === traderName || img.sellerName === traderName) {
+              deleteList.push(
+                fetch(`${baseUrl.replace(".json", "/" + key + ".json")}`, { method: "DELETE" })
               );
             }
           });
@@ -268,6 +253,5 @@
       });
     }
   </script>
-
 </body>
 </html>
