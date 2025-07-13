@@ -99,17 +99,22 @@
     };
     firebase.initializeApp(firebaseConfig);
 
+    let authToken = "";
+
     firebase.auth().onAuthStateChanged(user => {
       if (!user || user.email !== "kollomollo1@gmail.com") {
         alert("🚫 غير مصرح لك بالدخول");
         window.location.href = "admin-login-firebase.html";
       } else {
-        loadPending();
+        user.getIdToken().then(token => {
+          authToken = token;
+          loadPending();
+        });
       }
     });
 
     function loadPending() {
-      fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages.json")
+      fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages.json?auth=" + authToken)
         .then(res => res.json())
         .then(data => {
           const container = document.getElementById("pendingContainer");
@@ -136,6 +141,9 @@
               container.appendChild(div);
             }
           }
+        })
+        .catch(err => {
+          console.error("فشل في تحميل الصور:", err);
         });
     }
 
@@ -149,19 +157,19 @@
         group: Date.now()
       };
 
-      fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json", {
+      fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json?auth=" + authToken, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(approvedImage)
       }).then(() => {
-        return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages/" + key + ".json", {
+        return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages/" + key + ".json?auth=" + authToken, {
           method: "DELETE"
         });
       }).then(loadPending);
     }
 
     function reject(key) {
-      fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages/" + key + ".json", {
+      fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages/" + key + ".json?auth=" + authToken, {
         method: "DELETE"
       }).then(loadPending);
     }
