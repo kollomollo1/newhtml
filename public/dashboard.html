@@ -120,6 +120,7 @@
           category: category,
           approved: false,
           email: firebase.auth().currentUser.email
+          uid: firebase.auth().currentUser?.uid || "guest"
         };
 
         return firebase.auth().currentUser.getIdToken().then(token => {
