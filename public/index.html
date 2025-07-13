@@ -617,15 +617,16 @@ if (!sellerName) return alert("اختر اسم التاجر من القائمة 
     .then(data => {
       
 
-      const newImg = {
-        id: Date.now() + Math.random(),
-        src: data.secure_url,
-        category: selectedCategory,
-        seller: sellerLink, // ✅ نضيف الرابط للصورة
-        trader: sellerName,
-        group: groupId,
-        uid: firebase.auth().currentUser?.uid || "guest"
-      };
+const newImg = {
+  id: Date.now() + Math.random(),
+  src: data.secure_url,
+  category: selectedCategory,
+  seller: sellerLink,
+  trader: sellerName,
+  group: groupId,
+  uid: firebase.auth().currentUser?.uid || "guest"
+};
+
 
       return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json", {
         method: "POST",
@@ -927,14 +928,16 @@ function uploadSingleImage() {
   })
   .then(res => res.json())
   .then(data => {
-    const newImg = {
-      id: Date.now() + Math.random(),
-      src: data.secure_url,
-      category: selectedCategory,
-      seller: sellerLink,
-      group: groupId,
-      uid: firebase.auth().currentUser?.uid || "guest"
-    };
+   const newImg = {
+  id: Date.now() + Math.random(),
+  src: data.secure_url,
+  category: selectedCategory,
+  seller: sellerLink,
+  trader: sellerName,
+  group: groupId,
+  uid: firebase.auth().currentUser?.uid || "guest"
+};
+
 
     return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json", {
       method: "POST",
