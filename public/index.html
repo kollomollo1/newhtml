@@ -1094,8 +1094,10 @@ function viewTraderImages() {
     const isAdminSession = sessionStorage.getItem("adminLoggedIn") === "true";
     if (isAdminSession) {
       document.getElementById("adminPanel").style.display = "flex";
+       isAdmin = true;
     } else {
       document.getElementById("adminPanel").style.display = "none";
+       isAdmin = false;
     }
 
     firebase.auth().onAuthStateChanged(user => {
