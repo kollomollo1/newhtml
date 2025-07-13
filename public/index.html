@@ -1188,6 +1188,14 @@ if (localStorage.getItem("isAdmin") === "true") {
   };
   firebase.initializeApp(firebaseConfig);
 
+  firebase.auth().signInWithEmailAndPassword("kollomollo1@gmail.com", "كلمة_السر_هنا")
+  .then(() => {
+    console.log("✅ تم تسجيل الدخول");
+  })
+  .catch((error) => {
+    console.error("❌ فشل تسجيل الدخول:", error.message);
+  });
+
   // ✅ التحقق من أن المستخدم هو الأدمن
   firebase.auth().onAuthStateChanged(user => {
     const allowedAdmins = ["kollomollo1@gmail.com"]; // ← الإيميلات المسموحة
