@@ -667,21 +667,26 @@ function askAdmin() {
       updateCounter();
     });
 
-    fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json")
+  fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json")
   .then(res => res.json())
   .then(data => {
     images = Object.values(data || {});
     images = images.sort(() => Math.random() - 0.5); // ✅ لخبطة الصور تلقائيًا
 
-      renderChunk();
-      updateCounter();
-      galleryEl.style.display = "grid";
-    })
-    .catch(err => {
-      console.error("فشل في جلب الصور من Firebase:", err);
-    });
+    // ✅ ضبط isAdmin من الجلسة
+    const isAdminSession = sessionStorage.getItem("adminLoggedIn") === "true";
+    isAdmin = isAdminSession;
+    console.log("✅ isAdmin from session:", isAdmin);
+
+    galleryEl.innerHTML = "";
+    page = 1;
     renderChunk();
     updateCounter();
+    galleryEl.style.display = "grid";
+  })
+  .catch(err => {
+    console.error("فشل في جلب الصور من Firebase:", err);
+  });
 
     let currentLightboxIndex = 0;
     let currentLightboxImages = [];
