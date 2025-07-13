@@ -446,76 +446,73 @@ contactBtn.style.cssText = `
 
 }
 
-        delBtn.onclick = e => {
-  e.stopPropagation();
+        
+ if (isAdmin) {
+  const delBtn = document.createElement("button");
+  delBtn.textContent = "✖";
+  delBtn.title = "حذف الصورة";
+  delBtn.style.cssText = `
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: red;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    width: 22px;
+    height: 22px;
+    font-size: 13px;
+    z-index: 999;
+  `;
 
-  const user = firebase.auth().currentUser;
-  if (!user) {
-    alert("❌ يجب تسجيل الدخول لحذف الصور");
-    return;
-  }
+  delBtn.onclick = e => {
+    e.stopPropagation();
 
-  console.log("🧾 المستخدم الحالي:", user.email);
+    const user = firebase.auth().currentUser;
+    if (!user) {
+      alert("❌ يجب تسجيل الدخول لحذف الصور");
+      return;
+    }
 
-  fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json")
-    .then(res => res.json())
-    .then(data => {
-      const entries = Object.entries(data || {});
-      const match = entries.find(([key, value]) => value.id === img.id);
-      if (match) {
-        const key = match[0];
+    console.log("🧾 المستخدم الحالي:", user.email);
 
-        // 🔐 تحقق من أن الأدمن فقط هو من يستطيع الحذف
-        if (user.email !== "kollomollo1@gmail.com") {
-          alert("❌ الحذف مسموح للأدمن فقط");
-          return;
-        }
+    fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json")
+      .then(res => res.json())
+      .then(data => {
+        const entries = Object.entries(data || {});
+        const match = entries.find(([key, value]) => value.id === img.id);
+        if (match) {
+          const key = match[0];
 
-        fetch(`https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images/${key}.json`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json"
+          // تحقق من أن الأدمن فقط هو من يستطيع الحذف
+          if (user.email !== "kollomollo1@gmail.com") {
+            alert("❌ الحذف مسموح للأدمن فقط");
+            return;
           }
-        }).then(() => {
-          images = images.filter(i => i.id !== img.id);
-          galleryEl.innerHTML = "";
-          page = 1;
-          renderChunk();
-          updateCounter();
-        }).catch(err => {
-          console.error("فشل حذف الصورة:", err);
-          alert("حدث خطأ أثناء حذف الصورة.");
-        });
-      }
-    });
-};
 
-
-  fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json")
-    .then(res => res.json())
-    .then(data => {
-      const entries = Object.entries(data || {});
-      const match = entries.find(([key, value]) => value.id === img.id);
-      if (match) {
-        const key = match[0];
-        fetch(`https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images/${key}.json`, {
-          method: "DELETE"
-        }).then(() => {
-          images = images.filter(i => i.id !== img.id);
-          galleryEl.innerHTML = "";
-          page = 1;
-          renderChunk();
-          updateCounter();
-        }).catch(err => {
-          console.error("فشل حذف الصورة:", err);
-          alert("حدث خطأ أثناء حذف الصورة.");
-        });
-      }
-    });
-};
-
-          div.appendChild(delBtn);
+          fetch(`https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images/${key}.json`, {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json"
+            }
+          }).then(() => {
+            images = images.filter(i => i.id !== img.id);
+            galleryEl.innerHTML = "";
+            page = 1;
+            renderChunk();
+            updateCounter();
+          }).catch(err => {
+            console.error("فشل حذف الصورة:", err);
+            alert("حدث خطأ أثناء حذف الصورة.");
+          });
         }
+      });
+  };
+
+  div.appendChild(delBtn);
+}
+
 
         galleryEl.appendChild(div);
       });
