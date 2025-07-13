@@ -188,7 +188,7 @@
                   return fetch(`${pendingUrl.replace(".json", "/" + img.key + ".json")}`, {
                     method: "DELETE"
                   });
-                }).then(() => div.remove());
+                }).then(() => loadData());
               };
               btnGroup.appendChild(approveBtn);
             }
@@ -201,7 +201,7 @@
               if (confirm("هل تريد حذف الصورة؟")) {
                 fetch(`${url.replace(".json", "/" + img.key + ".json")}`, {
                   method: "DELETE"
-                }).then(() => div.remove());
+                }).then(() => loadData());
               }
             };
 
