@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar">
 <head>
@@ -139,7 +140,7 @@
           section.className = "seller-section";
 
           const sellerTitle = document.createElement("h3");
-          sellerTitle.innerHTML = \`🛍️ \${sellerName || "غير معروف"} <button class="toggle-images">👁️‍🗨️ إظهار الصور</button>\`;
+          sellerTitle.innerHTML = `🛍️ ${sellerName || "غير معروف"} <button class="toggle-images">👁️‍🗨️ إظهار الصور</button>`;
           section.appendChild(sellerTitle);
 
           const imagesContainer = document.createElement("div");
@@ -194,7 +195,7 @@
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify(approvedImage)
                 }).then(() => {
-                  return fetch(\`\${pendingUrl.replace(".json", "/" + img.key + ".json")}\`, {
+                  return fetch(`${pendingUrl.replace(".json", "/" + img.key + ".json")}`, {
                     method: "DELETE"
                   });
                 }).then(() => div.remove());
@@ -209,7 +210,7 @@
               const url = img.approved ? imagesUrl : pendingUrl;
               if (confirm("هل تريد حذف الصورة؟")) {
                 firebase.auth().currentUser.getIdToken().then(token => {
-                  fetch(\`\${url.replace(".json", "/" + img.key + ".json")}?auth=\${token}\`, {
+                  fetch(`${url.replace(".json", "/" + img.key + ".json")}?auth=${token}`, {
                     method: "DELETE"
                   }).then(() => div.remove());
                 });
@@ -252,7 +253,7 @@
             if (!data) return;
             Object.entries(data).forEach(([key, img]) => {
               if (img.trader === traderName || img.sellerName === traderName) {
-                const deleteUrl = \`\${baseUrl.replace(".json", "/" + key + ".json")}?auth=\${token}\`;
+                const deleteUrl = `${baseUrl.replace(".json", "/" + key + ".json")}?auth=${token}`;
                 deleteList.push(fetch(deleteUrl, { method: "DELETE" }));
               }
             });
@@ -267,7 +268,7 @@
             );
             if (entry) {
               const uid = entry[0];
-              const deleteUrl = \`\${sellersUrl.replace(".json", "/" + uid + ".json")}?auth=\${token}\`;
+              const deleteUrl = `${sellersUrl.replace(".json", "/" + uid + ".json")}?auth=${token}`;
               deleteList.push(fetch(deleteUrl, { method: "DELETE" }));
             }
           }
