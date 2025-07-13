@@ -149,14 +149,27 @@
           section.appendChild(imagesContainer);
 
           const deleteSellerBtn = document.createElement("button");
-          deleteSellerBtn.textContent = "❌ حذف التاجر";
-          deleteSellerBtn.className = "remove-seller";
-          deleteSellerBtn.onclick = () => {
-            if (confirm("هل أنت متأكد من حذف هذا التاجر وصوره؟")) {
-              deleteByTraderName(sellerName);
-            }
-          };
-          section.appendChild(deleteSellerBtn);
+deleteSellerBtn.textContent = "❌ حذف التاجر";
+deleteSellerBtn.className = "remove-seller";
+deleteSellerBtn.onclick = () => {
+  if (confirm("هل أنت متأكد من حذف هذا التاجر وصوره؟")) {
+    deleteByTraderName(sellerName, true); // حذف الصور والتاجر
+  }
+};
+section.appendChild(deleteSellerBtn);
+
+// 👇 زر جديد لحذف الصور فقط
+const deleteImagesBtn = document.createElement("button");
+deleteImagesBtn.textContent = "🧹 حذف جميع صور التاجر";
+deleteImagesBtn.className = "remove-seller";
+deleteImagesBtn.style.background = "#6c757d"; // لون مختلف
+deleteImagesBtn.onclick = () => {
+  if (confirm("هل تريد حذف جميع صور هذا التاجر فقط بدون حذف بياناته؟")) {
+    deleteByTraderName(sellerName, false); // حذف الصور فقط
+  }
+};
+section.appendChild(deleteImagesBtn);
+
 
           (allImages[sellerName] || []).forEach(img => {
             const div = document.createElement("div");
