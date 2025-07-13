@@ -94,10 +94,10 @@
     firebase.initializeApp(firebaseConfig);
   </script>
 
-  <!-- الكود الرئيسي بعد تحميل Firebase -->
   <script>
     const pendingUrl = "https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages.json";
     const imagesUrl = "https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json";
+    const sellersUrl = "https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/sellers.json";
     const container = document.getElementById("container");
 
     firebase.auth().onAuthStateChanged(user => {
@@ -105,24 +105,25 @@
         alert("🚫 غير مصرح لك بالدخول");
         window.location.href = "admin-login-firebase.html";
       } else {
-        loadImages();
+        loadData();
       }
     });
 
-    function loadImages() {
+    function loadData() {
       Promise.all([
         fetch(pendingUrl).then(res => res.json()),
-        fetch(imagesUrl).then(res => res.json())
+        fetch(imagesUrl).then(res => res.json()),
+        fetch(sellersUrl).then(res => res.json())
       ])
-      .then(([pendingData, approvedData]) => {
-        const allData = {};
+      .then(([pendingData, approvedData, sellersData]) => {
+        const allImages = {};
 
         const merge = (data, approved) => {
           if (!data) return;
           Object.entries(data).forEach(([key, img]) => {
             const seller = img.trader || img.sellerName || "غير معروف";
-            if (!allData[seller]) allData[seller] = [];
-            allData[seller].push({ key, ...img, approved });
+            if (!allImages[seller]) allImages[seller] = [];
+            allImages[seller].push({ key, ...img, approved });
           });
         };
 
@@ -131,12 +132,15 @@
 
         container.innerHTML = "";
 
-        Object.entries(allData).forEach(([sellerName, images]) => {
+        const allSellers = new Set(Object.keys(sellersData || {}).map(uid => sellersData[uid].shopName));
+        const allNames = new Set([...allSellers, ...Object.keys(allImages)]);
+
+        allNames.forEach(sellerName => {
           const section = document.createElement("div");
           section.className = "seller-section";
 
           const sellerTitle = document.createElement("h3");
-          sellerTitle.innerHTML = `🛍️ ${sellerName} <button class="toggle-images">👁️‍🗨️ إظهار الصور</button>`;
+          sellerTitle.innerHTML = `🛍️ ${sellerName || "غير معروف"} <button class="toggle-images">👁️‍🗨️ إظهار الصور</button>`;
           section.appendChild(sellerTitle);
 
           const imagesContainer = document.createElement("div");
@@ -154,10 +158,9 @@
           };
           section.appendChild(deleteSellerBtn);
 
-          images.forEach(img => {
+          (allImages[sellerName] || []).forEach(img => {
             const div = document.createElement("div");
             div.className = "img-box";
-
             const image = document.createElement("img");
             image.src = img.src;
 
@@ -208,14 +211,13 @@
             imagesContainer.appendChild(div);
           });
 
-            const toggleBtn = sellerTitle.querySelector(".toggle-images");
-            let visible = true;
-            toggleBtn.onclick = () => {
+          const toggleBtn = sellerTitle.querySelector(".toggle-images");
+          let visible = true;
+          toggleBtn.onclick = () => {
             visible = !visible;
             imagesContainer.style.display = visible ? "block" : "none";
             toggleBtn.textContent = visible ? "👁️ إخفاء الصور" : "👁️‍🗨️ إظهار الصور";
-         };
-
+          };
 
           container.appendChild(section);
         });
@@ -251,7 +253,6 @@
       });
     }
   </script>
+
 </body>
 </html>
-
-
