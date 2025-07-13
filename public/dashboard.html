@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar">
 <head>
@@ -30,7 +29,6 @@
       align-items: start;
       min-height: 100vh;
     }
-
     .container {
       background: white;
       padding: 20px;
@@ -40,12 +38,10 @@
       width: 90%;
       max-width: 700px;
     }
-
     h2 {
       text-align: center;
       color: #333;
     }
-
     input, select, button {
       width: 100%;
       padding: 10px;
@@ -54,14 +50,12 @@
       border: 1px solid #ccc;
       font-size: 16px;
     }
-
     button {
       background-color: #28a745;
       color: white;
       border: none;
       cursor: pointer;
     }
-
     button:hover {
       background-color: #218838;
     }
@@ -100,10 +94,7 @@
       const category = document.getElementById("category").value;
       let phone = document.getElementById("sellerPhone").value.trim();
 
-      if (phone.startsWith("0")) {
-        phone = phone.substring(1);
-      }
-
+      if (phone.startsWith("0")) phone = phone.substring(1);
       const sellerLink = phone ? `https://wa.me/20${phone}` : "";
 
       if (!file || !category || !sellerName || !sellerLink) {
@@ -122,95 +113,66 @@
       .then(res => res.json())
       .then(data => {
         const newImg = {
-  src: data.secure_url,
-  sellerName: sellerName,
-  trader: sellerName,       // ✅ إضافة مهمة
-  seller: sellerLink,
-  category: category,
-  approved: false
-};
+          src: data.secure_url,
+          sellerName: sellerName,
+          trader: sellerName,
+          seller: sellerLink,
+          category: category,
+          approved: false
+        };
 
-firebase.auth().currentUser.getIdToken().then(token => {
-  return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages.json?auth=" + token, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(newImg)
-  });
-})
-.then(() => {
-  alert("✅ تم رفع الصورة بنجاح وتنتظر موافقة الأدمن");
-  loadMyImages();
-})
-.catch(err => {
-  alert("❌ حدث خطأ أثناء رفع الصورة: " + err.message);
-});
-
+        return firebase.auth().currentUser.getIdToken().then(token => {
+          return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages.json?auth=" + token, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(newImg)
+          });
+        });
       })
       .then(() => {
         alert("✅ تم رفع الصورة بنجاح وتنتظر موافقة الأدمن");
         loadMyImages();
+      })
+      .catch(err => {
+        alert("❌ حدث خطأ أثناء رفع الصورة: " + err.message);
       });
     }
 
     function loadMyImages() {
       const container = document.getElementById("myImages");
       container.innerHTML = "";
-
       const sources = [
-        {
-          url: "https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages.json",
-          deletable: true
-        },
-        {
-          url: "https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json",
-          deletable: true
-        }
+        { url: "https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages.json", deletable: true },
+        { url: "https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json", deletable: true }
       ];
 
       sources.forEach(source => {
-        fetch(source.url)
-          .then(res => res.json())
-          .then(data => {
-            if (!data) return;
-
-            Object.entries(data).forEach(([key, img]) => {
-              if (img.sellerName === sellerName || img.trader === sellerName) {
-                const div = document.createElement("div");
-                div.style.position = "relative";
-
-                const image = document.createElement("img");
-                image.src = img.src;
-                image.style.width = "100%";
-                image.style.borderRadius = "6px";
-                div.appendChild(image);
-
-                const btn = document.createElement("button");
-                btn.textContent = "❌ حذف";
-                btn.style.position = "absolute";
-                btn.style.bottom = "6px";
-                btn.style.right = "6px";
-                btn.style.padding = "4px 8px";
-                btn.style.background = "#dc3545";
-                btn.style.color = "white";
-                btn.style.border = "none";
-                btn.style.borderRadius = "4px";
-                btn.style.cursor = "pointer";
-
-                btn.onclick = () => {
-                  if (confirm("هل أنت متأكد من حذف الصورة؟")) {
-                    fetch(`${source.url.replace(".json", "/" + key + ".json")}`, {
-                      method: "DELETE"
-                    }).then(() => {
-                      loadMyImages();
-                    });
-                  }
-                };
-
-                div.appendChild(btn);
-                container.appendChild(div);
-              }
-            });
+        fetch(source.url).then(res => res.json()).then(data => {
+          if (!data) return;
+          Object.entries(data).forEach(([key, img]) => {
+            if (img.sellerName === sellerName || img.trader === sellerName) {
+              const div = document.createElement("div");
+              div.style.position = "relative";
+              const image = document.createElement("img");
+              image.src = img.src;
+              image.style.width = "100%";
+              image.style.borderRadius = "6px";
+              div.appendChild(image);
+              const btn = document.createElement("button");
+              btn.textContent = "❌ حذف";
+              btn.style.cssText = "position:absolute;bottom:6px;right:6px;padding:4px 8px;background:#dc3545;color:white;border:none;border-radius:4px;cursor:pointer";
+              btn.onclick = () => {
+                if (confirm("هل أنت متأكد من حذف الصورة؟")) {
+                  fetch(`${source.url.replace(".json", "/" + key + ".json")}`, {
+                    method: "DELETE"
+                  }).then(() => loadMyImages());
+                }
+              };
+              div.appendChild(btn);
+              container.appendChild(div);
+            }
           });
+        });
       });
     }
 
@@ -218,16 +180,18 @@ firebase.auth().currentUser.getIdToken().then(token => {
       firebase.auth().onAuthStateChanged((user) => {
         if (user) {
           const uid = user.uid;
-          fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/sellers/" + uid + ".json")
-            .then(res => res.json())
-            .then(data => {
-              if (data && data.shopName) {
-                sellerName = data.shopName;
-                loadMyImages();
-              } else {
-                alert("❌ لا يوجد اسم متجر مرتبط بهذا الحساب");
-              }
-            });
+          firebase.auth().currentUser.getIdToken().then(token => {
+            return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/sellers/" + uid + ".json?auth=" + token);
+          })
+          .then(res => res.json())
+          .then(data => {
+            if (data && data.shopName) {
+              sellerName = data.shopName;
+              loadMyImages();
+            } else {
+              alert("❌ لا يوجد اسم متجر مرتبط بهذا الحساب");
+            }
+          });
         } else {
           alert("❌ يجب تسجيل الدخول أولاً");
           window.location.href = "login.html";
