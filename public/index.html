@@ -1171,34 +1171,11 @@ if (sessionStorage.getItem("adminLoggedIn") === "true") {
   loadPendingApprovalImages();
 }
 
-</script>
-
-<!-- Firebase SDK -->
+<!-- Firebase SDK (مرة واحدة فقط) -->
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 
-<script>
-  
-
-  // ✅ التحقق من أن المستخدم هو الأدمن
-  firebase.auth().onAuthStateChanged(user => {
-  const allowedAdmins = ["kollomollo1@gmail.com"];
-  if (user && allowedAdmins.includes(user.email)) {
-    sessionStorage.setItem("adminLoggedIn", "true"); // ← نحفظ الجلسة هنا
-    document.getElementById("adminPanel").style.display = "flex";
-    galleryEl.innerHTML = "";
-    page = 1;
-    renderChunk();
-  } else {
-    sessionStorage.removeItem("adminLoggedIn");
-  }
-});
-</script>
-
-
-
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+<!-- تهيئة Firebase -->
 <script>
   const firebaseConfig = {
     apiKey: "AIzaSyCP2gI3kFHg-ExtEhyMLlBe4o0yXHHXV6E",
@@ -1209,8 +1186,24 @@ if (sessionStorage.getItem("adminLoggedIn") === "true") {
   firebase.initializeApp(firebaseConfig);
 </script>
 
+<!-- التحقق من الأدمن -->
 <script>
-  // فحص الجلسة عند تحميل الصفحة
+  firebase.auth().onAuthStateChanged(user => {
+    const allowedAdmins = ["kollomollo1@gmail.com"];
+    if (user && allowedAdmins.includes(user.email)) {
+      sessionStorage.setItem("adminLoggedIn", "true");
+      document.getElementById("adminPanel").style.display = "flex";
+      galleryEl.innerHTML = "";
+      page = 1;
+      renderChunk();
+    } else {
+      sessionStorage.removeItem("adminLoggedIn");
+    }
+  });
+</script>
+
+<!-- فحص الجلسة عند فتح الصفحة -->
+<script>
   const isAdminSession = sessionStorage.getItem("adminLoggedIn") === "true";
   if (isAdminSession) {
     document.getElementById("adminPanel").style.display = "flex";
@@ -1218,7 +1211,6 @@ if (sessionStorage.getItem("adminLoggedIn") === "true") {
     document.getElementById("adminPanel").style.display = "none";
   }
 </script>
-
 </body>
 </html>
 
