@@ -331,7 +331,29 @@ function createUploadUI(sellerName, section) {
 
   const uploadImage = file => {
     const category = categorySelect.value.trim();
-    const sellerLink = contactInput.value.trim();
+    
+  let sellerLink = contactInput.value.trim();
+
+  // تحويل تلقائي لرابط واتساب أو ماسنجر
+  const hasWhatsApp = /(002|\+2)?01\d{8}/.test(sellerLink);
+  const hasMessenger = /(?:m\.me\/)?[a-zA-Z0-9._]{5,}/.test(sellerLink) && !hasWhatsApp;
+
+  if (hasWhatsApp && hasMessenger) {
+    return alert("❌ لا يمكن إدخال رقم واتساب ويوزر فيسبوك معًا. اختر واحد فقط.");
+  }
+
+  if (/^01\d{8}$/.test(sellerLink)) {
+    sellerLink = "https://wa.me/2" + sellerLink;
+  } else if (/^(?:002|\+2)?01\d{8}$/.test(sellerLink)) {
+    sellerLink = "https://wa.me/" + sellerLink.replace(/^0+/, "").replace(/^(\+|00)?/, "");
+  } else if (/^[a-zA-Z0-9._]{5,}$/.test(sellerLink)) {
+    sellerLink = "https://m.me/" + sellerLink;
+  } else if (/^m\.me\//.test(sellerLink)) {
+    sellerLink = "https://" + sellerLink;
+  } else {
+    return alert("❌ أدخل رقم واتساب صحيح أو يوزر فيسبوك فقط");
+  }
+
 
     if (!file) return alert("اختر صورة");
     if (!category) return alert("اختر التصنيف");
