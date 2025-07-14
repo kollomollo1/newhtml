@@ -230,6 +230,23 @@ const allNames = new Set([
             btnGroup.appendChild(delBtn);
             div.appendChild(image);
             div.appendChild(btnGroup);
+            // زر التواصل حسب الرابط
+            if (img.seller && img.seller.startsWith("https://wa.me/")) {
+              const contactBtn = document.createElement("a");
+              contactBtn.href = img.seller;
+              contactBtn.target = "_blank";
+              contactBtn.textContent = "💬 واتساب";
+              contactBtn.style = "display:block; margin-top:4px; color:#25D366; font-size:13px;";
+              div.appendChild(contactBtn);
+            } else if (img.seller && img.seller.startsWith("https://m.me/")) {
+              const contactBtn = document.createElement("a");
+              contactBtn.href = img.seller;
+              contactBtn.target = "_blank";
+              contactBtn.textContent = "💬 ماسنجر";
+              contactBtn.style = "display:block; margin-top:4px; color:#0078FF; font-size:13px;";
+              div.appendChild(contactBtn);
+            }
+
             imagesContainer.appendChild(div);
           });
 
