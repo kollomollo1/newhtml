@@ -96,7 +96,7 @@
 
   <script>
     const pendingUrl = "https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages.json";
-    const imagesUrl = "https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages.json";
+    const imagesUrl = "https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json";
     const sellersUrl = "https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/sellers.json";
     const container = document.getElementById("container");
 
@@ -180,22 +180,7 @@ uploadBtn.onclick = () => {
       sellerLink = "https://m.me/" + number;
     }
 
-    // 🟡 اختيار التصنيف من قائمة
-    const categoryList = [
-      "كاشات حريمي وداخلي",
-      "بيجامات حريمي وملابس البيت",
-      "منتجات الجمال والمكياجات",
-      "إكسسوارات حريمي",
-      "ملابس خروج حريمي",
-      "شنط وأحذية حريمي",
-      "أدوات منزلية",
-      "ملابس وأحذية أطفالي",
-      "ملابس وأحذية رجالي",
-      "عام"
-    ];
-
-    const category = prompt("اختر رقم التصنيف:\n" + categoryList.map((c, i) => `${i + 1} - ${c}`).join("\n"));
-    const selectedCategory = categoryList[parseInt(category) - 1] || "غير مصنف";
+    const category = prompt("اكتب التصنيف (اختياري):") || "غير مصنف";
     const groupId = Date.now();
 
     const formData = new FormData();
@@ -220,7 +205,7 @@ uploadBtn.onclick = () => {
       };
 
       return firebase.auth().currentUser.getIdToken().then(token => {
-        return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages.json?auth=" + token, {
+        return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json?auth=" + token, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(newImg)
@@ -263,92 +248,119 @@ uploadBtn.onclick = () => {
             }
           };
           section.appendChild(deleteImagesBtn);
-// ✅ زر رفع صورة داخل القسم
-const uploadImageBtn = document.createElement("button");
-uploadImageBtn.textContent = "📤 رفع صورة";
-uploadImageBtn.className = "remove-seller";
-uploadImageBtn.style.backgroundColor = "#28a745";
-uploadImageBtn.onclick = () => {
-  const fileInput = document.createElement("input");
-  fileInput.type = "file";
-  fileInput.accept = "image/*";
-  fileInput.click();
+// ✅ زر رفع صورة
+const uploadBtn = document.createElement("button");
+uploadBtn.textContent = "📤 رفع صورة";
+uploadBtn.className = "remove-seller";
+uploadBtn.style.backgroundColor = "#28a745";
+uploadBtn.style.marginRight = "6px";
+section.appendChild(uploadBtn);
 
-  fileInput.onchange = () => {
-    const file = fileInput.files[0];
-    if (!file) return;
+// ✅ select التصنيفات
+const catWrapper = document.createElement("div");
+catWrapper.innerHTML = `<select style="margin:6px;" id="categorySelect">
+  <option value="كاشات حريمي وداخلي">كاشات حريمي وداخلي</option>
+  <option value="بيجامات حريمي وملابس البيت">بيجامات حريمي وملابس البيت</option>
+  <option value="منتجات الجمال والمكياجات">منتجات الجمال والمكياجات</option>
+  <option value="إكسسوارات حريمي">إكسسوارات حريمي</option>
+  <option value="ملابس خروج حريمي">ملابس خروج حريمي</option>
+  <option value="شنط وأحذية حريمي">شنط وأحذية حريمي</option>
+  <option value="أدوات منزلية">أدوات منزلية</option>
+  <option value="ملابس وأحذية أطفالي">ملابس وأحذية أطفالي</option>
+  <option value="ملابس وأحذية رجالي">ملابس وأحذية رجالي</option>
+  <option value="عام">عام</option>
+</select>`;
+section.appendChild(catWrapper);
 
-    let number = prompt("اكتب رقم البائع (واتساب أو ماسنجر):");
-    if (!number) return alert("لم يتم إدخال رقم البائع.");
-    number = number.trim();
-    let sellerLink = "";
-    if (/^\d{10,12}$/.test(number)) {
-      if (number.startsWith("0")) number = number.slice(1);
-      sellerLink = "https://wa.me/20" + number;
-    } else if (number.includes("facebook.com")) {
-      sellerLink = number;
-    } else {
-      sellerLink = "https://m.me/" + number;
-    }
+// ✅ dropzone
+const dropzone = document.createElement("div");
+dropzone.textContent = "🖼️ اسحب الصورة هنا لرفعها";
+dropzone.style.border = "2px dashed #aaa";
+dropzone.style.padding = "16px";
+dropzone.style.marginTop = "8px";
+dropzone.style.borderRadius = "8px";
+dropzone.style.background = "#f9f9f9";
+dropzone.style.color = "#555";
+dropzone.style.cursor = "pointer";
+section.appendChild(dropzone);
 
-    // 🟡 اختيار التصنيف من قائمة
-    const categoryList = [
-      "كاشات حريمي وداخلي",
-      "بيجامات حريمي وملابس البيت",
-      "منتجات الجمال والمكياجات",
-      "إكسسوارات حريمي",
-      "ملابس خروج حريمي",
-      "شنط وأحذية حريمي",
-      "أدوات منزلية",
-      "ملابس وأحذية أطفالي",
-      "ملابس وأحذية رجالي",
-      "عام"
-    ];
+// ⬆️ رفع صورة (زرار)
+uploadBtn.onclick = () => handleUpload(sellerName, document.getElementById("categorySelect").value);
 
-    const category = prompt("اختر رقم التصنيف:\n" + categoryList.map((c, i) => `${i + 1} - ${c}`).join("\n"));
-    const selectedCategory = categoryList[parseInt(category) - 1] || "غير مصنف";
-    const groupId = Date.now();
+// ⬆️ رفع صورة (سحب وافلات)
+dropzone.addEventListener("dragover", function(e) {
+  e.preventDefault();
+  dropzone.style.background = "#eef";
+});
+dropzone.addEventListener("dragleave", function() {
+  dropzone.style.background = "#f9f9f9";
+});
+dropzone.addEventListener("drop", function(e) {
+  e.preventDefault();
+  dropzone.style.background = "#f9f9f9";
+  const files = e.dataTransfer.files;
+  handleUpload(sellerName, document.getElementById("categorySelect").value, files[0]);
+});
 
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", "lastlast");
+function handleUpload(sellerName, category, file) {
+  if (!category) return alert("اختر تصنيف أولًا");
 
-    fetch("https://api.cloudinary.com/v1_1/dugzs3qbh/image/upload", {
-      method: "POST",
-      body: formData
-    })
-    .then(res => res.json())
-    .then(data => {
-      const newImg = {
-        id: Date.now() + Math.random(),
-        src: data.secure_url,
-        category,
-        seller: sellerLink,
-        trader: sellerName,
-        group: groupId,
-        uid: firebase.auth().currentUser?.uid || "admin",
-        email: firebase.auth().currentUser?.email || "admin@admin.com"
-      };
+  if (!file) {
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = "image/*";
+    fileInput.click();
+    fileInput.onchange = () => handleUpload(sellerName, category, fileInput.files[0]);
+    return;
+  }
 
-      return firebase.auth().currentUser.getIdToken().then(token => {
-        return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages.json?auth=" + token, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(newImg)
-        });
+  let number = prompt("أدخل رقم البائع (واتساب أو ماسنجر):");
+  if (!number) return alert("لم يتم إدخال رقم البائع.");
+  number = number.trim();
+  let sellerLink = "";
+  if (/^\d{10,12}$/.test(number)) {
+    if (number.startsWith("0")) number = number.slice(1);
+    sellerLink = "https://wa.me/20" + number;
+  } else if (number.includes("facebook.com")) {
+    sellerLink = number;
+  } else {
+    sellerLink = "https://m.me/" + number;
+  }
+
+  const groupId = Date.now();
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", "lastlast");
+
+  fetch("https://api.cloudinary.com/v1_1/dugzs3qbh/image/upload", {
+    method: "POST",
+    body: formData
+  })
+  .then(res => res.json())
+  .then(data => {
+    const newImg = {
+      id: Date.now() + Math.random(),
+      src: data.secure_url,
+      category,
+      seller: sellerLink,
+      trader: sellerName,
+      group: groupId,
+      uid: firebase.auth().currentUser?.uid || "admin",
+      email: firebase.auth().currentUser?.email || "admin@admin.com",
+      approved: false
+    };
+
+    return firebase.auth().currentUser.getIdToken().then(token => {
+      return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages.json?auth=" + token, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newImg)
       });
-    })
-    .then(() => {
-      alert("✅ تم رفع الصورة بنجاح");
-      location.reload();
-    })
-    .catch(err => {
-      alert("❌ حدث خطأ أثناء الرفع: " + err.message);
     });
-  };
-};
-
-section.appendChild(uploadImageBtn);
+  })
+  .then(() => alert("✅ تم رفع الصورة إلى المراجعة"))
+  .catch(err => alert("❌ خطأ أثناء الرفع: " + err.message));
+}
 
           (allImages[sellerKey] || []).forEach(img => {
             const div = document.createElement("div");
