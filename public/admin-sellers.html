@@ -334,40 +334,64 @@ const uploadImage = file => {
 
   if (!file) return alert("اختر صورة");
   if (!category) return alert("اختر التصنيف");
-  if (!sellerLink) return alert("أدخل رابط البائع");
+  if (!sellerLink) return alert("أدخل رقم واتساب أو يوزر ماسنجر");
 
-  // تعديل الرابط تلقائياً
+  // 🟥 تحقق من وجود واتساب وفيس معًا
+  const hasWhatsApp = /(002|\+2)?01\d{8}/.test(sellerLink);
+  const hasMessenger = /(?:m\.me\/)?[a-zA-Z0-9._]{5,}/.test(sellerLink) && !hasWhatsApp;
+
+  if (hasWhatsApp && hasMessenger) {
+    return alert("❌ لا يمكن إدخال رقم واتساب ويوزر فيسبوك معًا. اختر واحد فقط.");
+  }
+
+  // ✅ تحويل رقم الواتساب إلى رابط
   if (/^01\d{8}$/.test(sellerLink)) {
     sellerLink = "https://wa.me/2" + sellerLink;
   } else if (/^(?:002|\+2)?01\d{8}$/.test(sellerLink)) {
     sellerLink = "https://wa.me/" + sellerLink.replace(/^0+/, "").replace(/^(\+|00)?/, "");
+  }
+
+  // ✅ تحويل يوزر ماسنجر إلى رابط
+  else if (/^[a-zA-Z0-9._]{5,}$/.test(sellerLink)) {
+    sellerLink = "https://m.me/" + sellerLink;
   } else if (/^m\.me\//.test(sellerLink)) {
     sellerLink = "https://" + sellerLink;
   }
 
-    if (!file) return alert("اختر صورة");
-    if (!category) return alert("اختر التصنيف");
-    if (!sellerLink) return alert("أدخل رابط البائع");
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", "lastlast");
 
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", "lastlast");
+  fetch("https://api.cloudinary.com/v1_1/dugzs3qbh/image/upload", {
+    method: "POST",
+    body: formData
+  })
+  .then(res => res.json())
+  .then(data => {
+    const pendingImage = {
+      src: data.secure_url,
+      seller: sellerLink,
+      sellerName: sellerName,
+      category: category,
+      approved: false,
+      group: Date.now(),
+      uid: firebase.auth().currentUser?.uid || "guest"
+    };
 
-    fetch("https://api.cloudinary.com/v1_1/dugzs3qbh/image/upload", {
-      method: "POST",
-      body: formData
-    })
-    .then(res => res.json())
-    .then(data => {
-      const pendingImage = {
-        src: data.secure_url,
-        seller: sellerLink,
-        sellerName: sellerName,
-        category: category,
-        approved: false,
-        group: Date.now(),
-        uid: firebase.auth().currentUser?.uid || "guest"
-      };
+    return firebase.auth().currentUser.getIdToken()
+      .then(token => fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages.json?auth=" + token, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(pendingImage)
+      }));
+  })
+  .then(() => alert("✅ تم رفع الصورة بنجاح وتنتظر المراجعة"))
+  .catch(err => {
+    console.error("❌ خطأ في رفع الصورة:", err);
+    alert("حدث خطأ أثناء رفع الصورة");
+  });
+};
+
 
       return firebase.auth().currentUser.getIdToken()
         .then(token => fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages.json?auth=" + token, {
