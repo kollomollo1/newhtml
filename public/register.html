@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar">
 <head>
@@ -7,6 +6,18 @@
   <link href="https://fonts.googleapis.com/css2?family=Cairo&display=swap" rel="stylesheet">
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCP2gI3kFHg-ExtEhyMLlBe4o0yXHHXV6E",
+      authDomain: "gallery3modifiedjsless.firebaseapp.com",
+      databaseURL: "https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "gallery3modifiedjsless",
+      storageBucket: "gallery3modifiedjsless.firebasestorage.app",
+      messagingSenderId: "437182767215",
+      appId: "1:437182767215:web:0705b90e7009337a85ad9a"
+    };
+    firebase.initializeApp(firebaseConfig);
+  </script>
   <style>
     body {
       font-family: 'Cairo', sans-serif;
@@ -49,18 +60,6 @@
       background-color: #218838;
     }
   </style>
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyCP2gI3kFHg-ExtEhyMLlBe4o0yXHHXV6E",
-      authDomain: "gallery3modifiedjsless.firebaseapp.com",
-      databaseURL: "https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app",
-      projectId: "gallery3modifiedjsless",
-      storageBucket: "gallery3modifiedjsless.firebasestorage.app",
-      messagingSenderId: "437182767215",
-      appId: "1:437182767215:web:0705b90e7009337a85ad9a"
-    };
-    firebase.initializeApp(firebaseConfig);
-  </script>
 </head>
 <body>
   <div class="container">
@@ -75,46 +74,38 @@
   </div>
 
   <script>
-    document.getElementById("registerForm").addEventListener("submit", async function(e) {
-      e.preventDefault();
+  document.getElementById("registerForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
 
-      const shopName = document.getElementById("shopName").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value.trim();
-      const message = document.getElementById("message");
+    const shopName = document.getElementById("shopName").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
+    const message = document.getElementById("message");
 
-      if (!shopName || !email || !password) {
-        message.innerText = "يرجى ملء جميع الحقول";
-        return;
-      }
+    if (!shopName || !email || !password) {
+      message.innerText = "يرجى ملء جميع الحقول";
+      return;
+    }
 
-      try {
-        const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
-        const user = userCredential.user;
-        const token = await user.getIdToken();
+    try {
+      const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
+      const user = userCredential.user;
+      const token = await user.getIdToken();
 
-        // حفظ اسم المتجر في sellers
-        const res1 = await fetch(`https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/sellers/${user.uid}.json?auth=${token}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ shopName })
-        });
-        if (!res1.ok) throw new Error("❌ فشل حفظ اسم المتجر في sellers");
+      const res = await fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/sellers/" + user.uid + ".json?auth=" + token, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ shopName })
+      });
 
-        // حفظ اسم المتجر في users
-        const res2 = await fetch(`https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/users/${user.uid}.json?auth=${token}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name: shopName })
-        });
-        if (!res2.ok) throw new Error("❌ فشل حفظ اسم المستخدم في users");
+      if (!res.ok) throw new Error("فشل في حفظ اسم المتجر");
 
-        alert("✅ تم إنشاء الحساب بنجاح");
-        window.location.href = "login.html";
-      } catch (error) {
-        message.innerText = "❌ " + error.message;
-      }
-    });
-  </script>
+      alert("✅ تم إنشاء الحساب بنجاح");
+      window.location.href = "login.html";
+    } catch (error) {
+      message.innerText = "❌ " + error.message;
+    }
+  });
+</script>
 </body>
 </html>

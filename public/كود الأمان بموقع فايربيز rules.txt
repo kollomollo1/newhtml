@@ -20,6 +20,43 @@ https://console.firebase.google.com/u/0/project/gallery3modifiedjsless/database/
 
 {
   "rules": {
+    "pendingImages": {
+      "$imageId": {
+        ".read": true,
+        ".write": "auth != null && (
+          (!data.exists() && newData.child('uid').val() === auth.uid) ||
+          data.child('uid').val() === auth.uid ||
+          auth.token.admin === true
+        )"
+      }
+    },
+    "images": {
+      "$imageId": {
+        ".read": true,
+        ".write": "auth != null && (
+          (!data.exists() && newData.child('uid').val() === auth.uid) ||
+          data.child('uid').val() === auth.uid ||
+          auth.token.admin === true
+        )"
+      }
+    },
+    "sellers": {
+      "$uid": {
+        ".read": true,
+        ".write": "auth != null && (auth.uid === $uid || auth.token.admin === true)"
+      }
+    },
+    ".read": true
+  }
+}
+
+
+
+
+
+
+{
+  "rules": {
     "images": {
       ".read": true,
       ".write": "auth != null"
