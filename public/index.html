@@ -605,49 +605,44 @@ dropzone.addEventListener("drop", (e) => {
   alert("يرجى اختيار تصنيف قبل رفع الصورة");
   return;
 }
-// 🟡 نطلب رابط البائع من المستخدم
-const sellerLink = prompt("أدخل رابط البائع (واتساب أو ماسنجر):");
-if (!sellerLink) return alert("لم يتم إدخال رابط البائع.");
+
+  // 🟡 نطلب رابط البائع من المستخدم
+  const sellerLink = prompt("أدخل رابط البائع (واتساب أو ماسنجر):");
+  if (!sellerLink) return alert("لم يتم إدخال رابط البائع.");
 
 // 🟢 نطلب اسم التاجر
 const sellerName = document.getElementById("sellerName")?.value || "";
 if (!sellerName) return alert("اختر اسم التاجر من القائمة قبل السحب");
 
-const groupId = Date.now();
+  const groupId = Date.now();
 
-Array.from(files).forEach(file => {
-  const formData = new FormData();
-  formData.append("file", file);
-  formData.append("upload_preset", "lastlast");
+  Array.from(files).forEach(file => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "lastlast");
 
-  fetch("https://api.cloudinary.com/v1_1/dugzs3qbh/image/upload", {
-    method: "POST",
-    body: formData
-  })
-  .then(res => res.json())
-  .then(data => {
-    const newImg = {
-      id: Date.now() + Math.random(),
-      src: data.secure_url,
-      category: selectedCategory,
-      seller: sellerLink,
-      trader: sellerName,
-      group: groupId,
-      uid: firebase.auth().currentUser?.uid || "guest"
-    };
+    fetch("https://api.cloudinary.com/v1_1/dugzs3qbh/image/upload", {
+      method: "POST",
+      body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+      
 
-    const user = firebase.auth().currentUser;
-    if (!user) {
-      alert("❌ يجب تسجيل الدخول أولاً.");
-      return;
-    }
+const newImg = {
+  id: Date.now() + Math.random(),
+  src: data.secure_url,
+  category: selectedCategory,
+  seller: sellerLink,
+  trader: sellerName,
+  group: groupId,
+  uid: firebase.auth().currentUser?.uid || "guest"
+};
 
-    return user.getIdToken().then(token => {
-      return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json?auth=" + token, {
+
+      return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newImg)
       })
       .then(() => {
@@ -657,15 +652,13 @@ Array.from(files).forEach(file => {
         renderChunk();
         updateCounter();
       });
+    })
+    .catch(err => {
+      console.error("❌ خطأ في الرفع:", err);
+      alert("حدث خطأ أثناء رفع الصورة.");
     });
-  })
-  .catch(err => {
-    console.error("❌ خطأ في الرفع:", err);
-    alert("حدث خطأ أثناء رفع الصورة.");
   });
-});
-
-
+}
 
     function confirmClearGallery() {
   if (confirm("هل أنت متأكد أنك تريد حذف جميع الصور؟")) {
