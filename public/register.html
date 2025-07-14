@@ -92,19 +92,21 @@
       const user = userCredential.user;
       const token = await user.getIdToken();
 
-      const res = await fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/sellers/" + user.uid + ".json?auth=" + token, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ shopName })
-      });
+  const res = await fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/sellers/" + user.uid + ".json?auth=" + token, {
+  method: "PUT",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ shopName })
+});
 
- await fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/users/" + user.uid + ".json?auth=" + token, {
+// ✅ تحقق من نجاح الحفظ في sellers أولاً
+if (!res.ok) throw new Error("فشل في حفظ اسم المتجر");
+
+// ✅ بعد نجاح الحفظ في sellers، نحفظ الاسم في users
+await fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/users/" + user.uid + ".json?auth=" + token, {
   method: "PUT",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({ name: shopName })
 });
-
-      if (!res.ok) throw new Error("فشل في حفظ اسم المتجر");
 
       alert("✅ تم إنشاء الحساب بنجاح");
       window.location.href = "login.html";
