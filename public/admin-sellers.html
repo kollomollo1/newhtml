@@ -149,9 +149,55 @@ const allNames = new Set([
           const section = document.createElement("div");
           section.className = "seller-section";
 
-          const sellerTitle = document.createElement("h3");
-          sellerTitle.innerHTML = `🛍️ ${sellerName || "غير معروف"} <button class="toggle-images">👁️‍🗨️ إظهار الصور</button>`;
-          section.appendChild(sellerTitle);
+const sellerTitle = document.createElement("h3");
+sellerTitle.innerHTML = `
+  🛍️ ${sellerName || "غير معروف"} 
+  <button class="toggle-images">👁️‍🗨️ إظهار الصور</button>
+  <button class="upload-btn">➕ إضافة صور</button>
+`;
+section.appendChild(sellerTitle);
+
+const uploadBtn = sellerTitle.querySelector(".upload-btn");
+uploadBtn.onclick = () => {
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = "image/*";
+  input.multiple = true;
+  input.click();
+
+  input.onchange = () => {
+    const files = Array.from(input.files);
+    if (!files.length) return;
+
+    firebase.auth().currentUser.getIdToken().then(token => {
+      files.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const imgData = {
+            id: Date.now() + Math.random(),
+            src: reader.result,
+            seller: "#",
+            trader: sellerName,
+            category: "غير مصنف",
+            group: Date.now(),
+            uid: firebase.auth().currentUser.uid
+          };
+          fetch(pendingUrl + "?auth=" + token, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(imgData)
+          }).then(() => {
+            alert("✅ تم رفع الصورة بنجاح، وستظهر بعد المراجعة");
+          }).catch(err => {
+            console.error("فشل في رفع الصورة:", err);
+          });
+        };
+        reader.readAsDataURL(file);
+      });
+    });
+  };
+};
+
 
           const imagesContainer = document.createElement("div");
           imagesContainer.className = "images-container";
