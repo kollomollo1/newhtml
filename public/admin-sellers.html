@@ -248,6 +248,77 @@ uploadBtn.onclick = () => {
             }
           };
           section.appendChild(deleteImagesBtn);
+// ✅ زر رفع صورة داخل القسم
+const uploadImageBtn = document.createElement("button");
+uploadImageBtn.textContent = "📤 رفع صورة";
+uploadImageBtn.className = "remove-seller";
+uploadImageBtn.style.backgroundColor = "#28a745";
+uploadImageBtn.onclick = () => {
+  const fileInput = document.createElement("input");
+  fileInput.type = "file";
+  fileInput.accept = "image/*";
+  fileInput.click();
+
+  fileInput.onchange = () => {
+    const file = fileInput.files[0];
+    if (!file) return;
+
+    let number = prompt("اكتب رقم البائع (واتساب أو ماسنجر):");
+    if (!number) return alert("لم يتم إدخال رقم البائع.");
+    number = number.trim();
+    let sellerLink = "";
+    if (/^\d{10,12}$/.test(number)) {
+      if (number.startsWith("0")) number = number.slice(1);
+      sellerLink = "https://wa.me/20" + number;
+    } else if (number.includes("facebook.com")) {
+      sellerLink = number;
+    } else {
+      sellerLink = "https://m.me/" + number;
+    }
+
+    const category = prompt("اكتب التصنيف (اختياري):") || "غير مصنف";
+    const groupId = Date.now();
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "lastlast");
+
+    fetch("https://api.cloudinary.com/v1_1/dugzs3qbh/image/upload", {
+      method: "POST",
+      body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+      const newImg = {
+        id: Date.now() + Math.random(),
+        src: data.secure_url,
+        category,
+        seller: sellerLink,
+        trader: sellerName,
+        group: groupId,
+        uid: firebase.auth().currentUser?.uid || "admin",
+        email: firebase.auth().currentUser?.email || "admin@admin.com"
+      };
+
+      return firebase.auth().currentUser.getIdToken().then(token => {
+        return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json?auth=" + token, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newImg)
+        });
+      });
+    })
+    .then(() => {
+      alert("✅ تم رفع الصورة بنجاح");
+      location.reload();
+    })
+    .catch(err => {
+      alert("❌ حدث خطأ أثناء الرفع: " + err.message);
+    });
+  };
+};
+
+section.appendChild(uploadImageBtn);
 
           (allImages[sellerKey] || []).forEach(img => {
             const div = document.createElement("div");
