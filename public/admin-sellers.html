@@ -334,15 +334,17 @@ function createUploadUI(sellerName, section) {
     
     let sellerLink = contactInput.value.trim();
 
-    // ✅ تحويل تلقائي لرابط واتساب أو ماسنجر
+    // ✅ أولًا نتحقق إن كان رقم واتساب بوضوح
     if (/^01\d{8}$/.test(sellerLink)) {
       sellerLink = "https://wa.me/2" + sellerLink;
     } else if (/^(002|\+2)?01\d{8}$/.test(sellerLink)) {
       sellerLink = "https://wa.me/" + sellerLink.replace(/^0+/, "").replace(/^(002|\+2)/, "2");
-    } else if (/^[a-zA-Z0-9._]{5,}$/.test(sellerLink)) {
-      sellerLink = "https://m.me/" + sellerLink;
-    } else if (/^m\.me\//.test(sellerLink)) {
+    }
+    // ✅ بعدين نتحقق من يوزر ماسنجر
+    else if (/^m\.me\//.test(sellerLink)) {
       sellerLink = "https://" + sellerLink;
+    } else if (/^[a-zA-Z][a-zA-Z0-9._]{4,}$/.test(sellerLink)) {
+      sellerLink = "https://m.me/" + sellerLink;
     } else {
       return alert("❌ أدخل رقم واتساب صحيح أو يوزر فيسبوك فقط");
     }
