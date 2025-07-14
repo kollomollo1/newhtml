@@ -149,14 +149,13 @@ const allNames = new Set([
           const section = document.createElement("div");
           section.className = "seller-section";
 
-  const sellerTitle = document.createElement("h3");
+          const sellerTitle = document.createElement("h3");
 sellerTitle.innerHTML = `
   🛍️ ${sellerName || "غير معروف"} 
   <button class="toggle-images">👁️‍🗨️ إظهار الصور</button>
   <button class="upload-btn" style="margin-right:10px; background:#28a745; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">📤 رفع صورة</button>
 `;
 
-// ✅ زر رفع صورة
 const uploadBtn = sellerTitle.querySelector(".upload-btn");
 uploadBtn.onclick = () => {
   const fileInput = document.createElement("input");
@@ -170,10 +169,8 @@ uploadBtn.onclick = () => {
 
     let number = prompt("اكتب رقم البائع (واتساب أو ماسنجر):");
     if (!number) return alert("لم يتم إدخال رقم البائع.");
-
     number = number.trim();
     let sellerLink = "";
-
     if (/^\d{10,12}$/.test(number)) {
       if (number.startsWith("0")) number = number.slice(1);
       sellerLink = "https://wa.me/20" + number;
@@ -224,6 +221,8 @@ uploadBtn.onclick = () => {
     });
   };
 };
+          sellerTitle.innerHTML = `🛍️ ${sellerName || "غير معروف"} <button class="toggle-images">👁️‍🗨️ إظهار الصور</button>`;
+          section.appendChild(sellerTitle);
 
           const imagesContainer = document.createElement("div");
           imagesContainer.className = "images-container";
