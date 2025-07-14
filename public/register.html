@@ -95,7 +95,7 @@
       const res = await fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/sellers/" + user.uid + ".json?auth=" + token, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ shopName })
+        body: JSON.stringify({ shopName, email })
       });
 
       if (!res.ok) throw new Error("فشل في حفظ اسم المتجر");
