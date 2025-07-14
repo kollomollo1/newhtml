@@ -180,7 +180,22 @@ uploadBtn.onclick = () => {
       sellerLink = "https://m.me/" + number;
     }
 
-    const category = prompt("اكتب التصنيف (اختياري):") || "غير مصنف";
+    // 🟡 اختيار التصنيف من قائمة
+    const categoryList = [
+      "كاشات حريمي وداخلي",
+      "بيجامات حريمي وملابس البيت",
+      "منتجات الجمال والمكياجات",
+      "إكسسوارات حريمي",
+      "ملابس خروج حريمي",
+      "شنط وأحذية حريمي",
+      "أدوات منزلية",
+      "ملابس وأحذية أطفالي",
+      "ملابس وأحذية رجالي",
+      "عام"
+    ];
+
+    const category = prompt("اختر رقم التصنيف:\n" + categoryList.map((c, i) => `${i + 1} - ${c}`).join("\n"));
+    const selectedCategory = categoryList[parseInt(category) - 1] || "غير مصنف";
     const groupId = Date.now();
 
     const formData = new FormData();
@@ -205,7 +220,7 @@ uploadBtn.onclick = () => {
       };
 
       return firebase.auth().currentUser.getIdToken().then(token => {
-        return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json?auth=" + token, {
+        return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages.json?auth=" + token, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(newImg)
@@ -276,7 +291,22 @@ uploadImageBtn.onclick = () => {
       sellerLink = "https://m.me/" + number;
     }
 
-    const category = prompt("اكتب التصنيف (اختياري):") || "غير مصنف";
+    // 🟡 اختيار التصنيف من قائمة
+    const categoryList = [
+      "كاشات حريمي وداخلي",
+      "بيجامات حريمي وملابس البيت",
+      "منتجات الجمال والمكياجات",
+      "إكسسوارات حريمي",
+      "ملابس خروج حريمي",
+      "شنط وأحذية حريمي",
+      "أدوات منزلية",
+      "ملابس وأحذية أطفالي",
+      "ملابس وأحذية رجالي",
+      "عام"
+    ];
+
+    const category = prompt("اختر رقم التصنيف:\n" + categoryList.map((c, i) => `${i + 1} - ${c}`).join("\n"));
+    const selectedCategory = categoryList[parseInt(category) - 1] || "غير مصنف";
     const groupId = Date.now();
 
     const formData = new FormData();
@@ -301,7 +331,7 @@ uploadImageBtn.onclick = () => {
       };
 
       return firebase.auth().currentUser.getIdToken().then(token => {
-        return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json?auth=" + token, {
+        return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages.json?auth=" + token, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(newImg)
