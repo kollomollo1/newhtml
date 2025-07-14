@@ -239,8 +239,7 @@
   margin-bottom: 10px;
   position: relative;
   right: -170px; /* ✅ ده اللي يحركه فعليًا لليمين */
-  top: 10px; /*
-">
+top: 10px;">
   👤 إدارة البائعين
 </a>
 
@@ -1213,10 +1212,8 @@ if (localStorage.getItem("isAdmin") === "true") {
       page = 1;
       renderChunk();
 
-      
-      // ✅ تحميل التجار اليدويين تلقائيًا
-// populateSellers(); ← ❌ غير معرفة، نحذفها
-registerManualSellers(); // ← ✅ دي اللي نحتاجها فعلاً
+      // ✅ تحميل التجار الجدد تلقائيًا
+      populateSellers();
     }
   });
 </script> <!-- ✅ أضف السطر ده هنا فقط! -->
@@ -1258,50 +1255,6 @@ function populateSellers() {
       console.error("❌ فشل تحميل أسماء التجار:", err);
     });
 }
-
-<script>
-function registerManualSellers() {
-  const manualSellers = [
-    "Nancy Elshabrawy Store",
-    "Mohammed Nabil Store",
-    "Marwa Kandeel Store",
-    "كوليكشن ستور",
-    "Basma Hossam Store",
-    "Asmaa Saeed Store",
-    "Amal Hassan Store",
-    "Golden Eyescat Store",
-    "Aliaa Abdelnaser Store",
-    "Ahmed Emad Store",
-    "Ibrahim Store",
-    "Anaqt Mhjbt Store",
-    "So Trendy Store",
-    "Hnyn Abrahym Store",
-    "Eman Khairallah Store",
-    "عام"
-  ];
-
-  firebase.auth().currentUser.getIdToken().then(token => {
-    manualSellers.forEach(name => {
-      // اسم المتجر هو المفتاح
-      const encodedName = encodeURIComponent(name.trim().toLowerCase());
-
-      fetch(`https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/sellers/${encodedName}.json?auth=${token}`)
-        .then(res => res.json())
-        .then(existing => {
-          if (!existing || !existing.shopName) {
-            // لو التاجر غير موجود، نسجله
-            return fetch(`https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/sellers/${encodedName}.json?auth=${token}`, {
-              method: "PUT",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ shopName: name, email: "manual@added.com" }) // ← بريد افتراضي
-            });
-          }
-        })
-        .catch(err => console.error("❌ فشل تسجيل تاجر يدوي:", err));
-    });
-  });
-}
 </script>
 </body>
 </html>
-
