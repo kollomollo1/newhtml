@@ -241,7 +241,6 @@ const allNames = new Set([
             toggleBtn.textContent = visible ? "👁️ إخفاء الصور" : "👁️‍🗨️ إظهار الصور";
           };
 
-          createUploadUI(sellerName, section);
           container.appendChild(section);
         });
       })
@@ -292,8 +291,6 @@ const allNames = new Set([
       });
     }
   </script>
-</body>
-</html>
 
 <!-- ✅ الجزء الجديد لإضافة زر رفع الصور مع سحب وافلات لكل تاجر -->
 <script>
@@ -329,13 +326,27 @@ function createUploadUI(sellerName, section) {
   const contactInput = uploadContainer.querySelector(".contactInput");
   const dropArea = uploadContainer.querySelector(".dropArea");
 
+  function formatSellerLink(input) {
+    input = input.trim();
+    if (input.startsWith("http")) return input;
+    if (/^01[0-9]{9}$/.test(input)) return `https://wa.me/2${input}`;
+    if (/^[0-9]{10,15}$/.test(input)) return `https://wa.me/${input}`;
+    return `https://m.me/${input}`;
+  }
+
   const uploadImage = file => {
     const category = categorySelect.value.trim();
-    const sellerLink = contactInput.value.trim();
+    let sellerLink = contactInput.value.trim();
 
     if (!file) return alert("اختر صورة");
     if (!category) return alert("اختر التصنيف");
-    if (!sellerLink) return alert("أدخل رابط البائع");
+    if (!sellerLink) {
+      sellerLink = prompt("أدخل رقم واتساب أو رابط ماسنجر:");
+      if (!sellerLink) return alert("لم يتم إدخال رابط البائع");
+      contactInput.value = sellerLink;
+    }
+
+    sellerLink = formatSellerLink(sellerLink);
 
     const formData = new FormData();
     formData.append("file", file);
@@ -393,3 +404,12 @@ function createUploadUI(sellerName, section) {
   });
 }
 </script>
+
+<script>
+// ⬅️ تعديل داخل loadData() لإضافة واجهة رفع الصور لكل تاجر
+// السطر التالي يُضاف داخل allNames.forEach بعد toggleBtn.onclick
+createUploadUI(sellerName, section);
+</script>
+
+</body>
+</html>
