@@ -109,72 +109,40 @@
       }
     });
 
-   function loadData() {
-  Promise.all([
-    fetch(pendingUrl).then(res => res.json()),
-    fetch(imagesUrl).then(res => res.json()),
-    fetch(sellersUrl).then(res => res.json())
-  ])
-  .then(([pendingData, approvedData, sellersData]) => {
-    const allImages = {};
+    function loadData() {
+      Promise.all([
+        fetch(pendingUrl).then(res => res.json()),
+        fetch(imagesUrl).then(res => res.json()),
+        fetch(sellersUrl).then(res => res.json())
+      ])
+      .then(([pendingData, approvedData, sellersData]) => {
+        const allImages = {};
 
-    const merge = (data, approved) => {
-      if (!data) return;
-      Object.entries(data).forEach(([key, img]) => {
-        const seller = (img.trader || img.sellerName || "غير معروف").trim().toLowerCase();
-        if (!allImages[seller]) allImages[seller] = [];
-        allImages[seller].push({ key, ...img, approved });
-      });
-    };
+        const merge = (data, approved) => {
+          if (!data) return;
+          Object.entries(data).forEach(([key, img]) => {
+            const seller = (img.trader || img.sellerName || "غير معروف").trim().toLowerCase();
+            if (!allImages[seller]) allImages[seller] = [];
+            allImages[seller].push({ key, ...img, approved });
+          });
+        };
 
-    merge(pendingData, false);
-    merge(approvedData, true);
+        merge(pendingData, false);
+        merge(approvedData, true);
 
-    container.innerHTML = "";
+        container.innerHTML = "";
 
-    // ✅ تعريف allSellers مرة واحدة فقط
-    const allSellers = new Map();
-    Object.entries(sellersData || {}).forEach(([uid, data]) => {
-      const name = (data.shopName || "").trim().toLowerCase();
-      if (name) allSellers.set(name, data.shopName);
-    });
-
-    // ✅ تجار يدويين مأخوذين من index.html
-    const manualSellers = [
-      "Nancy Elshabrawy Store",
-      "Mohammed Nabil Store",
-      "Marwa Kandeel Store",
-      "كوليكشن ستور",
-      "Basma Hossam Store",
-      "Asmaa Saeed Store",
-      "Amal Hassan Store",
-      "Golden Eyescat Store",
-      "Aliaa Abdelnaser Store",
-      "Ahmed Emad Store",
-      "Ibrahim Store",
-      "Anaqt Mhjbt Store",
-      "So Trendy Store",
-      "Hnyn Abrahym Store",
-      "Eman Khairallah Store",
-      "عام"
-    ];
-
-    manualSellers.forEach(name => {
-      const key = name.trim().toLowerCase();
-      if (!allSellers.has(key)) {
-        allSellers.set(key, name);
-      }
-    });
-
-
-    // 👇 باقي الكود بعد كده زي ما هو (عرض التجار وصورهم)
-
-
-// ✅ بعدها مباشرة
+        
+const allSellers = new Map();
+Object.entries(sellersData || {}).forEach(([uid, data]) => {
+  const name = (data.shopName || "").trim().toLowerCase();
+  if (name) allSellers.set(name, data.shopName);
+});
 const allNames = new Set([
   ...Object.keys(allImages).map(name => name.trim().toLowerCase()),
   ...allSellers.keys()
 ]);
+
 
         allNames.forEach(sellerKey => {
   const sellerName = allSellers.get(sellerKey) || sellerKey;
