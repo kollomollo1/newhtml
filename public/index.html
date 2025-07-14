@@ -1195,7 +1195,6 @@ if (localStorage.getItem("isAdmin") === "true") {
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-
 <script>
   const firebaseConfig = {
     apiKey: "AIzaSyCP2gI3kFHg-ExtEhyMLlBe4o0yXHHXV6E",
@@ -1205,20 +1204,20 @@ if (localStorage.getItem("isAdmin") === "true") {
   };
   firebase.initializeApp(firebaseConfig);
 
-firebase.auth().onAuthStateChanged(user => {
-  const allowedAdmins = ["kollomollo1@gmail.com"];
-  if (user && allowedAdmins.includes(user.email)) {
-    isAdmin = true;
-    document.getElementById("adminPanel").style.display = "flex";
-    galleryEl.innerHTML = "";
-    page = 1;
-    renderChunk();
+  firebase.auth().onAuthStateChanged(user => {
+    const allowedAdmins = ["kollomollo1@gmail.com"];
+    if (user && allowedAdmins.includes(user.email)) {
+      isAdmin = true;
+      document.getElementById("adminPanel").style.display = "flex";
+      galleryEl.innerHTML = "";
+      page = 1;
+      renderChunk();
 
-    // ✅ تحميل التجار الجدد تلقائيًا
-    populateSellers();
-  }
-});
-
+      // ✅ تحميل التجار الجدد تلقائيًا
+      populateSellers();
+    }
+  });
+</script> <!-- ✅ أضف السطر ده هنا فقط! -->
 
 <script>
 function populateSellers() {
@@ -1260,4 +1259,5 @@ function populateSellers() {
 </script>
 </body>
 </html>
+
 
