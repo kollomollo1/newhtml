@@ -251,46 +251,63 @@ const allNames = new Set([
       });
     }
 
-    function deleteByTraderName(traderName, deleteSellerToo = false) {
-      firebase.auth().currentUser.getIdToken().then(token => {
-        Promise.all([
-          fetch(pendingUrl).then(res => res.json()),
-          fetch(imagesUrl).then(res => res.json()),
-          fetch(sellersUrl + "?auth=" + token).then(res => res.json())
-        ]).then(([pending, approved, sellersData]) => {
-          const deleteList = [];
+   function deleteByTraderName(traderName, deleteSellerToo = false) {
+  firebase.auth().currentUser.getIdToken().then(token => {
+    Promise.all([
+      fetch(pendingUrl).then(res => res.json()),
+      fetch(imagesUrl).then(res => res.json()),
+      fetch(sellersUrl + "?auth=" + token).then(res => res.json())
+    ]).then(async ([pending, approved, sellersData]) => {
+      const deleteList = [];
 
-          const handleDelete = (data, baseUrl) => {
-            if (!data) return;
-            Object.entries(data).forEach(([key, img]) => {
-              if (img.trader === traderName || img.sellerName === traderName) {
-                const deleteUrl = `${baseUrl.replace(".json", "/" + key + ".json")}?auth=${token}`;
-                deleteList.push(fetch(deleteUrl, { method: "DELETE" }));
-              }
-            });
+      const handleDelete = (data, baseUrl) => {
+        if (!data) return;
+        Object.entries(data).forEach(([key, img]) => {
+          if (img.trader === traderName || img.sellerName === traderName) {
+            const deleteUrl = `${baseUrl.replace(".json", "/" + key + ".json")}?auth=${token}`;
+            deleteList.push(fetch(deleteUrl, { method: "DELETE" }));
+          }
+        });
+      };
+
+      handleDelete(pending, pendingUrl);
+      handleDelete(approved, imagesUrl);
+
+      if (deleteSellerToo && sellersData) {
+        const entry = Object.entries(sellersData).find(
+          ([_, s]) => s.shopName === traderName
+        );
+        if (entry) {
+          const uid = entry[0];
+          const sellerInfo = entry[1];
+
+          // 🟡 إنشاء نسخة في sellerArchive قبل الحذف
+          const archiveData = {
+            shopName: sellerInfo.shopName || traderName,
+            email: sellerInfo.email || "غير متوفر",
+            deleted: true,
+            deletedAt: new Date().toISOString()
           };
 
-          handleDelete(pending, pendingUrl);
-          handleDelete(approved, imagesUrl);
+          await fetch(`https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/sellerArchive/${uid}.json?auth=${token}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(archiveData)
+          });
 
-          if (deleteSellerToo && sellersData) {
-            const entry = Object.entries(sellersData).find(
-              ([_, s]) => s.shopName === traderName
-            );
-            if (entry) {
-              const uid = entry[0];
-              const deleteUrl = `${sellersUrl.replace(".json", "/" + uid + ".json")}?auth=${token}`;
-              deleteList.push(fetch(deleteUrl, { method: "DELETE" }));
-            }
-          }
+          // 🔴 حذف التاجر من sellers
+          const deleteUrl = `${sellersUrl.replace(".json", "/" + uid + ".json")}?auth=${token}`;
+          deleteList.push(fetch(deleteUrl, { method: "DELETE" }));
+        }
+      }
 
-          Promise.all(deleteList).then(() => location.reload());
-        });
-      }).catch(err => {
-        alert("❌ فشل في حذف التاجر: لم يتم الحصول على التوكن");
-        console.error(err);
-      });
-    }
+      Promise.all(deleteList).then(() => location.reload());
+    });
+  }).catch(err => {
+    alert("❌ فشل في حذف التاجر: لم يتم الحصول على التوكن");
+    console.error(err);
+  });
+}
   </script>
 </body>
 </html>
