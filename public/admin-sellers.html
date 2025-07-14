@@ -258,7 +258,7 @@ section.appendChild(uploadBtn);
 
 // ✅ select التصنيفات
 const catWrapper = document.createElement("div");
-catWrapper.innerHTML = `<select style="margin:6px;" id="categorySelect">
+catWrapper.innerHTML = `<select style="margin:6px;" class="categorySelect">
   <option value="كاشات حريمي وداخلي">كاشات حريمي وداخلي</option>
   <option value="بيجامات حريمي وملابس البيت">بيجامات حريمي وملابس البيت</option>
   <option value="منتجات الجمال والمكياجات">منتجات الجمال والمكياجات</option>
@@ -285,7 +285,7 @@ dropzone.style.cursor = "pointer";
 section.appendChild(dropzone);
 
 // ⬆️ رفع صورة (زرار)
-uploadBtn.onclick = () => handleUpload(sellerName, document.getElementById("categorySelect").value);
+uploadBtn.onclick = () => handleUpload(sellerName, section.querySelector(".categorySelect").value);
 
 // ⬆️ رفع صورة (سحب وافلات)
 dropzone.addEventListener("dragover", function(e) {
@@ -299,7 +299,7 @@ dropzone.addEventListener("drop", function(e) {
   e.preventDefault();
   dropzone.style.background = "#f9f9f9";
   const files = e.dataTransfer.files;
-  handleUpload(sellerName, document.getElementById("categorySelect").value, files[0]);
+  handleUpload(sellerName, section.querySelector(".categorySelect").value, files[0]);
 });
 
 function handleUpload(sellerName, category, file) {
