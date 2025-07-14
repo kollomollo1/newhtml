@@ -1,7 +1,4 @@
 
-
-
-
 هنا
 https://console.firebase.google.com/u/0/project/gallery3modifiedjsless/database/gallery3modifiedjsless-default-rtdb/rules
 
@@ -22,7 +19,50 @@ https://console.firebase.google.com/u/0/project/gallery3modifiedjsless/database/
 ودي للحماية الكاملة اللي شغالة حاليا بعد تعديلات كتيير في الملفات 
 وبعد ما عينت الادمن ادمن بسكربت في فولدر في مجلد جنب مجلد بابليك
 
+{
+  "rules": {
+    "pendingImages": {
+      "$imageId": {
+        ".read": true,
+        ".write": "auth != null && (
+          (!data.exists() && newData.child('uid').val() === auth.uid) ||
+          data.child('uid').val() === auth.uid ||
+          auth.token.admin === true
+        )"
+      }
+    },
+    "images": {
+      "$imageId": {
+        ".read": true,
+        ".write": "auth != null && (
+          (!data.exists() && newData.child('uid').val() === auth.uid) ||
+          data.child('uid').val() === auth.uid ||
+          auth.token.admin === true
+        )"
+      }
+    },
+    "sellers": {
+      "$uid": {
+        ".read": true,
+        ".write": "auth != null && (auth.uid === $uid || auth.token.admin === true)"
+      }
+    },
+    "sellerArchive": {
+      "$uid": {
+        ".read": true,
+        ".write": "auth != null && auth.token.admin === true"
+      }
+    },
+    ".read": true
+  }
+}
 
+
+دي اللى قبلها شغالة كويس بس مش بتعمل قسم في فايربيز seller archive
+
+دي اللى قبلها شغالة كويس بس مش بتعمل قسم في فايربيز seller archive
+
+دي اللى قبلها شغالة كويس بس مش بتعمل قسم في فايربيز seller archive
 
 {
   "rules": {
@@ -55,7 +95,4 @@ https://console.firebase.google.com/u/0/project/gallery3modifiedjsless/database/
     ".read": true
   }
 }
-
-
-
 
