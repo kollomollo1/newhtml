@@ -1205,20 +1205,59 @@ if (localStorage.getItem("isAdmin") === "true") {
   };
   firebase.initializeApp(firebaseConfig);
 
-  // ✅ التحقق من أن المستخدم هو الأدمن
-  firebase.auth().onAuthStateChanged(user => {
-    const allowedAdmins = ["kollomollo1@gmail.com"]; // ← الإيميلات المسموحة
-    if (user && allowedAdmins.includes(user.email)) {
-      isAdmin = true;
-      document.getElementById("adminPanel").style.display = "flex";
-      galleryEl.innerHTML = "";
-     page = 1;
-     renderChunk();
-    }
-  });
+firebase.auth().onAuthStateChanged(user => {
+  const allowedAdmins = ["kollomollo1@gmail.com"];
+  if (user && allowedAdmins.includes(user.email)) {
+    isAdmin = true;
+    document.getElementById("adminPanel").style.display = "flex";
+    galleryEl.innerHTML = "";
+    page = 1;
+    renderChunk();
+
+    // ✅ تحميل التجار الجدد تلقائيًا
+    populateSellers();
+  }
+});
+
+
+<script>
+function populateSellers() {
+  const sellerDropdowns = [
+    document.getElementById("sellerName"),
+    document.getElementById("deleteTraderSelect"),
+    document.getElementById("viewTraderSelect")
+  ];
+
+  fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/users.json")
+    .then(res => res.json())
+    .then(data => {
+      if (!data) return;
+
+      const existingNames = new Set();
+      
+      sellerDropdowns.forEach(dropdown => {
+        for (let i = 0; i < dropdown.options.length; i++) {
+          const val = dropdown.options[i].value.trim();
+          if (val) existingNames.add(val);
+        }
+      });
+
+      Object.values(data).forEach(user => {
+        if (user.name && !existingNames.has(user.name)) {
+          sellerDropdowns.forEach(dropdown => {
+            const option = document.createElement("option");
+            option.value = user.name;
+            option.textContent = user.name;
+            dropdown.appendChild(option);
+          });
+        }
+      });
+    })
+    .catch(err => {
+      console.error("❌ فشل تحميل أسماء التجار:", err);
+    });
+}
 </script>
-
-
 </body>
 </html>
 
