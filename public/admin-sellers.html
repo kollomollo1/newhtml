@@ -138,11 +138,46 @@ Object.entries(sellersData || {}).forEach(([uid, data]) => {
   const name = (data.shopName || "").trim().toLowerCase();
   if (name) allSellers.set(name, data.shopName);
 });
+
+// ✅ تجار يدويين مأخوذين من index.html
+const allSellers = new Map();
+Object.entries(sellersData || {}).forEach(([uid, data]) => {
+  const name = (data.shopName || "").trim().toLowerCase();
+  if (name) allSellers.set(name, data.shopName);
+});
+
+// ✅ فقط هنا! أضف التجار اليدويين مرة واحدة
+const manualSellers = [
+  "Nancy Elshabrawy Store",
+  "Mohammed Nabil Store",
+  "Marwa Kandeel Store",
+  "كوليكشن ستور",
+  "Basma Hossam Store",
+  "Asmaa Saeed Store",
+  "Amal Hassan Store",
+  "Golden Eyescat Store",
+  "Aliaa Abdelnaser Store",
+  "Ahmed Emad Store",
+  "Ibrahim Store",
+  "Anaqt Mhjbt Store",
+  "So Trendy Store",
+  "Hnyn Abrahym Store",
+  "Eman Khairallah Store",
+  "عام"
+];
+
+manualSellers.forEach(name => {
+  const key = name.trim().toLowerCase();
+  if (!allSellers.has(key)) {
+    allSellers.set(key, name);
+  }
+});
+
+// ✅ بعدها مباشرة
 const allNames = new Set([
   ...Object.keys(allImages).map(name => name.trim().toLowerCase()),
   ...allSellers.keys()
 ]);
-
 
         allNames.forEach(sellerKey => {
   const sellerName = allSellers.get(sellerKey) || sellerKey;
