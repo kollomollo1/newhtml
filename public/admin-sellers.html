@@ -166,11 +166,6 @@
       }
     });
 
-    // ✅ allNames مبنية مرة واحدة فقط
-    const allNames = new Set([
-      ...Object.keys(allImages).map(name => name.trim().toLowerCase()),
-      ...allSellers.keys()
-    ]);
 
     // 👇 باقي الكود بعد كده زي ما هو (عرض التجار وصورهم)
 
