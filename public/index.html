@@ -640,25 +640,35 @@ const newImg = {
 };
 
 
-      return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newImg)
-      })
-      .then(() => {
-        images.unshift(newImg);
-        galleryEl.innerHTML = "";
-        page = 1;
-        renderChunk();
-        updateCounter();
-      });
-    })
-    .catch(err => {
-      console.error("❌ خطأ في الرفع:", err);
-      alert("حدث خطأ أثناء رفع الصورة.");
+const user = firebase.auth().currentUser;
+if (!user) {
+  alert("❌ يجب تسجيل الدخول أولاً.");
+  return;
+}
+
+user.getIdToken().then(token => {
+  return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json?auth=" + token, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(newImg)
+  });
+})
+.then(() => {
+  images.unshift(newImg);
+  galleryEl.innerHTML = "";
+  page = 1;
+  renderChunk();
+  updateCounter();
+})
+.catch(err => {
+  console.error("❌ خطأ في الرفع:", err);
+  alert("حدث خطأ أثناء رفع الصورة.");
     });
   });
 }
+
 
     function confirmClearGallery() {
   if (confirm("هل أنت متأكد أنك تريد حذف جميع الصور؟")) {
