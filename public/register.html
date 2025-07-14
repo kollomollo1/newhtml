@@ -98,6 +98,12 @@
         body: JSON.stringify({ shopName })
       });
 
+ await fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/users/" + user.uid + ".json?auth=" + token, {
+  method: "PUT",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ name: shopName })
+});
+
       if (!res.ok) throw new Error("فشل في حفظ اسم المتجر");
 
       alert("✅ تم إنشاء الحساب بنجاح");
