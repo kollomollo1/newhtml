@@ -1213,9 +1213,10 @@ if (localStorage.getItem("isAdmin") === "true") {
       page = 1;
       renderChunk();
 
-      // ✅ تحميل التجار الجدد تلقائيًا
-      populateSellers();
-      registerManualSellers(); // ← ⬅️ جديد
+      
+      // ✅ تحميل التجار اليدويين تلقائيًا
+// populateSellers(); ← ❌ غير معرفة، نحذفها
+registerManualSellers(); // ← ✅ دي اللي نحتاجها فعلاً
     }
   });
 </script> <!-- ✅ أضف السطر ده هنا فقط! -->
@@ -1303,5 +1304,4 @@ function registerManualSellers() {
 </script>
 </body>
 </html>
-
 
