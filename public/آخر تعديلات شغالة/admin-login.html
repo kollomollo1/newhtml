@@ -1,107 +1,86 @@
-
 <!DOCTYPE html>
 <html lang="ar">
 <head>
   <meta charset="UTF-8">
-  <title>تسجيل دخول الأدمن - Firebase</title>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تسجيل دخول الأدمن</title>
   <style>
     body {
       font-family: 'Cairo', sans-serif;
-      background: #f2f2f2;
+      background: #f4f4f4;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
+      margin: 0;
     }
-
     .login-box {
       background: white;
       padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      width: 100%;
-      max-width: 400px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 300px;
       text-align: center;
     }
-
     input {
       width: 100%;
       padding: 10px;
-      margin: 10px 0;
-      font-size: 16px;
-      border-radius: 6px;
+      margin-top: 10px;
+      margin-bottom: 20px;
       border: 1px solid #ccc;
+      border-radius: 6px;
     }
-
     button {
-      padding: 10px 20px;
-      font-size: 16px;
-      background: #6f42c1;
+      width: 100%;
+      padding: 10px;
+      background: #28a745;
       color: white;
       border: none;
       border-radius: 6px;
+      font-size: 16px;
       cursor: pointer;
     }
-
-    button:hover {
-      background: #5936a2;
-    }
-
     .error {
       color: red;
-      margin-top: 10px;
+      margin-bottom: 10px;
     }
   </style>
 </head>
 <body>
+  <div class="login-box">
+    <h2>تسجيل دخول الأدمن</h2>
+    <div id="error" class="error"></div>
+    <input type="email" id="email" placeholder="البريد الإلكتروني">
+    <input type="password" id="password" placeholder="كلمة السر">
+    <button onclick="login()">دخول</button>
+  </div>
 
-<div class="login-box">
-  <h2>تسجيل دخول الأدمن</h2>
-  <input type="email" id="email" placeholder="البريد الإلكتروني" />
-  <input type="password" id="password" placeholder="كلمة المرور" />
-  <button onclick="loginAdmin()">دخول</button>
-  <p class="error" id="error"></p>
-</div>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCP2gI3kFHg-ExtEhyMLlBe4o0yXHHXV6E",
+      authDomain: "gallery3modifiedjsless.firebaseapp.com",
+      projectId: "gallery3modifiedjsless",
+      appId: "1:437182767215:web:0705b90e7009337a85ad9a"
+    };
+    firebase.initializeApp(firebaseConfig);
 
-<script>
-  // إعداد Firebase
-  const firebaseConfig = {
-    apiKey: "AIzaSyCP2gI3kFHg-ExtEhyMLlBe4o0yXHHXV6E",
-    authDomain: "gallery3modifiedjsless.firebaseapp.com",
-    databaseURL: "https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "gallery3modifiedjsless",
-    storageBucket: "gallery3modifiedjsless.appspot.com",
-    messagingSenderId: "437182767215",
-    appId: "1:437182767215:web:0705b90e7009337a85ad9a"
-  };
-
-  firebase.initializeApp(firebaseConfig);
-
-  function loginAdmin() {
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value.trim();
-    const errorBox = document.getElementById("error");
-
-    firebase.auth().signInWithEmailAndPassword(email, password)
-  .then(userCredential => {
-    const user = userCredential.user;
-    const allowedAdmins = ["kollomollo1@gmail.com"]; // ← ممكن تضيف أكتر من إيميل هنا
-
-    if (allowedAdmins.includes(user.email)) {
-      // ✅ تسجيل دخول ناجح كأدمن
-      location.href = "index.html"; // ← أو أي صفحة لوحة الأدمن
-    } else {
-      firebase.auth().signOut(); // طرده من الجلسة
-      errorBox.textContent = "🚫 هذا الحساب لا يملك صلاحيات الأدمن.";
+    function login() {
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const errorEl = document.getElementById('error');
+      firebase.auth().signInWithEmailAndPassword(email, password)
+        .then(() => {
+          // حفظ جلسة
+          sessionStorage.setItem('adminLoggedIn', 'true');
+          location.href = "index.html"; // توجيه للوحة التحكم بعد الدخول
+        })
+        .catch(error => {
+          errorEl.textContent = "❌ " + error.message;
+        });
     }
-  })
-  .catch(error => {
-    errorBox.textContent = "❌ " + error.message;
-  });
-  }
-</script>
-
+  </script>
 </body>
 </html>

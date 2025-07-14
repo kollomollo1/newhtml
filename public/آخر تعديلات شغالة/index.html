@@ -480,46 +480,55 @@ contactBtn.style.cssText = `
 
 }
 
-        if (isAdmin) {
-          const delBtn = document.createElement("div");
-          delBtn.textContent = "✖";
-          delBtn.style.cssText = `
-            position: absolute; top: 4px; right: 4px;
-            background: rgba(0,0,0,0.6); color: white;
-            font-size: 14px; width: 20px; height: 20px;
-            line-height: 20px; text-align: center;
-            border-radius: 50%; cursor: pointer; z-index: 10;
-          `;
-          
-delBtn.onclick = e => {
-  e.stopPropagation();
+ if (isAdmin) {
+  const delBtn = document.createElement("div");
+  delBtn.textContent = "✖";
+  delBtn.style.cssText = `
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: rgba(0,0,0,0.6);
+    color: white;
+    font-size: 14px;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    text-align: center;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10;
+  `;
 
-  fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json")
-    .then(res => res.json())
-    .then(data => {
-      const entries = Object.entries(data || {});
-      const match = entries.find(([key, value]) => value.id === img.id);
-      if (match) {
-        const key = match[0];
-        fetch(`https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images/${key}.json`, {
-          method: "DELETE"
-        }).then(() => {
-          images = images.filter(i => i.id !== img.id);
-          galleryEl.innerHTML = "";
-          page = 1;
-          renderChunk();
-          updateCounter();
-        }).catch(err => {
-          console.error("فشل حذف الصورة:", err);
-          alert("حدث خطأ أثناء حذف الصورة.");
-        });
-      }
-    });
-};
+  delBtn.onclick = e => {
+    e.stopPropagation();
 
-          div.appendChild(delBtn);
+    fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json")
+      .then(res => res.json())
+      .then(data => {
+        const entries = Object.entries(data || {});
+        const match = entries.find(([key, value]) => value.id === img.id);
+        if (match) {
+          const key = match[0];
+          firebase.auth().currentUser.getIdToken().then(token => {
+            fetch(`https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images/${key}.json?auth=${token}`, {
+              method: "DELETE"
+            }).then(() => {
+              images = images.filter(i => i.id !== img.id);
+              galleryEl.innerHTML = "";
+              page = 1;
+              renderChunk();
+              updateCounter();
+            }).catch(err => {
+              console.error("فشل حذف الصورة:", err);
+              alert("حدث خطأ أثناء حذف الصورة.");
+            });
+          });
         }
+      });
+  };
 
+  div.appendChild(delBtn);
+}
         galleryEl.appendChild(div);
       });
     }
@@ -617,14 +626,16 @@ if (!sellerName) return alert("اختر اسم التاجر من القائمة 
     .then(data => {
       
 
-      const newImg = {
-        id: Date.now() + Math.random(),
-        src: data.secure_url,
-        category: selectedCategory,
-        seller: sellerLink, // ✅ نضيف الرابط للصورة
-        trader: sellerName,
-        group: groupId
-      };
+const newImg = {
+  id: Date.now() + Math.random(),
+  src: data.secure_url,
+  category: selectedCategory,
+  seller: sellerLink,
+  trader: sellerName,
+  group: groupId,
+  uid: firebase.auth().currentUser?.uid || "guest"
+};
+
 
       return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json", {
         method: "POST",
@@ -926,13 +937,16 @@ function uploadSingleImage() {
   })
   .then(res => res.json())
   .then(data => {
-    const newImg = {
-      id: Date.now() + Math.random(),
-      src: data.secure_url,
-      category: selectedCategory,
-      seller: sellerLink,
-      group: groupId
-    };
+   const newImg = {
+  id: Date.now() + Math.random(),
+  src: data.secure_url,
+  category: selectedCategory,
+  seller: sellerLink,
+  trader: sellerName,
+  group: groupId,
+  uid: firebase.auth().currentUser?.uid || "guest"
+};
+
 
     return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json", {
       method: "POST",
@@ -1204,5 +1218,4 @@ if (localStorage.getItem("isAdmin") === "true") {
 
 </body>
 </html>
-
 
