@@ -147,29 +147,15 @@
         });
     }
 
-  function approve(key, imgData) {
-  const approvedImage = {
-    id: Date.now() + Math.random(),
-    src: imgData.src,
-    seller: imgData.seller || "#",
-    trader: imgData.sellerName || "غير معروف",
-    category: imgData.category || "غير مصنف",
-    group: Date.now(),
-    uid: imgData.uid || null,            // ✅ إضافة uid كما هو
-    email: imgData.email || null         // (اختياري) إضافة الإيميل الأصلي
-  };
-
-  fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json?auth=" + authToken, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(approvedImage)
-  }).then(() => {
-    return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages/" + key + ".json?auth=" + authToken, {
-      method: "DELETE"
-    });
-  }).then(loadPending);
-}
-
+    function approve(key, imgData) {
+      const approvedImage = {
+        id: Date.now() + Math.random(),
+        src: imgData.src,
+        seller: imgData.seller || "#",
+        trader: imgData.sellerName || "غير معروف",
+        category: imgData.category || "غير مصنف",
+        group: Date.now()
+      };
 
       fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json?auth=" + authToken, {
         method: "POST",

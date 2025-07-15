@@ -1,0 +1,429 @@
+
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>إدارة البائعين</title>
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+      padding: 20px;
+      background: #f5f5f5;
+      text-align: center;
+    }
+    h2 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+    .seller-section {
+      margin-bottom: 30px;
+      background: #fff;
+      padding: 10px;
+      border-radius: 10px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    .seller-section h3 {
+      color: green;
+      margin-bottom: 10px;
+    }
+    .img-box {
+      display: inline-block;
+      width: 130px;
+      margin: 10px;
+      padding: 10px;
+      background: #f9f9f9;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.05);
+    }
+    .img-box img {
+      width: 100%;
+      border-radius: 6px;
+      background: #ccc;
+    }
+    .btns {
+      margin-top: 8px;
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+    }
+    .btns button {
+      padding: 4px 6px;
+      font-size: 12px;
+      border: none;
+      border-radius: 4px;
+      color: white;
+      cursor: pointer;
+    }
+    .approve-btn { background: #28a745; }
+    .delete-btn { background: #dc3545; }
+    .remove-seller {
+      margin-bottom: 20px;
+      padding: 6px 12px;
+      background: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .review-link {
+      display: inline-block;
+      margin-bottom: 20px;
+      background: #007bff;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 6px;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>📸 إدارة صور البائعين</h2>
+  <a class="review-link" href="https://www.matgary.shop/admin-review.html" target="_blank">🔍 مراجعة الصور المعلقة</a>
+  <div id="container">جارٍ التحميل...</div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCP2gI3kFHg-ExtEhyMLlBe4o0yXHHXV6E",
+      authDomain: "gallery3modifiedjsless.firebaseapp.com",
+      projectId: "gallery3modifiedjsless",
+      appId: "1:437182767215:web:0705b90e7009337a85ad9a"
+    };
+    firebase.initializeApp(firebaseConfig);
+  </script>
+
+  <script>
+    const pendingUrl = "https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages.json";
+    const imagesUrl = "https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json";
+    const sellersUrl = "https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/sellers.json";
+    const container = document.getElementById("container");
+
+    firebase.auth().onAuthStateChanged(user => {
+      if (!user || user.email !== "kollomollo1@gmail.com") {
+        alert("🚫 غير مصرح لك بالدخول");
+        window.location.href = "admin-login-firebase.html";
+      } else {
+        loadData();
+      }
+    });
+
+    function loadData() {
+      Promise.all([
+        fetch(pendingUrl).then(res => res.json()),
+        fetch(imagesUrl).then(res => res.json()),
+        fetch(sellersUrl).then(res => res.json())
+      ])
+      .then(([pendingData, approvedData, sellersData]) => {
+        const allImages = {};
+
+        const merge = (data, approved) => {
+          if (!data) return;
+          Object.entries(data).forEach(([key, img]) => {
+            const seller = (img.trader || img.sellerName || "غير معروف").trim().toLowerCase();
+            if (!allImages[seller]) allImages[seller] = [];
+            allImages[seller].push({ key, ...img, approved });
+          });
+        };
+
+        merge(pendingData, false);
+        merge(approvedData, true);
+
+        container.innerHTML = "";
+
+        
+const allSellers = new Map();
+Object.entries(sellersData || {}).forEach(([uid, data]) => {
+  const name = (data.shopName || "").trim().toLowerCase();
+  if (name) allSellers.set(name, data.shopName);
+});
+const allNames = new Set([
+  ...Object.keys(allImages).map(name => name.trim().toLowerCase()),
+  ...allSellers.keys()
+]);
+
+
+        allNames.forEach(sellerKey => {
+  const sellerName = allSellers.get(sellerKey) || sellerKey;
+          const section = document.createElement("div");
+          section.className = "seller-section";
+
+          const sellerTitle = document.createElement("h3");
+          sellerTitle.innerHTML = `🛍️ ${sellerName || "غير معروف"} <button class="toggle-images">👁️‍🗨️ إظهار الصور</button>`;
+          section.appendChild(sellerTitle);
+
+          const imagesContainer = document.createElement("div");
+          imagesContainer.className = "images-container";
+          imagesContainer.style.display = "none";
+          section.appendChild(imagesContainer);
+
+          const deleteSellerBtn = document.createElement("button");
+          deleteSellerBtn.textContent = "❌ حذف التاجر";
+          deleteSellerBtn.className = "remove-seller";
+          deleteSellerBtn.onclick = () => {
+            if (confirm("هل أنت متأكد من حذف هذا التاجر وصوره وبياناته؟")) {
+              deleteByTraderName(sellerName, true);
+            }
+          };
+          section.appendChild(deleteSellerBtn);
+
+          const deleteImagesBtn = document.createElement("button");
+          deleteImagesBtn.textContent = "🖼️ حذف جميع الصور";
+          deleteImagesBtn.className = "remove-seller";
+          deleteImagesBtn.onclick = () => {
+            if (confirm("هل أنت متأكد من حذف جميع صور هذا التاجر فقط؟")) {
+              deleteByTraderName(sellerName);
+            }
+          };
+          section.appendChild(deleteImagesBtn);
+
+          (allImages[sellerKey] || []).forEach(img => {
+            const div = document.createElement("div");
+            div.className = "img-box";
+            const image = document.createElement("img");
+            image.src = img.src;
+
+            const btnGroup = document.createElement("div");
+            btnGroup.className = "btns";
+
+            if (!img.approved) {
+              const approveBtn = document.createElement("button");
+              approveBtn.textContent = "✅";
+              approveBtn.className = "approve-btn";
+              approveBtn.onclick = () => {
+                const approvedImage = {
+                  id: Date.now() + Math.random(),
+                  src: img.src,
+                  seller: img.seller || "#",
+                  trader: img.trader || img.sellerName || "غير معروف",
+                  category: img.category || "غير مصنف",
+                  group: Date.now()
+                };
+                fetch(imagesUrl, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify(approvedImage)
+                }).then(() => {
+                  return fetch(`${pendingUrl.replace(".json", "/" + img.key + ".json")}`, {
+                    method: "DELETE"
+                  });
+                }).then(() => div.remove());
+              };
+              btnGroup.appendChild(approveBtn);
+            }
+
+            const delBtn = document.createElement("button");
+            delBtn.textContent = "🗑️";
+            delBtn.className = "delete-btn";
+            delBtn.onclick = () => {
+              const url = img.approved ? imagesUrl : pendingUrl;
+              if (confirm("هل تريد حذف الصورة؟")) {
+                firebase.auth().currentUser.getIdToken().then(token => {
+                  fetch(`${url.replace(".json", "/" + img.key + ".json")}?auth=${token}`, {
+                    method: "DELETE"
+                  }).then(() => div.remove());
+                });
+              }
+            };
+
+            btnGroup.appendChild(delBtn);
+            div.appendChild(image);
+            div.appendChild(btnGroup);
+            imagesContainer.appendChild(div);
+          });
+
+          const toggleBtn = sellerTitle.querySelector(".toggle-images");
+          let visible = true;
+          toggleBtn.onclick = () => {
+            visible = !visible;
+            imagesContainer.style.display = visible ? "block" : "none";
+            toggleBtn.textContent = visible ? "👁️ إخفاء الصور" : "👁️‍🗨️ إظهار الصور";
+          };
+
+          createUploadUI(sellerName, section);
+          container.appendChild(section);
+        });
+      })
+      .catch(err => {
+        container.textContent = "فشل في تحميل الصور.";
+        console.error(err);
+      });
+    }
+
+   function deleteByTraderName(traderName, deleteSellerToo = false) {
+  firebase.auth().currentUser.getIdToken().then(token => {
+    Promise.all([
+      fetch(pendingUrl).then(res => res.json()),
+      fetch(imagesUrl).then(res => res.json()),
+      fetch(sellersUrl + "?auth=" + token).then(res => res.json())
+    ]).then(async ([pending, approved, sellersData]) => {
+      const deleteList = [];
+
+      const handleDelete = (data, baseUrl) => {
+        if (!data) return;
+        Object.entries(data).forEach(([key, img]) => {
+          if (img.trader === traderName || img.sellerName === traderName) {
+            const deleteUrl = `${baseUrl.replace(".json", "/" + key + ".json")}?auth=${token}`;
+            deleteList.push(fetch(deleteUrl, { method: "DELETE" }));
+          }
+        });
+      };
+
+      handleDelete(pending, pendingUrl);
+      handleDelete(approved, imagesUrl);
+
+      if (deleteSellerToo && sellersData) {
+        const entry = Object.entries(sellersData).find(
+          ([_, s]) => s.shopName === traderName
+        );
+        if (entry) {
+          const uid = entry[0];
+          const sellerInfo = entry[1];
+
+          // 🟡 إنشاء نسخة في sellerArchive قبل الحذف
+          const archiveData = {
+            shopName: sellerInfo.shopName || traderName,
+            email: sellerInfo.email || "غير متوفر",
+            deleted: true,
+            deletedAt: new Date().toISOString()
+          };
+
+          await fetch(`https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/sellerArchive/${uid}.json?auth=${token}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(archiveData)
+          });
+
+          // 🔴 حذف التاجر من sellers
+          const deleteUrl = `${sellersUrl.replace(".json", "/" + uid + ".json")}?auth=${token}`;
+          deleteList.push(fetch(deleteUrl, { method: "DELETE" }));
+        }
+      }
+
+      Promise.all(deleteList).then(() => location.reload());
+    });
+  }).catch(err => {
+    alert("❌ فشل في حذف التاجر: لم يتم الحصول على التوكن");
+    console.error(err);
+  });
+}
+  </script>
+</body>
+</html>
+
+<!-- ✅ الجزء الجديد لإضافة زر رفع الصور مع سحب وافلات لكل تاجر -->
+<script>
+function createUploadUI(sellerName, section) {
+  const uploadContainer = document.createElement("div");
+  uploadContainer.style.marginTop = "10px";
+  uploadContainer.innerHTML = `
+    <div style="border: 2px dashed #ccc; padding: 10px; border-radius: 8px; background: #f9f9f9;">
+      <p style="margin: 0 0 6px; font-weight: bold; color: #555;">📤 رفع صورة للتاجر: <span style="color: green">\${sellerName}</span></p>
+      <input type="file" accept="image/*" class="fileInput" /><br>
+      <select class="categorySelect" style="margin-top:6px; padding:4px; width:100%;">
+        <option value="">-- اختر التصنيف --</option>
+        <option value="كاشات حريمي وداخلي">كاشات حريمي وداخلي</option>
+        <option value="بيجامات حريمي وملابس البيت">بيجامات حريمي وملابس البيت</option>
+        <option value="منتجات الجمال والمكياجات">منتجات الجمال والمكياجات</option>
+        <option value="إكسسوارات حريمي">إكسسوارات حريمي</option>
+        <option value="ملابس خروج حريمي">ملابس خروج حريمي</option>
+        <option value="شنط وأحذية حريمي">شنط وأحذية حريمي</option>
+        <option value="أدوات منزلية">أدوات منزلية</option>
+        <option value="ملابس وأحذية أطفالي">ملابس وأحذية أطفالي</option>
+        <option value="ملابس وأحذية رجالي">ملابس وأحذية رجالي</option>
+      </select>
+      <input type="text" class="contactInput" placeholder="رابط التواصل (واتساب أو ماسنجر)" style="margin-top:6px; padding:4px; width:100%;" />
+      <button class="uploadBtn" style="margin-top:6px; padding:6px 12px; background:#28a745; color:white; border:none; border-radius:6px; cursor:pointer;">رفع</button>
+      <div class="dropArea" style="margin-top:6px; height:180px; border:2px dashed #aaa; border-radius:6px; color:#666; display:flex; align-items:center; justify-content:center;">🖼️ اسحب الصورة هنا</div>
+    </div>
+  `;
+
+  section.appendChild(uploadContainer);
+
+  const fileInput = uploadContainer.querySelector(".fileInput");
+  const categorySelect = uploadContainer.querySelector(".categorySelect");
+  const contactInput = uploadContainer.querySelector(".contactInput");
+  const dropArea = uploadContainer.querySelector(".dropArea");
+
+  const uploadImage = file => {
+    const category = categorySelect.value.trim();
+    
+    let sellerLink = contactInput.value.trim();
+
+    // ✅ التحقق من رقم واتساب بدقة
+    if (/^01[0-2,5][0-9]{8}$/.test(sellerLink)) {
+      sellerLink = "https://wa.me/2" + sellerLink;
+    } else if (/^(002|\+2)?01[0-2,5][0-9]{8}$/.test(sellerLink)) {
+      sellerLink = "https://wa.me/" + sellerLink.replace(/^0+/, "").replace(/^(002|\+2)/, "2");
+    }
+    // ✅ بعدين يوزر ماسنجر
+    else if (/^m\.me\//.test(sellerLink)) {
+      sellerLink = "https://" + sellerLink;
+    } else if (/^[a-zA-Z][a-zA-Z0-9._]{4,}$/.test(sellerLink)) {
+      sellerLink = "https://m.me/" + sellerLink;
+    } else {
+      return alert("❌ أدخل رقم واتساب صحيح أو يوزر فيسبوك فقط");
+    }
+
+
+    if (!file) return alert("اختر صورة");
+    if (!category) return alert("اختر التصنيف");
+    if (!sellerLink) return alert("أدخل رابط البائع");
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "lastlast");
+
+    fetch("https://api.cloudinary.com/v1_1/dugzs3qbh/image/upload", {
+      method: "POST",
+      body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+      const pendingImage = {
+        src: data.secure_url,
+        seller: sellerLink,
+        sellerName: sellerName,
+        category: category,
+        approved: false,
+        group: Date.now(),
+        uid: firebase.auth().currentUser?.uid || "guest"
+      };
+
+      return firebase.auth().currentUser.getIdToken()
+        .then(token => fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages.json?auth=" + token, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(pendingImage)
+        }));
+    })
+    .then(() => alert("✅ تم رفع الصورة بنجاح وتنتظر المراجعة"))
+    .catch(err => {
+      console.error("❌ خطأ في رفع الصورة:", err);
+      alert("حدث خطأ أثناء رفع الصورة");
+    });
+  };
+
+  uploadContainer.querySelector(".uploadBtn").onclick = () => {
+    if (fileInput.files.length > 0) uploadImage(fileInput.files[0]);
+    else alert("يرجى اختيار صورة");
+  };
+
+  dropArea.addEventListener("dragover", e => {
+    e.preventDefault();
+    dropArea.style.backgroundColor = "#f0f8ff";
+  });
+
+  dropArea.addEventListener("dragleave", () => {
+    dropArea.style.backgroundColor = "";
+  });
+
+  dropArea.addEventListener("drop", e => {
+    e.preventDefault();
+    dropArea.style.backgroundColor = "";
+    const file = e.dataTransfer.files[0];
+    if (file) uploadImage(file);
+  });
+}
+</script>
