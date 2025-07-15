@@ -238,32 +238,6 @@ const allNames = new Set([
           toggleBtn.onclick = () => {
             visible = !visible;
             imagesContainer.style.display = visible ? "block" : "none";
-  if (visible && !loaded) {
-    (allImages[sellerKey] || []).forEach(img => {
-      const div = document.createElement("div");
-      div.className = "img-box";
-      const image = document.createElement("img");
-      image.src = img.src;
-      const btnGroup = document.createElement("div");
-      btnGroup.className = "btns";
-      if (!img.approved) {
-        const approveBtn = document.createElement("button");
-        approveBtn.textContent = "✅";
-        approveBtn.className = "approve-btn";
-        approveBtn.onclick = () => approveImage(img, div);
-        btnGroup.appendChild(approveBtn);
-      }
-      const delBtn = document.createElement("button");
-      delBtn.textContent = "🗑️";
-      delBtn.className = "delete-btn";
-      delBtn.onclick = () => deleteImage(img, div);
-      btnGroup.appendChild(delBtn);
-      div.appendChild(image);
-      div.appendChild(btnGroup);
-      imagesContainer.appendChild(div);
-    });
-    loaded = true;
-  }
             toggleBtn.textContent = visible ? "👁️ إخفاء الصور" : "👁️‍🗨️ إظهار الصور";
           };
 
