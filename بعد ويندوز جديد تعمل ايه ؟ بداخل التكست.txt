@@ -1,0 +1,32 @@
+
+
+نزل Git من: https://git-scm.com/downloads
+git --version
+لو طلع رقم الإصدار → تمام 
+
+
+تسجيل الدخول لحساب GitHub هتكتب اليوزر والايميل بتوع حساب github
+git config --global user.name "kollomollo1"
+git config --global user.email "kollomollo1@gmail.com"
+
+https://github.com
+kollomollo1@gmail.com
+kollomollo1
+newhtml اسم المشروع
+
+
+cd C:\newhtml
+git status   تتأكد إن المشروع مرتبط بمستودع
+لو ظهر الملفات ومفيش خطأ Error 
+يبقي كله تمام بفضل الله
+
+رفع التعديلات من git
+
+cd C:\newhtml
+
+git add .
+
+git commit -m "ujdstgwfga.js"
+
+git push origin main
+

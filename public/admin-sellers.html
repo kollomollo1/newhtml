@@ -178,68 +178,159 @@ const allNames = new Set([
           };
           section.appendChild(deleteImagesBtn);
 
-          (allImages[sellerKey] || []).forEach(img => {
-            const div = document.createElement("div");
-            div.className = "img-box";
-            const image = document.createElement("img");
-            image.src = img.src;
+          const sellerTitle = document.createElement("h3");
+sellerTitle.innerHTML = `🛍️ ${sellerName || "غير معروف"} <button class="toggle-images">👁️‍🗨️ إظهار الصور</button>`;
+section.appendChild(sellerTitle);
 
-            const btnGroup = document.createElement("div");
-            btnGroup.className = "btns";
+const imagesContainer = document.createElement("div");
+imagesContainer.className = "images-container";
+imagesContainer.style.display = "none"; // ✅ نخليها مخفية افتراضيًا
+section.appendChild(imagesContainer);
 
-            if (!img.approved) {
-              const approveBtn = document.createElement("button");
-              approveBtn.textContent = "✅";
-              approveBtn.className = "approve-btn";
-              approveBtn.onclick = () => {
-                const approvedImage = {
-                  id: Date.now() + Math.random(),
-                  src: img.src,
-                  seller: img.seller || "#",
-                  trader: img.trader || img.sellerName || "غير معروف",
-                  category: img.category || "غير مصنف",
-                  group: Date.now()
-                };
-                fetch(imagesUrl, {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify(approvedImage)
-                }).then(() => {
-                  return fetch(`${pendingUrl.replace(".json", "/" + img.key + ".json")}`, {
-                    method: "DELETE"
-                  });
-                }).then(() => div.remove());
-              };
-              btnGroup.appendChild(approveBtn);
-            }
+// ✅ زر إظهار/إخفاء الصور
+const toggleBtn = sellerTitle.querySelector(".toggle-images");
+let visible = false;
+let loaded = false;
 
-            const delBtn = document.createElement("button");
-            delBtn.textContent = "🗑️";
-            delBtn.className = "delete-btn";
-            delBtn.onclick = () => {
-              const url = img.approved ? imagesUrl : pendingUrl;
-              if (confirm("هل تريد حذف الصورة؟")) {
-                firebase.auth().currentUser.getIdToken().then(token => {
-                  fetch(`${url.replace(".json", "/" + img.key + ".json")}?auth=${token}`, {
-                    method: "DELETE"
-                  }).then(() => div.remove());
-                });
-              }
-            };
+toggleBtn.onclick = () => {
+  visible = !visible;
+  imagesContainer.style.display = visible ? "block" : "none";
+  toggleBtn.textContent = visible ? "👁️ إخفاء الصور" : "👁️‍🗨️ إظهار الصور";
 
-            btnGroup.appendChild(delBtn);
-            div.appendChild(image);
-            div.appendChild(btnGroup);
-            imagesContainer.appendChild(div);
-          });
+  // ✅ أول مرة فقط نحمّل الصور
+  if (visible && !loaded) {
+    (allImages[sellerKey] || []).forEach(img => {
+      const div = document.createElement("div");
+      div.className = "img-box";
+      const image = document.createElement("img");
+      image.src = img.src;
 
-          const toggleBtn = sellerTitle.querySelector(".toggle-images");
-          let visible = true;
-          toggleBtn.onclick = () => {
-            visible = !visible;
-            imagesContainer.style.display = visible ? "block" : "none";
-            toggleBtn.textContent = visible ? "👁️ إخفاء الصور" : "👁️‍🗨️ إظهار الصور";
+      const btnGroup = document.createElement("div");
+      btnGroup.className = "btns";
+
+      if (!img.approved) {
+        const approveBtn = document.createElement("button");
+        approveBtn.textContent = "✅";
+        approveBtn.className = "approve-btn";
+        approveBtn.onclick = () => {
+          const approvedImage = {
+            id: Date.now() + Math.random(),
+            src: img.src,
+            seller: img.seller || "#",
+            trader: img.trader || img.sellerName || "غير معروف",
+            category: img.category || "غير مصنف",
+            group: Date.now(),
+            uid: img.uid || null,
+            email: img.email || null,
+            approved: true
           };
+          fetch(imagesUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(approvedImage)
+          }).then(() => {
+            return fetch(`${pendingUrl.replace(".json", "/" + img.key + ".json")}`, {
+              method: "DELETE"
+            });
+          }).then(() => div.remove());
+        };
+        btnGroup.appendChild(approveBtn);
+      }
+
+      const delBtn = document.createElement("button");
+      delBtn.textContent = "🗑️";
+      delBtn.className = "delete-btn";
+      delBtn.onclick = () => {
+        const url = img.approved ? imagesUrl : pendingUrl;
+        if (confirm("هل تريد حذف الصورة؟")) {
+          firebase.auth().currentUser.getIdToken().then(token => {
+            fetch(`${url.replace(".json", "/" + img.key + ".json")}?auth=${token}`, {
+              method: "DELETE"
+            }).then(() => div.remove());
+          });
+        }
+      };
+
+      btnGroup.appendChild(delBtn);
+      div.appendChild(image);
+      div.appendChild(btnGroup);
+      imagesContainer.appendChild(div);
+    });
+
+    loaded = true;
+  }
+};
+
+let loaded = false;
+toggleBtn.onclick = () => {
+  visible = !visible;
+  imagesContainer.style.display = visible ? "block" : "none";
+  toggleBtn.textContent = visible ? "👁️ إخفاء الصور" : "👁️‍🗨️ إظهار الصور";
+
+  // ✅ أول مرة فقط نحمل الصور
+  if (visible && !loaded) {
+    (allImages[sellerKey] || []).forEach(img => {
+      const div = document.createElement("div");
+      div.className = "img-box";
+      const image = document.createElement("img");
+      image.src = img.src;
+
+      const btnGroup = document.createElement("div");
+      btnGroup.className = "btns";
+
+      if (!img.approved) {
+        const approveBtn = document.createElement("button");
+        approveBtn.textContent = "✅";
+        approveBtn.className = "approve-btn";
+        approveBtn.onclick = () => {
+          const approvedImage = {
+            id: Date.now() + Math.random(),
+            src: img.src,
+            seller: img.seller || "#",
+            trader: img.trader || img.sellerName || "غير معروف",
+            category: img.category || "غير مصنف",
+            group: Date.now(),
+            uid: img.uid || null,
+            email: img.email || null,
+            approved: true
+          };
+          fetch(imagesUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(approvedImage)
+          }).then(() => {
+            return fetch(`${pendingUrl.replace(".json", "/" + img.key + ".json")}`, {
+              method: "DELETE"
+            });
+          }).then(() => div.remove());
+        };
+        btnGroup.appendChild(approveBtn);
+      }
+
+      const delBtn = document.createElement("button");
+      delBtn.textContent = "🗑️";
+      delBtn.className = "delete-btn";
+      delBtn.onclick = () => {
+        const url = img.approved ? imagesUrl : pendingUrl;
+        if (confirm("هل تريد حذف الصورة؟")) {
+          firebase.auth().currentUser.getIdToken().then(token => {
+            fetch(`${url.replace(".json", "/" + img.key + ".json")}?auth=${token}`, {
+              method: "DELETE"
+            }).then(() => div.remove());
+          });
+        }
+      };
+
+      btnGroup.appendChild(delBtn);
+      div.appendChild(image);
+      div.appendChild(btnGroup);
+      imagesContainer.appendChild(div);
+    });
+
+    loaded = true; // ✅ ما نكرر التحميل
+  }
+};
+
 
           createUploadUI(sellerName, section);
           container.appendChild(section);
