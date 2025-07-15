@@ -65,7 +65,7 @@
   <div class="container">
     <h2>لوحة البائع - رفع صورة</h2>
 
-    <input type="file" id="fileInput" accept="image/*">
+    <input type="file" id="fileInput" accept="image/*" multiple>
     <select id="category">
       <option value="">اختر التصنيف</option>
       <option value="كاشات حريمي وداخلي">كاشات حريمي وداخلي</option>
@@ -89,58 +89,59 @@
   <script>
     let sellerName = "";
 
-    function uploadImage() {
-      const file = document.getElementById("fileInput").files[0];
-      const category = document.getElementById("category").value;
-      let phone = document.getElementById("sellerPhone").value.trim();
+ function uploadImage() {
+  const files = document.getElementById("fileInput").files;
+  const category = document.getElementById("category").value;
+  let phone = document.getElementById("sellerPhone").value.trim();
 
-      if (phone.startsWith("0")) phone = phone.substring(1);
-      const sellerLink = phone ? `https://wa.me/20${phone}` : "";
+  if (phone.startsWith("0")) phone = phone.substring(1);
+  const sellerLink = phone ? `https://wa.me/20${phone}` : "";
 
-      if (!file || !category || !sellerName || !sellerLink) {
-        alert("يرجى ملء جميع الحقول");
-        return;
-      }
+  if (!files.length || !category || !sellerName || !sellerLink) {
+    alert("يرجى ملء جميع الحقول واختيار صور");
+    return;
+  }
 
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("upload_preset", "lastlast");
+  Array.from(files).forEach(file => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "lastlast");
 
-      fetch("https://api.cloudinary.com/v1_1/dugzs3qbh/image/upload", {
-        method: "POST",
-        body: formData
-      })
-      .then(res => res.json())
-      .then(data => {
-        const newImg = {
-          src: data.secure_url,
-          sellerName: sellerName,
-          trader: sellerName,
-          seller: sellerLink,
-          category: category,
-          approved: false,
-          email: firebase.auth().currentUser.email,
-          uid: firebase.auth().currentUser?.uid || "guest"
-        };
+    fetch("https://api.cloudinary.com/v1_1/dugzs3qbh/image/upload", {
+      method: "POST",
+      body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+      const newImg = {
+        src: data.secure_url,
+        sellerName: sellerName,
+        trader: sellerName,
+        seller: sellerLink,
+        category: category,
+        approved: false,
+        email: firebase.auth().currentUser.email,
+        uid: firebase.auth().currentUser?.uid || "guest"
+      };
 
-        console.log("🔥 newImg:", newImg);
-
-        return firebase.auth().currentUser.getIdToken().then(token => {
-          return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages.json?auth=" + token, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(newImg)
-          });
+      return firebase.auth().currentUser.getIdToken().then(token => {
+        return fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/pendingImages.json?auth=" + token, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newImg)
         });
-      })
-      .then(() => {
-        alert("✅ تم رفع الصورة بنجاح وتنتظر موافقة الأدمن");
-        loadMyImages();
-      })
-      .catch(err => {
-        alert("❌ حدث خطأ أثناء رفع الصورة: " + err.message);
       });
-    }
+    })
+    .then(() => {
+      console.log("✅ تم رفع صورة بنجاح");
+      loadMyImages();
+    })
+    .catch(err => {
+      alert("❌ خطأ أثناء رفع صورة: " + err.message);
+    });
+  });
+}
+
 
     function loadMyImages() {
       const container = document.getElementById("myImages");
