@@ -129,14 +129,42 @@
               const div = document.createElement("div");
               div.className = "card";
 
-              div.innerHTML = `
-                <p><strong>${img.sellerName || "غير معروف"}</strong></p>
-                <img src="${img.src}" alt="صورة">
-                <div class="btns">
-                  <button class="approve-btn" onclick='approve("${key}", ${JSON.stringify(img).replace(/"/g, '&quot;')})'>✅ قبول</button>
-                  <button class="reject-btn" onclick='reject("${key}")'>🗑️ حذف</button>
-                </div>
-              `;
+             div.innerHTML = `
+  <p><strong>${img.sellerName || "غير معروف"}</strong></p>
+  <img src="${img.src}" alt="صورة" style="max-height:150px;"><br>
+  <label style="font-size: 14px;">التصنيف:</label>
+  <select class="category-select" style="margin: 6px 0; width: 100%; padding: 4px;">
+    <option value="كاشات حريمي وداخلي">كاشات حريمي وداخلي</option>
+    <option value="بيجامات حريمي وملابس البيت">بيجامات حريمي وملابس البيت</option>
+    <option value="منتجات الجمال والمكياجات">منتجات الجمال والمكياجات</option>
+    <option value="إكسسوارات حريمي">إكسسوارات حريمي</option>
+    <option value="ملابس خروج حريمي">ملابس خروج حريمي</option>
+    <option value="شنط وأحذية حريمي">شنط وأحذية حريمي</option>
+    <option value="أدوات منزلية">أدوات منزلية</option>
+    <option value="ملابس وأحذية أطفالي">ملابس وأحذية أطفالي</option>
+    <option value="ملابس وأحذية رجالي">ملابس وأحذية رجالي</option>
+  </select>
+  <div class="btns">
+    <button class="approve-btn">✅ قبول</button>
+    <button class="reject-btn">🗑️ حذف</button>
+  </div>
+`;
+
+// ✅ هذا هو الكود الذي تسأل عنه:
+const select = div.querySelector(".category-select");
+if (select && img.category) {
+  select.value = img.category;
+}
+
+const approveBtn = div.querySelector(".approve-btn");
+approveBtn.onclick = () => {
+  const selectedCategory = select?.value || img.category || "غير مصنف";
+  approve(key, { ...img, category: selectedCategory });
+};
+
+const rejectBtn = div.querySelector(".reject-btn");
+rejectBtn.onclick = () => reject(key);
+
 
               container.appendChild(div);
             }

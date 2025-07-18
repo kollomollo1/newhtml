@@ -19,6 +19,8 @@ https://console.firebase.google.com/u/0/project/gallery3modifiedjsless/database/
 ودي للحماية الكاملة اللي شغالة حاليا بعد تعديلات كتيير في الملفات 
 وبعد ما عينت الادمن ادمن بسكربت في فولدر في مجلد جنب مجلد بابليك
 
+
+
 {
   "rules": {
     "pendingImages": {
@@ -56,6 +58,7 @@ https://console.firebase.google.com/u/0/project/gallery3modifiedjsless/database/
     ".read": true
   }
 }
+
 
 
 دي اللى قبلها شغالة كويس بس مش بتعمل قسم في فايربيز seller archive
